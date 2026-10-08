@@ -3,7 +3,6 @@ from Model.paciente import Paciente
 from Controller.cpfJaCadastradoException import CpfJaCadastradoException
 from Controller.cpfNaoEncontradoException import CpfNaoEncontradoException
 from datetime import date as Date
-from Model.pessoa import Pessoa
 
 
 class ControllerPaciente(Paciente):
@@ -64,3 +63,19 @@ class ControllerPaciente(Paciente):
                 raise CpfNaoEncontradoException(cpf_cadastrado)
         else:
             raise CpfJaCadastradoException(cpf_correto)
+
+    def calcular_idade_paciente(self, cpf:str) -> int:
+        if cpf in self.listar_cpfs_cadastrados():
+            paciente = self.__pacientes[cpf]
+            data_de_nascimento = paciente.data_de_nascimento
+            hoje = Date.today()
+            if (
+                hoje.month >= data_de_nascimento.month
+                and hoje.day >= data_de_nascimento.day
+            ):
+                idade = hoje.year - data_de_nascimento.year
+            else:
+                idade = hoje.year - data_de_nascimento.year - 1
+            return idade
+        else:
+            CpfNaoEncontradoException(cpf)
