@@ -5,7 +5,7 @@ from Controller.cpfNaoEncontradoException import CpfNaoEncontradoException
 from datetime import date as Date
 
 
-class ControllerPaciente(Paciente):
+class ControllerPaciente:
     def __init__(self):
         self.__pacientes = {}
 
@@ -14,6 +14,12 @@ class ControllerPaciente(Paciente):
 
     def listar_cpfs_cadastrados(self):
         return self.__pacientes.keys()
+
+    def retornar_paciente(self, cpf:str) -> Paciente:
+        if cpf in self.listar_cpfs_cadastrados():
+            return self.__pacientes[cpf]
+        else:
+            raise CpfNaoEncontradoException(cpf)
 
     def cadastrar_paciente(self, nome:str, celular: str, cpf:str, data_de_nascimento: Date):
         if cpf not in self.listar_cpfs_cadastrados():
@@ -44,7 +50,7 @@ class ControllerPaciente(Paciente):
         else:
             raise CpfNaoEncontradoException(cpf)
 
-    def atualizar_data_de_nascimento(self, data_de_nascimento:Date, cpf:str):
+    def corrigir_data_de_nascimento(self, data_de_nascimento:Date, cpf:str):
         if cpf in self.listar_cpfs_cadastrados():
             self.__pacientes[cpf].data_de_nascimento = data_de_nascimento
             return True

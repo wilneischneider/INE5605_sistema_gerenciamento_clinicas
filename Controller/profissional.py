@@ -4,7 +4,7 @@ from Controller.cpfJaCadastradoException import CpfJaCadastradoException
 from Controller.cpfNaoEncontradoException import CpfNaoEncontradoException
 
 
-class ControllerProfissional(Profissional):
+class ControllerProfissional:
     def __init__(self):
         self.__profissionais = {}
 
@@ -13,6 +13,12 @@ class ControllerProfissional(Profissional):
 
     def listar_cpfs_cadastrados(self):
         return self.__profissionais.keys()
+
+    def retornar_profissional(self, cpf:str) -> Profissional:
+        if cpf in self.listar_cpfs_cadastrados():
+            return self.__profissionais[cpf]
+        else:
+            raise CpfNaoEncontradoException(cpf)
 
     def cadastrar_profissional(self, nome:str, celular: str, cpf:str, especialidade:str, registro_profissional:str):
         if cpf not in self.listar_cpfs_cadastrados():

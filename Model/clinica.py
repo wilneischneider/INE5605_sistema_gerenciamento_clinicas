@@ -2,10 +2,22 @@ from Model.tipoParametroIncorretoException import TipoParametroIncorretoExceptio
 
 
 class Clinica:
-    def __init__(self, nome:str, cidade: str, descricao:str):
+    def __init__(self, cnpj:str, nome:str, cidade: str, descricao:str):
+        self.cnpj = cnpj
         self.nome = nome
         self.cidade = cidade
         self.descricao = descricao
+
+    @property
+    def cnpj(self) -> str:
+        return self.__cnpj
+
+    @cnpj.setter
+    def cnpj(self, cnpj: str):
+        if isinstance(cnpj, str):
+            self.__cnpj = cnpj
+        else:
+            raise TipoParametroIncorretoException("string")
 
     @property
     def nome(self) -> str:
