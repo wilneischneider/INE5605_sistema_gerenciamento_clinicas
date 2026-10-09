@@ -1,8 +1,12 @@
 from datetime import date as Date, date
 from datetime import time as Time
+
+from Controller.procedimentos import ControllerProcedimento
 from Model.paciente import Paciente
 from Model.clinica import Clinica
 from Model.profissional import Profissional
+from procedimento import Procedimento
+from Controller.procedimentoNaoEncontradoException import ProcedimentoNaoEncontradoException
 
 
 class Atendimento:
@@ -23,6 +27,7 @@ class Atendimento:
         self.horario_inicio = horario_inicio
         self.horario_fim = horario_fim
         self.tipo_de_atendimento = tipo_de_atendimento
+        self.__procedimentos_realizados = []
 
     @property
     def clinica(self) -> Clinica:
@@ -101,3 +106,13 @@ class Atendimento:
     #     else:
     #         raise TipoParametroIncorretoException("Clinica")
 
+    @property
+    def procedimentos_realizados(self):
+        return self.__procedimentos_realizados
+
+    def adicionar_procedimento(self, descricao:str):
+        if descricao in ControllerProcedimento.listar_descricao_procedimentos_cadastrados():
+            procedimento = ControllerProcedimento.retornar_procedimento(descricao)
+            self.__procedimentos_realizados.append(procedimento)
+        else:
+            raise ProcedimentoNaoEncontradoException(procedimento)
