@@ -2,6 +2,7 @@ from Model import pessoa
 from Model.profissional import Profissional
 from Controller.cpfJaCadastradoException import CpfJaCadastradoException
 from Controller.cpfNaoEncontradoException import CpfNaoEncontradoException
+from Controller.clinicas import ControllerClinica
 
 
 class ControllerProfissional:
@@ -31,6 +32,9 @@ class ControllerProfissional:
     def excluir_profissional(self, cpf):
         if cpf in self.listar_cpfs_cadastrados():
             self.__profissionais.pop(cpf)
+            # Excluir tambem o vinculo com as clinicas
+            for cnpj in ControllerClinica.listar_cnpjs_cadastrados():
+                ControllerClinica.desvincular_profissional_da_clinica(cnpj, cpf)
             return True
         else:
             raise CpfNaoEncontradoException(cpf)
