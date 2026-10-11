@@ -1,9 +1,9 @@
-from Model.profissional import Profissional
-from tipoParametroIncorretoException import TipoParametroIncorretoException
+from model.profissional import Profissional
+from exceptions.tipoParametroIncorretoException import TipoParametroIncorretoException
 
 
 class Procedimento:
-    def __init__(self, descricao:str, custo:float, profissional:Profissional):
+    def __init__(self, descricao:str, custo:float, profissional:str):
         self.descricao = descricao
         self.custo = custo
         self.profissional = profissional
@@ -31,12 +31,12 @@ class Procedimento:
             raise TipoParametroIncorretoException("float")
 
     @property
-    def profissional(self) -> Profissional:
+    def profissional(self) -> str:
         return self.__profissional
 
     @profissional.setter
-    def profissional(self, profissional: Profissional):
-        if isinstance(profissional, Profissional):
+    def profissional(self, profissional: str):
+        if isinstance(profissional, str):
             self.__profissional = profissional
         else:
-            raise TipoParametroIncorretoException("Profissional")
+            raise TipoParametroIncorretoException("string")

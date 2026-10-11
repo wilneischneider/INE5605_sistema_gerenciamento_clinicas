@@ -1,12 +1,9 @@
-from datetime import date as Date, date
+from datetime import date as Date
 from datetime import time as Time
-
-from Controller.procedimentos import ControllerProcedimento
-from Model.paciente import Paciente
-from Model.clinica import Clinica
-from Model.profissional import Profissional
-from procedimento import Procedimento
-from Controller.procedimentoNaoEncontradoException import ProcedimentoNaoEncontradoException
+from model.abstractTipoDeAtendimento import AbstractTipoDeAtendimento
+from model.paciente import Paciente
+from model.clinica import Clinica
+from model.profissional import Profissional
 
 
 class Atendimento:
@@ -18,7 +15,7 @@ class Atendimento:
             data:Date,
             horario_inicio:Time,
             horario_fim:Time,
-            tipo_de_atendimento
+            tipo_de_atendimento: AbstractTipoDeAtendimento
     ):
         self.clinica = clinica
         self.paciente = paciente
@@ -28,6 +25,7 @@ class Atendimento:
         self.horario_fim = horario_fim
         self.tipo_de_atendimento = tipo_de_atendimento
         self.__procedimentos_realizados = []
+        self.__responsavel = None
 
     @property
     def clinica(self) -> Clinica:
@@ -95,24 +93,28 @@ class Atendimento:
         else:
             raise TipoParametroIncorretoException("Hora")
 
-    # @property
-    # def tipo_de_atendimento(self):
-    #     return self.__tipo_de_atendimento
-    #
-    # @clinica.setter
-    # def clinica(self, clinica: Clinica):
-    #     if isinstance(clinica, Clinica):
-    #         self.__clinica = clinica
-    #     else:
-    #         raise TipoParametroIncorretoException("Clinica")
+    @property
+    def tipo_de_atendimento(self) -> AbstractTipoDeAtendimento:
+        return self.__tipo_de_atendimento
+
+    @tipo_de_atendimento.setter
+    def tipo_de_atendimento(self, tipo_de_atendimento: AbstractTipoDeAtendimento):
+        if isinstance(tipo_de_atendimento, AbstractTipoDeAtendimento):
+            self.__tipo_de_atendimento = tipo_de_atendimento
+        else:
+            raise TipoParametroIncorretoException("AbstractTipoDeAtendimento")
 
     @property
-    def procedimentos_realizados(self):
+    def procedimentos_realizados(self) -> list:
         return self.__procedimentos_realizados
 
-    def adicionar_procedimento(self, descricao:str):
-        if descricao in ControllerProcedimento.listar_descricao_procedimentos_cadastrados():
-            procedimento = ControllerProcedimento.retornar_procedimento(descricao)
-            self.__procedimentos_realizados.append(procedimento)
+    @property
+    def responsavel(self) -> Pessoa:
+        return self.__responsavel
+
+    @responsavel.setter
+    def responsavel(self, responsavel: Pessoa):
+        if isinstance(responsavel, Pessoa):
+            self.__responsavel = responsavel
         else:
-            raise ProcedimentoNaoEncontradoException(procedimento)
+            raise TipoParametroIncorretoException("Pessoa")

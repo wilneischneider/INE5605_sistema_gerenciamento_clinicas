@@ -1,10 +1,10 @@
-from Model.clinica import Clinica
-from Controller.CnpjJaCadastradoException import CnpjJaCadastradoException
-from Controller.CnpjNaoEncontradoException import CnpjNaoEncontradoException
-from Controller.profissionais import ControllerProfissional
-from Controller.profissionalNaoCadastradoException import ProfissionalNaoCadastradoException
-from Controller.cpfJaCadastradoException import CpfJaCadastradoException
-from Controller.cpfNaoEncontradoException import CpfNaoEncontradoException
+from model.clinica import Clinica
+from exceptions.cnpjJaCadastradoException import CnpjJaCadastradoException
+from exceptions.cnpjNaoEncontradoException import CnpjNaoEncontradoException
+from controller.controllerProfissionais import ControllerProfissional
+from exceptions.profissionalNaoCadastradoException import ProfissionalNaoCadastradoException
+from exceptions.cpfJaCadastradoException import CpfJaCadastradoException
+from exceptions.cpfNaoEncontradoException import CpfNaoEncontradoException
 from datetime import time as Time
 
 

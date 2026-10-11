@@ -1,18 +1,23 @@
-from Model import pessoa
-from Model.paciente import Paciente
-from Controller.cpfJaCadastradoException import CpfJaCadastradoException
-from Controller.cpfNaoEncontradoException import CpfNaoEncontradoException
+from controller import controllerSistema
+from model.paciente import Paciente
+from exceptions.cpfJaCadastradoException import CpfJaCadastradoException
+from exceptions.cpfNaoEncontradoException import CpfNaoEncontradoException
 from datetime import date as Date
+from exceptions.tipoParametroIncorretoException import TipoParametroIncorretoException
+from view.viewPacientes import ViewPacientes
+from controller import controllerSistema
 
 
 class ControllerPaciente:
-    def __init__(self):
+    def __init__(self, controller_sistema: controllerSistema):
         self.__pacientes = {}
+        self.__controller_sistema = controller_sistema
+        self.__view_pacientes = ViewPacientes()
 
-    def listar_pacientes_cadastrados(self):
+    def listar_pacientes_cadastrados(self) -> list:
         return self.__pacientes.values()
 
-    def listar_cpfs_cadastrados(self):
+    def listar_cpfs_cadastrados(self) -> list:
         return self.__pacientes.keys()
 
     def retornar_paciente(self, cpf:str) -> Paciente:
@@ -23,9 +28,12 @@ class ControllerPaciente:
 
     def cadastrar_paciente(self, nome:str, celular: str, cpf:str, data_de_nascimento: Date):
         if cpf not in self.listar_cpfs_cadastrados():
-            paciente = Paciente(nome, celular, cpf, data_de_nascimento)
-            self.__pacientes.update({cpf: paciente})
-            return True
+            try:
+                paciente = Paciente(nome, celular, cpf, data_de_nascimento)
+                self.__pacientes.update({cpf: paciente})
+            except TipoParametroIncorretoException as e:
+                print e ## VER COMO FAZER
+                return 'Tipo de parâmetro incorreto'
         else:
             raise CpfJaCadastradoException(cpf)
 
@@ -70,7 +78,7 @@ class ControllerPaciente:
         else:
             raise CpfJaCadastradoException(cpf_correto)
 
-    def calcular_idade_paciente(self, cpf:str) -> int:
+    def calcular_idade_paciente(self, cpf:str) -> int:#MOVIDO PARA O MODELO PACIENTE
         if cpf in self.listar_cpfs_cadastrados():
             paciente = self.__pacientes[cpf]
             data_de_nascimento = paciente.data_de_nascimento

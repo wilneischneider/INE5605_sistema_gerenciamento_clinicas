@@ -1,10 +1,16 @@
 from abstractTipoDeAtendimento import AbstractTipoDeAtendimento
+from exceptions.tipoParametroIncorretoException import TipoParametroIncorretoException
 
 
 class Retorno(AbstractTipoDeAtendimento):
-    def __init__(self, preco:float = 0):
+    def __init__(self, preco:float= 0):
         super().__init__()
+        self.__tipo_atendimento = "retorno"
         self.preco = preco
+
+    @property
+    def tipo_atendimento(self) -> str:
+        return self.__tipo_atendimento
 
     @property
     def preco(self) -> float:

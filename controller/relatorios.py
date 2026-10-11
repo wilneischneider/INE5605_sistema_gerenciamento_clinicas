@@ -1,6 +1,6 @@
-from Controller.atendimentos import ControllerAtendimento
-from Model.atendimento import Atendimento
-from Model.clinica import Clinica
+from controller.controllerAtendimentos import ControllerAtendimento
+from model.atendimento import Atendimento
+from model.clinica import Clinica
 
 
 class ClinicasMaiorNumeroAtendimentos:
@@ -29,3 +29,4 @@ class ClinicasMaiorNumeroAtendimentos:
                     n += 1
         return qt_atendimentos_ordenado
     # CONCLUIR
+    # Criar uma única classe de relatorios

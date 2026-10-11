@@ -1,8 +1,7 @@
-from Model import pessoa
-from Model.profissional import Profissional
-from Controller.cpfJaCadastradoException import CpfJaCadastradoException
-from Controller.cpfNaoEncontradoException import CpfNaoEncontradoException
-from Controller.clinicas import ControllerClinica
+from model.profissional import Profissional
+from exceptions.cpfJaCadastradoException import CpfJaCadastradoException
+from exceptions.cpfNaoEncontradoException import CpfNaoEncontradoException
+from controller.controllerClinicas import ControllerClinica
 
 
 class ControllerProfissional:

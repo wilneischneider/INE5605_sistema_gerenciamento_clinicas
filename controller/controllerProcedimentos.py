@@ -1,7 +1,7 @@
-from Model.procedimento import Procedimento
-from Controller.procedimentoJaCadastradoException import ProcedimentoJaCadastradoException
-from Controller.procedimentoNaoEncontradoException import ProcedimentoNaoEncontradoException
-from Model.profissional import Profissional
+from model.procedimento import Procedimento
+from exceptions.procedimentoJaCadastradoException import ProcedimentoJaCadastradoException
+from exceptions.procedimentoNaoEncontradoException import ProcedimentoNaoEncontradoException
+from model.profissional import Profissional
 
 
 class ControllerProcedimento:

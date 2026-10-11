@@ -1,4 +1,4 @@
-from Model.tipoParametroIncorretoException import TipoParametroIncorretoException
+from exceptions.tipoParametroIncorretoException import TipoParametroIncorretoException
 from datetime import time as Time
 
 

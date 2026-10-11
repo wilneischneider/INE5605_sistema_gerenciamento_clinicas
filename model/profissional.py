@@ -1,5 +1,5 @@
-from Model.tipoParametroIncorretoException import TipoParametroIncorretoException
-from Model.pessoa import Pessoa
+from exceptions.tipoParametroIncorretoException import TipoParametroIncorretoException
+from model.pessoa import Pessoa
 
 
 class Profissional(Pessoa):

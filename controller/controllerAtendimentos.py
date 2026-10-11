@@ -1,14 +1,11 @@
-from Model.clinica import Clinica
-from Model.paciente import Paciente
-from clinicas import ControllerClinica
-from pacientes import ControllerPaciente
-from profissionais import ControllerProfissional
+from controllerClinicas import ControllerClinica
+from controllerPacientes import ControllerPaciente
+from controllerProfissionais import ControllerProfissional
 from datetime import date as Date
 from datetime import time as Time
-from Model.abstractTipoDeAtendimento import AbstractTipoDeAtendimento
-from Model.atendimento import Atendimento
-from pacienteMenorDeIdadeException import PacienteMenorDeIdadeException
-from horarioForaDoHorarioDaClinaException import HorarioForaDoHorarioDaClinicaException
+from model.atendimento import Atendimento
+from exceptions.pacienteMenorDeIdadeException import PacienteMenorDeIdadeException
+from exceptions.horarioForaDoHorarioDaClinaException import HorarioForaDoHorarioDaClinicaException
 
 class ControllerAtendimento:
     def __init__(self):
@@ -54,3 +51,12 @@ class ControllerAtendimento:
 
     def cancelar_atendimento(self): #implementar se der tempo
         pass
+
+
+    #COPIADO PARA CÁ, PRECISA AJUSTAR O CODIGO
+    def adicionar_procedimento(self, descricao:str):
+        if descricao in ControllerProcedimento.listar_descricao_procedimentos_cadastrados():
+            procedimento = ControllerProcedimento.retornar_procedimento(descricao)
+            self.__procedimentos_realizados.append(procedimento)
+        else:
+            raise ProcedimentoNaoEncontradoException(procedimento)
