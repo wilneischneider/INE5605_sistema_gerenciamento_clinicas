@@ -3,7 +3,7 @@ from model.atendimento import Atendimento
 from model.clinica import Clinica
 
 
-class ClinicasMaiorNumeroAtendimentos:
+class ControllerRelatorios:
     def listar_clinicas_com_mais_atendimentos(self):
         atendimentos_por_clinica = {}
         for atendimento in ControllerAtendimento.listar_atendimentos():

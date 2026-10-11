@@ -1,4 +1,4 @@
-from controle.controlador_ import ControladorXXXX
+from controller.controllerSistema import ControllerSistema
 
 if __name__ == "__main__":
-    ControladorXXXX.inicia()
+    ControllerSistema().inicializar_sistema()

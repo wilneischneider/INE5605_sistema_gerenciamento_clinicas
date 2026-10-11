@@ -6,11 +6,15 @@ from exceptions.profissionalNaoCadastradoException import ProfissionalNaoCadastr
 from exceptions.cpfJaCadastradoException import CpfJaCadastradoException
 from exceptions.cpfNaoEncontradoException import CpfNaoEncontradoException
 from datetime import time as Time
+from controller.controllerSistema import ControllerSistema
+from view.viewClinicas import ViewClinicas
 
 
 class ControllerClinica:
-    def __init__(self):
+    def __init__(self, controller_sistema: ControllerSistema):
         self.__clinicas = {}
+        self.__controller_sistema = controller_sistema
+        self.__view_clinica = ViewClinicas()
 
     def listar_clinicas_cadastradas(self) -> list:
         return self.__clinicas.values()
@@ -111,3 +115,16 @@ class ControllerClinica:
             self.__clinicas.update({cnpj: clinica})
         else:
             raise CpfNaoEncontradoException(cpf)
+
+    def retornar(self):
+        self.__controller_sistema.abrir_tela()
+
+    def abrir_tela(self):
+        opcoes = {0: self.retornar, 1: self.listar_clinicas_cadastradas, 2: self.cadastrar_clinica,
+                  3: self.retornar_clinica, 4: self.excluir_clinica, 5: self.atualizar_nome_clinica,
+                  6: self.atualizar_cidade, 7: self.atualizar_descricao, 8: self.corrigir_cnpj,
+                  9: self.atualizar_horario_abertura_da_clinica, 10: self.atualizar_horario_fechamento_da_clinica,
+                  11: self.listar_profissionais_da_clinica, 12: self.vincular_profissional_a_clinica,
+                  13: self.desvincular_profissional_da_clinica}
+        while True:
+            opcoes[self.__view_clinica.view_opcoes()]()

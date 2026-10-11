@@ -1,17 +1,20 @@
 from controller.controllerPacientes import ControllerPaciente
 from datetime import date as Date
+from view import superView
 
 
-class ViewPacientes:
-    def opcoes_paciente(self):
-        print("-------- PACIENTES ----------")
-        print("Escolha a opcao")
-        print("1 - Cadastrar Paciente")
-        print("2 - Excluir Paciente")
-        print("3 - Listar ")
-        print("4 - Excluir Amigo")
-        print("0 - Retornar")
-        opcao = int(input("Escolha a opcao: "))
+class ViewPacientes(SuperView):
+    def view_opcoes(self):
+        print("-------- MÓDULO DE GESTÃO DE PACIENTES ---------")
+        print("Escolha sua opção:")
+        print("1 - Gerenciar Atendimentos")
+        print("2 - Gerenciar Pagamentos")
+        print("3 - Gerenciar Pacientes")
+        print("4 - Gerenciar Procedimentos")
+        print("5 - Gerenciar Profissionais")
+        print("6 - Gerenciar Clínicas")
+        print("0 - Finalizar sistema")
+        opcao = self.entra_opcao_valida("Escolha a opção desejada: ", [0,1,2,3,4,5,6])
         return opcao
 
     def solicitar_dados_paciente(self):
