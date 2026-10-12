@@ -6,10 +6,14 @@ from datetime import time as Time
 from model.atendimento import Atendimento
 from exceptions.pacienteMenorDeIdadeException import PacienteMenorDeIdadeException
 from exceptions.horarioForaDoHorarioDaClinaException import HorarioForaDoHorarioDaClinicaException
+from view.viewAtendimentos import ViewAtendimentos
+
 
 class ControllerAtendimento:
     def __init__(self):
         self.__atendimentos = []
+        self.__controller_sistema = controller_sistema
+        self.__view_atendimento = ViewAtendimentos()
 
     def listar_atendimentos(self) -> list:
         return self.__atendimentos
@@ -60,3 +64,19 @@ class ControllerAtendimento:
             self.__procedimentos_realizados.append(procedimento)
         else:
             raise ProcedimentoNaoEncontradoException(procedimento)
+
+    def calcular_idade_paciente(self, cpf:str) -> int:#MOVIDO PARA O MODELO PACIENTE
+        if cpf in self.listar_cpfs_cadastrados():
+            paciente = self.__pacientes[cpf]
+            data_de_nascimento = paciente.data_de_nascimento
+            hoje = Date.today()
+            if (
+                hoje.month >= data_de_nascimento.month
+                and hoje.day >= data_de_nascimento.day
+            ):
+                idade = hoje.year - data_de_nascimento.year
+            else:
+                idade = hoje.year - data_de_nascimento.year - 1
+            return idade
+        else:
+            CpfNaoEncontradoException(cpf)

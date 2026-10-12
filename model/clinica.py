@@ -1,6 +1,8 @@
 from exceptions.tipoParametroIncorretoException import TipoParametroIncorretoException
 from datetime import time as Time
 
+from model.profissional import Profissional
+
 
 class Clinica:
     def __init__(
@@ -18,7 +20,7 @@ class Clinica:
         self.descricao = descricao
         self.horario_de_abertura = horario_de_abertura
         self.horario_de_fechamento = horario_de_fechamento
-        self.__profissionais = []
+        self.__profissionais = {}
 
     @property
     def cnpj(self) -> str:
@@ -87,17 +89,17 @@ class Clinica:
             raise TipoParametroIncorretoException("Hora")
 
     @property
-    def profissionais(self) -> list:
+    def profissionais(self) -> dict:
         return self.__profissionais
 
-    def vincular_profissional(self, cpf:str):
-        if isinstance(cpf, str):
-            self.__profissionais.append(cpf)
+    def vincular_profissional(self, profissional: Profissional):
+        if isinstance(profissional, Profissional):
+            self.__profissionais.update({profissional.cpf:profissional})
         else:
-            raise TipoParametroIncorretoException("string")
+            raise TipoParametroIncorretoException("Profissional")
 
     def desvincular_profissional(self, cpf:str):
         if isinstance(cpf, str):
-            self.__profissionais.remove(cpf)
+            self.__profissionais.pop(cpf)
         else:
             raise TipoParametroIncorretoException("string")

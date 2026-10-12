@@ -1,43 +1,84 @@
-from controller.controllerPacientes import ControllerPaciente
 from datetime import date as Date
-from view import superView
+from view.superView import SuperView
 
 
 class ViewPacientes(SuperView):
     def view_opcoes(self):
         print("-------- MÓDULO DE GESTÃO DE PACIENTES ---------")
         print("Escolha sua opção:")
-        print("1 - Gerenciar Atendimentos")
-        print("2 - Gerenciar Pagamentos")
-        print("3 - Gerenciar Pacientes")
-        print("4 - Gerenciar Procedimentos")
-        print("5 - Gerenciar Profissionais")
-        print("6 - Gerenciar Clínicas")
+        print("1 - Cadastrar Paciente")
+        print("2 - Buscar Paciente")
+        print("3 - Excluir Paciente")
+        print("4 - Atualizar Nome do(a) Paciente")
+        print("5 - Atualizar Celular do(a) Paciente")
+        print("6 - Corrigir Data de Nascimento do(a) Paciente")
+        print("7 - Corrigir CPF do(a) Paciente")
         print("0 - Finalizar sistema")
-        opcao = self.entra_opcao_valida("Escolha a opção desejada: ", [0,1,2,3,4,5,6])
+        opcao = self.entra_opcao_valida("Escolha a opção desejada: ", [0,1,2,3,4,5,6,7])
         return opcao
 
-    def solicitar_dados_paciente(self):
-        print("-------- DADOS DO PACIENTE ----------")
+    def pegar_dados_paciente(self):
+        print("-------- CADASTRO DE PACIENTE ----------")
         nome = input("Nome: ")
         celular = input("Celular: ")
         cpf = input("CPF: ")
-        ano_de_nascimento = input("Ano de Nascimento: ")
-        mes_de_nascimento = input("Mês de Nascimento: ")
-        dia_de_nascimento = input("Dia de Nascimento: ")
-        data_de_nascimento = Date(ano_de_nascimento, mes_de_nascimento, dia_de_nascimento)
+        repetir = 0
+        while repetir == 0:
+            ano_de_nascimento = input("Ano de Nascimento (AAAA): ")
+            mes_de_nascimento = input("Mês de Nascimento (MM): ")
+            dia_de_nascimento = input("Dia de Nascimento (DD): ")
+            try:
+                ano = int(ano_de_nascimento)
+                mes = int(mes_de_nascimento)
+                dia = int(dia_de_nascimento)
+                data_de_nascimento = Date(ano, mes, dia)
+                repetir = 1
+            except ValueError:
+                print("Informe ano, mês e dia em numerais, nos formatos indicados. Ex.: Ano: 1990, Mês: 5, Dia: 15")
         return {"nome": nome, "celular": celular, "cpf": cpf, "data_de_nascimento": data_de_nascimento}
 
-    def mostrar_dados_paciente(self, dados_amigo):
-        print("Nome: ", dados_amigo["nome"])
-        print("Celular: ", dados_amigo["telefone"])
-        print("CPF: ", dados_amigo["cpf"])
-        print("Data de Nascimento: ", dados_amigo["cpf"])
+    def mostrar_dados_paciente(self, dados_paciente:dict):
+        print("Nome: ", dados_paciente["nome"])
+        print("Celular: ", dados_paciente["celular"])
+        print("CPF: ", dados_paciente["cpf"])
+        print("Data de Nascimento: ", dados_paciente["data_de_nascimento"])
         print("\n")
 
-    def seleciona_amigo(self):
-        cpf = input("CPF do amigo que deseja selecionar: ")
+    def mostrar_mensagem(self, mensagem):
+        print(mensagem)
+
+    def pegar_cpf(self):
+        cpf = input("Informe o CPF do(a) Paciente: ")
         return cpf
 
-    def mostra_mensagem(self, msg):
-        print(msg)
+    def pegar_novo_nome(self):
+        cpf = input("Informe o CPF do(a) Paciente: ")
+        nome = input("Informe o novo nome do(a) Paciente: ")
+        return {"nome": nome, "cpf": cpf}
+
+    def pegar_novo_celular(self):
+        cpf = input("Informe o CPF do(a) Paciente: ")
+        celular = input("Informe o novo celular do(a) Paciente: ")
+        return {"celular": celular, "cpf": cpf}
+
+    def pegar_data_de_nascimento(self):
+        cpf = input("Informe o CPF do(a) Paciente: ")
+        repetir = 0
+        while repetir == 0:
+            ano_de_nascimento = input("Ano de Nascimento (AAAA): ")
+            mes_de_nascimento = input("Mês de Nascimento (MM): ")
+            dia_de_nascimento = input("Dia de Nascimento (DD): ")
+            try:
+                ano = int(ano_de_nascimento)
+                mes = int(mes_de_nascimento)
+                dia = int(dia_de_nascimento)
+                data_de_nascimento = Date(ano, mes, dia)
+                repetir = 1
+            except ValueError:
+                print("Informe ano, mês e dia em numerais, nos formatos indicados. Ex.: Ano: 1990, Mês: 5, Dia: 15")
+        return {"data_de_nascimento": data_de_nascimento, "cpf": cpf}
+
+    def pegar_cpf_correto(self):
+        cpf_correto = input("Informe o CPF correto do(a) Paciente: ")
+        cpf_cadastrado = input("Informe o CPF cadastrado: ")
+        return {"cpf_correto": cpf_correto, "cpf_cadastrado": cpf_cadastrado}

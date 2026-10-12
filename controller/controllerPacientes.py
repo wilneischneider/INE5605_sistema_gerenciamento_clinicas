@@ -1,95 +1,110 @@
-from controller import controllerSistema
+from controller.controllerSistema import ControllerSistema
 from model.paciente import Paciente
-from exceptions.cpfJaCadastradoException import CpfJaCadastradoException
-from exceptions.cpfNaoEncontradoException import CpfNaoEncontradoException
-from datetime import date as Date
 from exceptions.tipoParametroIncorretoException import TipoParametroIncorretoException
 from view.viewPacientes import ViewPacientes
-from controller import controllerSistema
 
 
 class ControllerPaciente:
-    def __init__(self, controller_sistema: controllerSistema):
+    def __init__(self, controller_sistema: ControllerSistema):
         self.__pacientes = {}
         self.__controller_sistema = controller_sistema
-        self.__view_pacientes = ViewPacientes()
+        self.__view_paciente = ViewPacientes()
 
-    def listar_pacientes_cadastrados(self) -> list:
-        return self.__pacientes.values()
+    @property
+    def pacientes(self):
+        return self.__pacientes
 
     def listar_cpfs_cadastrados(self) -> list:
         return self.__pacientes.keys()
 
-    def retornar_paciente(self, cpf:str) -> Paciente:
+    def retornar_paciente(self) -> dict:
+        cpf = self.__view_paciente.pegar_cpf()
         if cpf in self.listar_cpfs_cadastrados():
-            return self.__pacientes[cpf]
+            paciente = self.pacientes[cpf]
+            dados = {"nome": paciente.nome, "celular": paciente.celular,
+                     "cpf": paciente.cpf, "data_de_nascimento": paciente.data_de_nascimento}
+            self.__view_paciente.mostrar_dados_paciente(dados)
         else:
-            raise CpfNaoEncontradoException(cpf)
+            self.__view_paciente.mostrar_mensagem(f'Não há paciente cadastrado com o CPF "{cpf}"!')
 
-    def cadastrar_paciente(self, nome:str, celular: str, cpf:str, data_de_nascimento: Date):
-        if cpf not in self.listar_cpfs_cadastrados():
+    def cadastrar_paciente(self):
+        dados = self.__view_paciente.pegar_dados_paciente()
+        if dados["cpf"] not in self.listar_cpfs_cadastrados():
             try:
-                paciente = Paciente(nome, celular, cpf, data_de_nascimento)
-                self.__pacientes.update({cpf: paciente})
+                paciente = Paciente(dados["nome"], dados["celular"], dados["cpf"], dados["data_de_nascimento"])
+                self.__pacientes.update({dados["cpf"]: paciente})
+                self.__view_paciente.mostrar_mensagem(f'Paciente cadastrado(a) com sucesso!')
             except TipoParametroIncorretoException as e:
-                print e ## VER COMO FAZER
-                return 'Tipo de parâmetro incorreto'
+                self.__view_paciente.mostrar_mensagem(e)
         else:
-            raise CpfJaCadastradoException(cpf)
+            self.__view_paciente.mostrar_mensagem(f'Paciente de CPF "{dados["cpf"]}" já cadastrado!')
 
-    def excluir_paciente(self, cpf):
+    def excluir_paciente(self):
+        cpf = self.__view_paciente.pegar_cpf()
         if cpf in self.listar_cpfs_cadastrados():
             self.__pacientes.pop(cpf)
-            return True
+            self.__view_paciente.mostrar_mensagem(f'Paciente de CPF "{cpf}" excluído(a) com sucesso!')
         else:
-            raise CpfNaoEncontradoException(cpf)
+            self.__view_paciente.mostrar_mensagem(f'Não há paciente cadastrado(a) com o CPF "{cpf}"!')
 
-    def atualizar_nome(self, nome:str, cpf:str):
-        if cpf in self.listar_cpfs_cadastrados():
-            self.__pacientes[cpf].nome = nome
-            return True
+    def atualizar_nome(self):
+        dados = self.__view_paciente.pegar_novo_nome()
+        if dados["cpf"] in self.listar_cpfs_cadastrados():
+            try:
+                self.__pacientes[dados["cpf"]].nome = dados["nome"]
+                self.__view_paciente.mostrar_mensagem('Nome atualizado com sucesso!')
+            except TipoParametroIncorretoException as e:
+                self.__view_paciente.mostrar_mensagem(e)
         else:
-            raise CpfNaoEncontradoException(cpf)
+            self.__view_paciente.mostrar_mensagem(f'Não há paciente cadastrado(a) com o CPF "{dados["cpf"]}"!')
 
-    def atualizar_celular(self, celular:str, cpf:str):
-        if cpf in self.listar_cpfs_cadastrados():
-            self.__pacientes[cpf].celular = celular
-            return True
+    def atualizar_celular(self):
+        dados = self.__view_paciente.pegar_novo_celular()
+        if dados["cpf"] in self.listar_cpfs_cadastrados():
+            try:
+                self.__pacientes[dados["cpf"]].celular = dados["celular"]
+                self.__view_paciente.mostrar_mensagem('Celular atualizado com sucesso!')
+            except TipoParametroIncorretoException as e:
+                self.__view_paciente.mostrar_mensagem(e)
         else:
-            raise CpfNaoEncontradoException(cpf)
+            self.__view_paciente.mostrar_mensagem(f'Não há paciente cadastrado(a) com o CPF "{dados["cpf"]}"!')
 
-    def corrigir_data_de_nascimento(self, data_de_nascimento:Date, cpf:str):
-        if cpf in self.listar_cpfs_cadastrados():
-            self.__pacientes[cpf].data_de_nascimento = data_de_nascimento
-            return True
+    def corrigir_data_de_nascimento(self):
+        dados = self.__view_paciente.pegar_data_de_nascimento()
+        if dados["cpf"] in self.listar_cpfs_cadastrados():
+            try:
+                self.__pacientes[dados["cpf"]].data_de_nascimento = dados["data_de_nascimento"]
+                self.__view_paciente.mostrar_mensagem('Data de nascimento atualizada com sucesso!')
+            except TipoParametroIncorretoException as e:
+                self.__view_paciente.mostrar_mensagem(e)
         else:
-            raise CpfNaoEncontradoException(cpf)
+            self.__view_paciente.mostrar_mensagem(f'Não há paciente cadastrado(a) com o CPF "{dados["cpf"]}"!')
 
-    def corrigir_cpf(self, cpf_correto:str, cpf_cadastrado:str):
-        if cpf_correto not in self.listar_cpfs_cadastrados():
-            if cpf_cadastrado in self.listar_cpfs_cadastrados():
-                paciente = self.__pacientes[cpf_cadastrado]
-                paciente.cpf = cpf_correto
-                self.__pacientes.pop(cpf_cadastrado)
-                self.__pacientes.update({cpf_correto: paciente})
-                return True
+    def corrigir_cpf(self):
+        dados = self.__view_paciente.pegar_cpf_correto()
+        if dados["cpf_correto"] not in self.listar_cpfs_cadastrados():
+            if dados["cpf_cadastrado"] in self.listar_cpfs_cadastrados():
+                try:
+                    paciente = self.__pacientes[dados["cpf_cadastrado"]]
+                    paciente.cpf = dados["cpf_correto"]
+                    self.__pacientes.pop(dados["cpf_cadastrado"])
+                    self.__pacientes.update({dados["cpf_correto"]: paciente})
+                    self.__view_paciente.mostrar_mensagem("CPF corrigido com sucesso!")
+                except TipoParametroIncorretoException as e:
+                    self.__view_paciente.mostrar_mensagem(e)
             else:
-                raise CpfNaoEncontradoException(cpf_cadastrado)
+                msg = f'Não há paciente cadastrado(a) com o CPF "{dados["cpf_cadastrado"]}".'
+                self.__view_paciente.mostrar_mensagem(msg)
         else:
-            raise CpfJaCadastradoException(cpf_correto)
+            msg = f'Já existe paciente com o CPF "{dados["cpf_correto"]}" cadastrado!'
+            self.__view_paciente.mostrar_mensagem(msg)
 
-    def calcular_idade_paciente(self, cpf:str) -> int:#MOVIDO PARA O MODELO PACIENTE
-        if cpf in self.listar_cpfs_cadastrados():
-            paciente = self.__pacientes[cpf]
-            data_de_nascimento = paciente.data_de_nascimento
-            hoje = Date.today()
-            if (
-                hoje.month >= data_de_nascimento.month
-                and hoje.day >= data_de_nascimento.day
-            ):
-                idade = hoje.year - data_de_nascimento.year
-            else:
-                idade = hoje.year - data_de_nascimento.year - 1
-            return idade
-        else:
-            CpfNaoEncontradoException(cpf)
+    def retornar(self):
+        self.__controller_sistema.abrir_tela()
+
+    def abrir_tela(self):
+        opcoes = {0: self.retornar, 1: self.cadastrar_paciente, 2: self.retornar_paciente,
+                  3: self.excluir_paciente, 4: self.atualizar_nome, 5: self.atualizar_celular,
+                  6: self.corrigir_data_de_nascimento, 7: self.corrigir_cpf()}
+        while True:
+            opcoes[self.__view_paciente.view_opcoes()]()
