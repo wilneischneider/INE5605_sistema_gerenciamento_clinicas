@@ -8,13 +8,14 @@ class ViewPacientes(SuperView):
         print("Escolha sua opção:")
         print("1 - Cadastrar Paciente")
         print("2 - Buscar Paciente")
-        print("3 - Excluir Paciente")
-        print("4 - Atualizar Nome do(a) Paciente")
-        print("5 - Atualizar Celular do(a) Paciente")
-        print("6 - Corrigir Data de Nascimento do(a) Paciente")
-        print("7 - Corrigir CPF do(a) Paciente")
+        print("3 - Listar Pacientes")
+        print("4 - Excluir Paciente")
+        print("5 - Atualizar Nome do(a) Paciente")
+        print("6 - Atualizar Celular do(a) Paciente")
+        print("7 - Corrigir Data de Nascimento do(a) Paciente")
+        print("8 - Corrigir CPF do(a) Paciente")
         print("0 - Finalizar sistema")
-        opcao = self.entra_opcao_valida("Escolha a opção desejada: ", [0,1,2,3,4,5,6,7])
+        opcao = self.entra_opcao_valida("Escolha a opção desejada: ", [0,1,2,3,4,5,6,7,8])
         return opcao
 
     def pegar_dados_paciente(self):
@@ -37,12 +38,17 @@ class ViewPacientes(SuperView):
                 print("Informe ano, mês e dia em numerais, nos formatos indicados. Ex.: Ano: 1990, Mês: 5, Dia: 15")
         return {"nome": nome, "celular": celular, "cpf": cpf, "data_de_nascimento": data_de_nascimento}
 
-    def mostrar_dados_paciente(self, dados_paciente:dict):
-        print("Nome: ", dados_paciente["nome"])
-        print("Celular: ", dados_paciente["celular"])
-        print("CPF: ", dados_paciente["cpf"])
-        print("Data de Nascimento: ", dados_paciente["data_de_nascimento"])
-        print("\n")
+    def mostrar_dados_paciente(self, lista_dados:list):
+        print("--- PACIENTE(S) CADASTRADO(S) ---")
+        if len(lista_dados) > 0:
+            for dados_paciente in lista_dados:
+                print("Nome: ", dados_paciente["nome"])
+                print("Celular: ", dados_paciente["celular"])
+                print("CPF: ", dados_paciente["cpf"])
+                print("Data de Nascimento: ", dados_paciente["data_de_nascimento"])
+                print("--------------------------------")
+        else:
+            print("Nenhum paciente encontrado!")
 
     def mostrar_mensagem(self, mensagem):
         print(mensagem)

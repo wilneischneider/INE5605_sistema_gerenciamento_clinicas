@@ -74,7 +74,9 @@ class ControllerClinica:
         dados = self.__view_clinica.pegar_novo_nome()
         if dados["cnpj"] in self.listar_cnpjs_cadastrados():
             try:
-                self.__clinicas[dados["cnpj"]].nome = dados["nome"]
+                clinica = self.__clinicas[dados["cnpj"]]
+                clinica.nome = dados["nome"]
+                self.__clinicas.update({dados_clinica["cnpj"]: clinica})
                 self.__view_clinica.mostrar_mensagem('Nome da Clínica atualizado com sucesso!')
             except tipoParametroIncorretoException as e:
                 self.__view_clinica.mostrar_mensagem(e)
@@ -85,7 +87,9 @@ class ControllerClinica:
         dados = self.__view_clinica.pegar_nova_cidade()
         if dados["cnpj"] in self.listar_cnpjs_cadastrados():
             try:
-                self.__clinicas[dados["cnpj"]].cidade = dados["cidade"]
+                clinica = self.__clinicas[dados["cnpj"]]
+                clinica.cidade = dados["cidade"]
+                self.__clinicas.update({dados_clinica["cnpj"]: clinica})
                 self.__view_clinica.mostrar_mensagem('Cidade da Clínica atualizada com sucesso!')
             except tipoParametroIncorretoException as e:
                 self.__view_clinica.mostrar_mensagem(e)
@@ -96,7 +100,9 @@ class ControllerClinica:
         dados = self.__view_clinica.pegar_nova_descricao()
         if dados["cnpj"] in self.listar_cnpjs_cadastrados():
             try:
-                self.__clinicas[dados["cnpj"]].descricao = dados["descricao"]
+                clinica = self.__clinicas[dados["cnpj"]]
+                clinica.descricao = dados["descricao"]
+                self.__clinicas.update({dados_clinica["cnpj"]: clinica})
                 self.__view_clinica.mostrar_mensagem('Descrição da Clínica atualizada com sucesso!')
             except tipoParametroIncorretoException as e:
                 self.__view_clinica.mostrar_mensagem(e)
@@ -124,7 +130,9 @@ class ControllerClinica:
         dados = self.__view_clinica.pegar_novo_horario_de_abertura()
         if dados["cnpj"] in self.listar_cnpjs_cadastrados():
             try:
-                self.__clinicas[dados["cnpj"]].horario_de_abertura = dados["horario_de_abertura"]
+                clinica = self.__clinicas[dados["cnpj"]]
+                clinica.horario_de_abertura = dados["horario_de_abertura"]
+                self.__clinicas.update({dados["cnpj"]: clinica})
                 self.__view_clinica.mostrar_mensagem(f'Horário de abertura atualizado com sucesso!')
             except tipoParametroIncorretoException as e:
                 self.__view_clinica.mostrar_mensagem(e)
@@ -135,7 +143,9 @@ class ControllerClinica:
         dados = self.__view_clinica.pegar_novo_horario_de_fechamento()
         if dados["cnpj"] in self.listar_cnpjs_cadastrados():
             try:
-                self.__clinicas[dados["cnpj"]].horario_de_fechamento = dados["horario_de_fechamento"]
+                clinica = self.__clinicas[dados["cnpj"]]
+                clinica.horario_de_fechamento = dados["horario_de_fechamento"]
+                self.__clinicas.update({dados["cnpj"]: clinica})
                 self.__view_clinica.mostrar_mensagem(f'Horário de fechamento atualizado com sucesso!')
             except tipoParametroIncorretoException as e:
                 self.__view_clinica.mostrar_mensagem(e)

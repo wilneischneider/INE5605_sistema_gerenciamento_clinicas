@@ -3,7 +3,7 @@ from exceptions.tipoParametroIncorretoException import TipoParametroIncorretoExc
 
 
 class Procedimento:
-    def __init__(self, descricao:str, custo:float, profissional:str):
+    def __init__(self, descricao:str, custo:float, profissional:Profissional):
         self.descricao = descricao
         self.custo = custo
         self.profissional = profissional
@@ -35,8 +35,8 @@ class Procedimento:
         return self.__profissional
 
     @profissional.setter
-    def profissional(self, profissional: str):
-        if isinstance(profissional, str):
+    def profissional(self, profissional: Profissional):
+        if isinstance(profissional, Profissional):
             self.__profissional = profissional
         else:
-            raise TipoParametroIncorretoException("string")
+            raise TipoParametroIncorretoException("Profissional")

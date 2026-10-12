@@ -1,6 +1,7 @@
 from controller.controllerSistema import ControllerSistema
 from model.paciente import Paciente
 from exceptions.tipoParametroIncorretoException import TipoParametroIncorretoException
+from model.pessoa import Pessoa
 from view.viewPacientes import ViewPacientes
 
 
@@ -17,15 +18,23 @@ class ControllerPaciente:
     def listar_cpfs_cadastrados(self) -> list:
         return self.__pacientes.keys()
 
-    def retornar_paciente(self) -> dict:
+    def retornar_paciente(self):
         cpf = self.__view_paciente.pegar_cpf()
         if cpf in self.listar_cpfs_cadastrados():
             paciente = self.pacientes[cpf]
-            dados = {"nome": paciente.nome, "celular": paciente.celular,
-                     "cpf": paciente.cpf, "data_de_nascimento": paciente.data_de_nascimento}
-            self.__view_paciente.mostrar_dados_paciente(dados)
+            lista_dados = [{"nome": paciente.nome, "celular": paciente.celular,
+                     "cpf": paciente.cpf, "data_de_nascimento": paciente.data_de_nascimento}]
+            self.__view_paciente.mostrar_dados_paciente(lista_dados)
         else:
             self.__view_paciente.mostrar_mensagem(f'Não há paciente cadastrado com o CPF "{cpf}"!')
+
+    def listar_pacientes(self):
+        lista_dados = []
+        for paciente in self.pacientes.values():
+            registro = {"nome": paciente.nome, "celular": paciente.celular,
+                     "cpf": paciente.cpf, "data_de_nascimento": paciente.data_de_nascimento}
+            lista_dados.append(registro)
+        self.__view_paciente.mostrar_dados_paciente(lista_dados)
 
     def cadastrar_paciente(self):
         dados = self.__view_paciente.pegar_dados_paciente()
@@ -40,6 +49,7 @@ class ControllerPaciente:
             self.__view_paciente.mostrar_mensagem(f'Paciente de CPF "{dados["cpf"]}" já cadastrado!')
 
     def excluir_paciente(self):
+        self.__view_paciente.mostrar_mensagem('--- Excluir Paciente ---')
         cpf = self.__view_paciente.pegar_cpf()
         if cpf in self.listar_cpfs_cadastrados():
             self.__pacientes.pop(cpf)
@@ -51,7 +61,9 @@ class ControllerPaciente:
         dados = self.__view_paciente.pegar_novo_nome()
         if dados["cpf"] in self.listar_cpfs_cadastrados():
             try:
-                self.__pacientes[dados["cpf"]].nome = dados["nome"]
+                paciente = self.__pacientes[dados["cpf"]]
+                paciente.nome = dados["nome"]
+                self.__pacientes.update({dados["cpf"]:paciente})
                 self.__view_paciente.mostrar_mensagem('Nome atualizado com sucesso!')
             except TipoParametroIncorretoException as e:
                 self.__view_paciente.mostrar_mensagem(e)
@@ -62,7 +74,9 @@ class ControllerPaciente:
         dados = self.__view_paciente.pegar_novo_celular()
         if dados["cpf"] in self.listar_cpfs_cadastrados():
             try:
-                self.__pacientes[dados["cpf"]].celular = dados["celular"]
+                paciente = self.__pacientes[dados["cpf"]]
+                paciente.celular = dados["celular"]
+                self.__pacientes.update({dados["cpf"]: paciente})
                 self.__view_paciente.mostrar_mensagem('Celular atualizado com sucesso!')
             except TipoParametroIncorretoException as e:
                 self.__view_paciente.mostrar_mensagem(e)
@@ -73,7 +87,9 @@ class ControllerPaciente:
         dados = self.__view_paciente.pegar_data_de_nascimento()
         if dados["cpf"] in self.listar_cpfs_cadastrados():
             try:
-                self.__pacientes[dados["cpf"]].data_de_nascimento = dados["data_de_nascimento"]
+                paciente = self.__pacientes[dados["cpf"]]
+                paciente.data_de_nascimento = dados["data_de_nascimento"]
+                self.__pacientes.update({dados["cpf"]: paciente})
                 self.__view_paciente.mostrar_mensagem('Data de nascimento atualizada com sucesso!')
             except TipoParametroIncorretoException as e:
                 self.__view_paciente.mostrar_mensagem(e)
@@ -103,8 +119,8 @@ class ControllerPaciente:
         self.__controller_sistema.abrir_tela()
 
     def abrir_tela(self):
-        opcoes = {0: self.retornar, 1: self.cadastrar_paciente, 2: self.retornar_paciente,
-                  3: self.excluir_paciente, 4: self.atualizar_nome, 5: self.atualizar_celular,
-                  6: self.corrigir_data_de_nascimento, 7: self.corrigir_cpf()}
+        opcoes = {0: self.retornar, 1: self.cadastrar_paciente, 2: self.retornar_paciente, 3: self.listar_pacientes,
+                  4: self.excluir_paciente, 5: self.atualizar_nome, 6: self.atualizar_celular,
+                  7: self.corrigir_data_de_nascimento, 8: self.corrigir_cpf}
         while True:
             opcoes[self.__view_paciente.view_opcoes()]()

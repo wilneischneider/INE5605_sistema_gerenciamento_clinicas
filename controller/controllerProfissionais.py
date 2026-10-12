@@ -1,4 +1,5 @@
 from exceptions.tipoParametroIncorretoException import TipoParametroIncorretoException
+from model.pessoa import Pessoa
 from model.profissional import Profissional
 from controller.controllerClinicas import ControllerClinica
 from controller.controllerSistema import ControllerSistema
@@ -16,12 +17,13 @@ class ControllerProfissional:
         return self.__profissionais
 
     def listar_profissionais_cadastrados(self):
-        self.__view_profissional.mostrar_mensagem("--- Lista de Profissionais Cadastrados ---")
-        for profissional in self.__profissionais.values():
-            self.__view_profissional.mostrar_mensagem(f'Nome: {profissional.nome}')
-            self.__view_profissional.mostrar_mensagem(f'Celular: {profissional.celular}')
-            self.__view_profissional.mostrar_mensagem(f'Especialidade: {profissional.especialidade}')
-            self.__view_profissional.mostrar_mensagem('--------------------------------------')
+        lista_dados = []
+        for profissional in self.profissionais.values()
+            registro = {"nome": profissional.nome, "cpf": profissional.cpf, "celular": profissional.celular,
+                     "especialidade": profissional.especialidade,
+                     "registro_profissional": profissional.registro_profissional}
+            lista_dados.append(registro)
+        self.__view_profissional.mostrar_dados_profissional(lista_dados)
 
     def listar_cpfs_cadastrados(self):
         return self.__profissionais.keys()
@@ -30,10 +32,10 @@ class ControllerProfissional:
         cpf = self.__view_profissional.pegar_cpf()
         if cpf in self.listar_cpfs_cadastrados():
             profissional = self.profissionais[cpf]
-            dados = {"nome": profissional.nome, "cpf": profissional.cpf, "celular": profissional.celular,
+            lista_dados = [{"nome": profissional.nome, "cpf": profissional.cpf, "celular": profissional.celular,
                      "especialidade": profissional.especialidade,
-                     "registro_profissional": profissional.registro_profissional}
-            self.__view_profissional.mostrar_dados_profissional(dados)
+                     "registro_profissional": profissional.registro_profissional}]
+            self.__view_profissional.mostrar_dados_profissional(lista_dados)
         else:
             self.__view_profissional.mostrar_mensagem(f'Não há profissional cadastrado(a) com o CPF "{cpf}".')
 
@@ -67,7 +69,9 @@ class ControllerProfissional:
         dados = self.__view_profissional.pegar_novo_nome()
         if dados["cpf"] in self.listar_cpfs_cadastrados():
             try:
-                self.__profissionais[dados["cpf"]].nome = dados["nome"]
+                profissional = self.__profissionais[dados["cpf"]]
+                profissional.nome = dados["nome"]
+                self.__profissionais.update({dados["cpf"]:profissional})
                 self.__view_profissional.mostrar_mensagem('Nome atualizado!')
             except TipoParametroIncorretoException as e:
                 self.__view_profissional.mostrar_mensagem(e)
@@ -78,7 +82,9 @@ class ControllerProfissional:
         dados = self.__view_profissional.pegar_novo_celular()
         if dados["cpf"] in self.listar_cpfs_cadastrados():
             try:
-                self.__profissionais[dados["cpf"]].celular = dados["celular"]
+                profissional = self.__profissionais[dados["cpf"]]
+                profissional.celular = dados["celular"]
+                self.__profissionais.update({dados["cpf"]: profissional})
                 self.__view_profissional.mostrar_mensagem('Celular atualizado!')
             except TipoParametroIncorretoException as e:
                 self.__view_profissional.mostrar_mensagem(e)
@@ -89,7 +95,9 @@ class ControllerProfissional:
         dados = self.__view_profissional.pegar_nova_especialidade()
         if dados["cpf"] in self.listar_cpfs_cadastrados():
             try:
-                self.__profissionais[dados["cpf"]].especialidade = dados["especialidade"]
+                profissional = self.__profissionais[dados["cpf"]]
+                profissional.especialidade = dados["especialidade"]
+                self.__profissionais.update({dados["cpf"]: profissional})
                 self.__view_profissional.mostrar_mensagem('Especialidade atualizada!')
             except TipoParametroIncorretoException as e:
                 self.__view_profissional.mostrar_mensagem(e)
@@ -100,7 +108,9 @@ class ControllerProfissional:
         dados = self.__view_profissional.pegar_novo_registro_profissional()
         if dados["cpf"] in self.listar_cpfs_cadastrados():
             try:
-                self.__profissionais[dados["cpf"]].registro_profissional = dados["registro_profissional"]
+                profissional = self.__profissionais[dados["cpf"]]
+                profissional.registro_profissional = dados["registro_profissional"]
+                self.__profissionais.update({dados["cpf"]: profissional})
                 self.__view_profissional.mostrar_mensagem('Registro profissional atualizado!')
             except TipoParametroIncorretoException as e:
                 self.__view_profissional.mostrar_mensagem(e)

@@ -25,12 +25,18 @@ class ViewProfissionais(SuperView):
         cpf = input("Informe o CPF do(a) Profissional: ")
         return cpf
 
-    def mostrar_dados_profissional(self, dados_profissional:dict):
-        print("Nome: ", dados_profissional["nome"])
-        print("Celular: ", dados_profissional["celular"])
-        print("CPF: ", dados_profissional["cpf"])
-        print("Especialidade: ", dados_profissional["especialidade"])
-        print("Registro Profissional: ", dados_profissional["registro_profissional"])
+    def mostrar_dados_profissional(self, lista_dados):
+        print("--- PROFISSIONAL(IS) CADASTRADO(S) ---")
+        if len(lista_dados) > 0:
+            for dados_profissional in lista_dados:
+                print("Nome: ", dados_profissional["nome"])
+                print("Celular: ", dados_profissional["celular"])
+                print("CPF: ", dados_profissional["cpf"])
+                print("Especialidade: ", dados_profissional["especialidade"])
+                print("Registro Profissional: ", dados_profissional["registro_profissional"])
+                print("--------------------------------")
+        else:
+            print("Nenhum profissional encontrado!")
 
     def pegar_dados_profissional(self):
         print("-------- CADASTRO DE PROFISSIONAL ----------")
