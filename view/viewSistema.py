@@ -11,7 +11,8 @@ class ViewSistema(SuperView):
         print("4 - Gerenciar Procedimentos")
         print("5 - Gerenciar Profissionais")
         print("6 - Gerenciar Clínicas")
-        print("7 - Emitir Relatórios")
+        print("7 - Gerenciar Tipos de Atendimento")
+        print("8 - Emitir Relatórios")
         print("0 - Finalizar sistema")
-        opcao = self.entra_opcao_valida("Escolha a opção desejada: ", [0,1,2,3,4,5,6,7])
+        opcao = self.entra_opcao_valida("Escolha a opção desejada: ", [0,1,2,3,4,5,6,7,8])
         return opcao

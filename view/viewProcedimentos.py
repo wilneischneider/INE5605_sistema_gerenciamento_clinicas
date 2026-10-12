@@ -55,5 +55,3 @@ class ViewProcedimentos(SuperView):
         descricao_correta = input("Informe a descrição correta do Procedimento: ")
         descricao_cadastrada = input("Informe a descrição cadastrada: ")
         return {"descricao_correta": descricao_correta, "descricao_cadastrada": descricao_cadastrada}
-
-

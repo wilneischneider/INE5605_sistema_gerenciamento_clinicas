@@ -1,3 +1,4 @@
+from controller.controllerTiposDeAtendimento import ControllerTipoDeAtendimento
 from controller.relatorios import ControllerRelatorios
 from controller.controllerClinicas import ControllerClinica
 from controller.controllerAtendimentos import ControllerAtendimento
@@ -17,7 +18,12 @@ class ControllerSistema:
         self.__controller_procedimento = ControllerProcedimento(self)
         self.__controller_profissional = ControllerProfissional(self)
         self.__controller_relatorios = ControllerRelatorios(self)
+        self.__controller_tipo_de_atendimento = ControllerTipoDeAtendimento(self)
         self.__view_sistema = ViewSistema()
+
+    @property
+    def controller_tipo_de_atendimento(self):
+        return self.__controller_tipo_de_atendimento
 
     @property
     def controller_atendimento(self):
@@ -65,6 +71,9 @@ class ControllerSistema:
     def gerenciar_profissionais(self):
         self.__controller_profissional.abrir_tela()
 
+    def gerenciar_tipos_de_atendimento(self):
+        self.__controller_tipo_de_atendimento.abrir_tela()
+
     def emitir_relatorios(self):
         self.__relatorios.abrir_tela()
 
@@ -74,7 +83,7 @@ class ControllerSistema:
     def abrir_tela(self):
         opcoes = {1: self.gerenciar_atendimentos, 2: self.gerenciar_pagamentos, 3: self.gerenciar_pacientes,
                   4: self.gerenciar_procedimentos, 5: self.gerenciar_profissionais, 6: self.gerenciar_clinicas,
-                  7: self.emitir_relatorios, 0: self.encerrar_sistema}
+                  7: self.gerenciar_tipos_de_atendimento, 8: self.emitir_relatorios, 0: self.encerrar_sistema}
         while True:
             opcao_escolhida = self.__view_sistema.view_opcoes()
             funcao_escolhida = opcoes[opcao_escolhida]

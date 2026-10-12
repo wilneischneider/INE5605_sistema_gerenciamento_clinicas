@@ -1,4 +1,3 @@
-from exceptions import tipoParametroIncorretoException
 from exceptions.tipoParametroIncorretoException import TipoParametroIncorretoException
 from model.clinica import Clinica
 from controller.controllerProfissionais import ControllerProfissional
