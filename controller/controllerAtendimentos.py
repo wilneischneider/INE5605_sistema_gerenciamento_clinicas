@@ -1,3 +1,4 @@
+from controller.controllerTiposDeAtendimento import ControllerTipoDeAtendimento
 from controllerClinicas import ControllerClinica
 from controllerPacientes import ControllerPaciente
 from controllerProfissionais import ControllerProfissional
@@ -5,53 +6,91 @@ from datetime import date as Date
 from datetime import time as Time
 from model.atendimento import Atendimento
 from exceptions.pacienteMenorDeIdadeException import PacienteMenorDeIdadeException
-from exceptions.horarioForaDoHorarioDaClinaException import HorarioForaDoHorarioDaClinicaException
+from model.paciente import Paciente
+from model.pessoa import Pessoa
+from model.tipoDeAtendimento import TipoDeAtendimento
 from view.viewAtendimentos import ViewAtendimentos
 
 
 class ControllerAtendimento:
-    def __init__(self):
-        self.__atendimentos = []
+    def __init__(self, controller_sistema: ControllerSistema):
+        self.__atendimentos = {} #{cpf_paciente:{data:{horario_inicio:atendimento}}}
         self.__controller_sistema = controller_sistema
         self.__view_atendimento = ViewAtendimentos()
 
-    def listar_atendimentos(self) -> list:
+    @property
+    def atendimentos(self) -> dict:
         return self.__atendimentos
 
-    def agendar_atendimento(
-            self,
-            cnpj:str,
-            cpf_paciente:str,
-            cpf_profissional:str,
-            data: Date,
-            horario_inicio: Time,
-            horario_fim: Time,
-            tipo_de_atendimento
-    ):
-        clinica = ControllerClinica.retornar_clinica(cnpj)
-        if (
-            clinica.horario_de_abertura <= horario_inicio
-            and clinica.horario_de_fechamento >= horario_fim
-            and horario_fim > horario_inicio
-        ):
-            paciente = ControllerPaciente.retornar_paciente(cpf_paciente)
-            profissional = ControllerProfissional.retornar_profissional(cpf_profissional)
-            if ControllerPaciente.calcular_idade_paciente(paciente.cpf) >= 18:
-                atendimento = Atendimento(
-                    clinica,
-                    paciente,
-                    profissional,
-                    data,
-                    horario_inicio,
-                    horario_fim,
-                    tipo_de_atendimento
-                )
-                self.__atendimentos.append(atendimento)
+    def agendar_atendimento(self):
+        dados = self.__view_atendimento.pegar_dados_agendar_atendimento()
+        cnpj = dados["cnpj"]
+        cpf_paciente = dados["cpf_paciente"]
+        cpf_profissional = dados["cpf_profissional"]
+        data = dados["data"]
+        horario_inicio = dados["horario_inicio"]
+        horario_fim = dados["horario_fim"]
+        tipo_de_atendimento = dados["tipo_de_atendimento"]
+        valor = dados["valor"]
+        if cnpj in ControllerClinica.listar_cnpjs_cadastrados():
+            clinica = ControllerClinica.clinicas[cnpj]
+            if (
+                clinica.horario_de_abertura <= horario_inicio
+                and clinica.horario_de_fechamento >= horario_fim
+                and horario_fim > horario_inicio
+            ):
+                if cpf_paciente in ControllerPaciente.listar_cpfs_cadastrados():
+                    if cpf_profissional in ControllerProfissional.listar_cpfs_cadastrados():
+                        if tipo_de_atendimento in ControllerTipoDeAtendimento.listar_descricao_tipos_atendimento():
+                            paciente = ControllerPaciente.pacientes[cpf_paciente]
+                            idade_paciente = calcular_idade_paciente_na_data_do_atendimento(paciente, data)
+                            if idade_paciente < 18:
+                                dados_responsavel = self.__view_atendimento.pegar_dados_do_responsavel()
+                                try:
+                                    responsavel = Pessoa(dados_responsavel["nome"], dados_responsavel["celular"],
+                                                         dados_responsavel["cpf"])
+                                except TipoParametroIncorretoException as e:
+                                    self.__view_atendimento.mostrar_mensagem(e)
+                            profissional = ControllerProfissional.profissionais[cpf_profissional]
+                            for objeto in ControllerTipoDeAtendimento.tipos_de_atendimento:
+                                if objeto.tipo == tipo_de_atendimento:
+                                    tipo_atendimento = objeto
+                            try:
+                                atendimento = Atendimento(
+                                    clinica,
+                                    paciente,
+                                    profissional,
+                                    data,
+                                    horario_inicio,
+                                    horario_fim,
+                                    tipo_atendimento,
+                                    valor
+                                )
+                                if idade_paciente < 18:
+                                    atendimento.responsavel = responsavel
+                                self.__atendimentos.update({cpf_paciente:{data:{horario_inicio:atendimento}}})
+                                self.__view_atendimento.mostrar_mensagem("Atendimento agendado com sucesso!")
+                            except TipoParametroIncorretoException as e:
+                                self.__view_atendimento.mostrar_mensagem(e)
+                        else:
+                            msg = (
+                                f'Tipo de atendimento "{tipo_de_atendimento}" não cadastrado!/n'
+                                f'Tipos cadastrados: {ControllerTipoDeAtendimento.listar_descricao_tipos_atendimento()}'
+                            )
+                            self.__view_atendimento.mostrar_mensagem(msg)
+                    else:
+                        msg = f'Não há profissional de CPF "{cpf_profissional}" cadastrado!'
+                        self.__view_atendimento.mostrar_mensagem(msg)
+                else:
+                    self.__view_atendimento.mostrar_mensagem(f'Não há paciente de CPF "{cpf_paciente}" cadastrado!')
             else:
-                raise PacienteMenorDeIdadeException()
+                msg = (
+                    f'Não foi possível agendar!/n'
+                    f'Horário de funcionamento da clínica: {clinica.horario_de_abertura} às {clinica.horario_de_fechamento}'
+                )
+                self.__view_atendimento.mostrar_mensagem(msg)
         else:
-            horario_da_clinica = {"abre":clinica.horario_de_abertura, "fecha": clinica.horario_de_fechamento}
-            raise HorarioForaDoHorarioDaClinicaException(horario_da_clinica)
+            self.__view_atendimento.mostrar_mensagem(f'Nenhuma clínica encontrada com o CNPJ "{cnpj}"')
 
     def cancelar_atendimento(self): #implementar se der tempo
         pass
@@ -65,18 +104,17 @@ class ControllerAtendimento:
         else:
             raise ProcedimentoNaoEncontradoException(procedimento)
 
-    def calcular_idade_paciente(self, cpf:str) -> int:#MOVIDO PARA O MODELO PACIENTE
-        if cpf in self.listar_cpfs_cadastrados():
-            paciente = self.__pacientes[cpf]
-            data_de_nascimento = paciente.data_de_nascimento
-            hoje = Date.today()
-            if (
-                hoje.month >= data_de_nascimento.month
-                and hoje.day >= data_de_nascimento.day
-            ):
-                idade = hoje.year - data_de_nascimento.year
-            else:
-                idade = hoje.year - data_de_nascimento.year - 1
-            return idade
+    def calcular_idade_paciente_na_data_do_atendimento(
+            self,
+            paciente: Paciente,
+            data_atendimento:Date
+    ) -> int:
+        data_de_nascimento = paciente.data_de_nascimento
+        if (
+                data_atendimento.month >= data_de_nascimento.month
+                and data_atendimento.day >= data_de_nascimento.day
+        ):
+            idade = data_atendimento.year - data_de_nascimento.year
         else:
-            CpfNaoEncontradoException(cpf)
+            idade = data_atendimento.year - data_de_nascimento.year - 1
+        return idade

@@ -11,6 +11,10 @@ class ControllerClinica:
         self.__controller_sistema = controller_sistema
         self.__view_clinica = ViewClinicas()
 
+    @property
+    def clinicas(self):
+        return self.__clinicas
+
     def listar_clinicas_cadastradas(self):
         self.__view_clinica.mostrar_mensagem("--- Lista de Clínicas Cadastradas ---")
         for clinica in self.__clinicas.values():

@@ -1,6 +1,6 @@
 from datetime import date as Date
 from datetime import time as Time
-from model.abstractTipoDeAtendimento import AbstractTipoDeAtendimento
+from model.tipoDeAtendimento import TipoDeAtendimento
 from model.paciente import Paciente
 from model.clinica import Clinica
 from model.profissional import Profissional
@@ -15,7 +15,8 @@ class Atendimento:
             data:Date,
             horario_inicio:Time,
             horario_fim:Time,
-            tipo_de_atendimento: AbstractTipoDeAtendimento
+            tipo_de_atendimento: TipoDeAtendimento,
+            valor: float
     ):
         self.clinica = clinica
         self.paciente = paciente
@@ -24,6 +25,7 @@ class Atendimento:
         self.horario_inicio = horario_inicio
         self.horario_fim = horario_fim
         self.tipo_de_atendimento = tipo_de_atendimento
+        self.valor = valor
         self.__procedimentos_realizados = []
         self.__responsavel = None
 
@@ -94,15 +96,26 @@ class Atendimento:
             raise TipoParametroIncorretoException("Hora")
 
     @property
-    def tipo_de_atendimento(self) -> AbstractTipoDeAtendimento:
+    def tipo_de_atendimento(self) -> TipoDeAtendimento:
         return self.__tipo_de_atendimento
 
     @tipo_de_atendimento.setter
-    def tipo_de_atendimento(self, tipo_de_atendimento: AbstractTipoDeAtendimento):
-        if isinstance(tipo_de_atendimento, AbstractTipoDeAtendimento):
+    def tipo_de_atendimento(self, tipo_de_atendimento: TipoDeAtendimento):
+        if isinstance(tipo_de_atendimento, TipoDeAtendimento):
             self.__tipo_de_atendimento = tipo_de_atendimento
         else:
-            raise TipoParametroIncorretoException("AbstractTipoDeAtendimento")
+            raise TipoParametroIncorretoException("TipoDeAtendimento")
+
+    @property
+    def valor(self) -> float:
+        return self.__valor
+
+    @valor.setter
+    def valor(self, valor: float):
+        if isinstance(valor, float):
+            self.__valor = valor
+        else:
+            raise TipoParametroIncorretoException("float")
 
     @property
     def procedimentos_realizados(self) -> list:
