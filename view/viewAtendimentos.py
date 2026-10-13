@@ -10,7 +10,7 @@ class ViewAtendimentos(SuperView):
         print("1 - Agendar Atendimento")
         print("2 - Registrar Procedimento")
         print("3 - Consultar Atendimento")
-        print("4 - Cancelar Atendimento")
+        print("4 - Excluir Atendimento")
         print("0 - Finalizar sistema")
         opcao = self.entra_opcao_valida("Escolha a opção desejada: ", [0,1,2,3,4])
         return opcao
@@ -147,20 +147,8 @@ class ViewAtendimentos(SuperView):
               f'{dados["especialidade"]}. O valor do atendimento foi R$ {dados["valor"]}.')
         if dados["responsavel"] != None:
             print(f'Acompanhou o(a) paciente o(a) Sr.(a) {dados["responsavel"]}')
-        # Listar procedimentos realizados
-
-        {
-            : atendimento.clinica.nome,
-            : atendimento.clinica.cidade,
-            : atendimento.paciente.nome,
-            : atendimento.profissional.nome,
-            : atendimento.profissional.especialidade,
-            : atendimento.data,
-            : atendimento.horario_inicio,
-            "horario_fim": atendimento.horario_fim,
-            : atendimento.tipo_de_atendimento.tipo,
-            : atendimento.valor,
-            "procedimentos_realizados": atendimento.procedimentos_realizados,
-            : atendimento.responsavel
-        }
-
+        if len(dados["procedimentos_realizados"] > 0):
+            print(f'Durante o (a) {dados["tipo_de_atendimento"]}, foram realizados os seguintes procedimentos:')
+            for procedimento in dados["procedimentos_realizados"]:
+                print(f'Descrição: {procedimento["descricao"]} (R$ {procedimento["descricao"]}),'
+                      f' Responsável: {procedimento["profissional"]}')

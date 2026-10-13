@@ -2,17 +2,10 @@ from controller.controllerProcedimentos import ControllerProcedimento
 from controller.controllerTiposDeAtendimento import ControllerTipoDeAtendimento
 from controllerClinicas import ControllerClinica
 from controllerPacientes import ControllerPaciente
-from controllerProfissionais import ControllerProfissional
 from datetime import date as Date
-from datetime import time as Time
-
-from model import profissional
 from model.atendimento import Atendimento
-from exceptions.pacienteMenorDeIdadeException import PacienteMenorDeIdadeException
-from model.clinica import Clinica
 from model.paciente import Paciente
 from model.pessoa import Pessoa
-from model.tipoDeAtendimento import TipoDeAtendimento
 from view.viewAtendimentos import ViewAtendimentos
 
 
@@ -97,10 +90,29 @@ class ControllerAtendimento:
         else:
             self.__view_atendimento.mostrar_mensagem(f'Nenhuma clínica encontrada com o CNPJ "{cnpj}"')
 
-    def cancelar_atendimento(self): #implementar se der tempo
-        pass
-
-
+    def excluir_atendimento(self):
+        self.__view_atendimento.mostrar_mensagem("--- Excluir atendimento ---")
+        dados = self.__view_atendimento.pegar_dados_da_consulta()
+        try:
+            datas_atendimentos_paciente = self.atendimentos[dados["cpf_paciente"]]
+            horarios_de_atendimentos = datas_atendimentos_paciente[dados["data"]]
+            horarios_de_atendimentos[dados["horario_inicio"]]
+        except KeyError:
+            msg = (f'Não há atendimento para o CPF "{dados["cpf_paciente"]}" em'
+                   f' {dados["data"]}, às {dados["horario_inicio"]}.')
+            self.__view_atendimento.mostrar_mensagem(msg)
+        else:
+            horarios_de_atendimentos.pop(dados["horario_inicio"])
+            if len(horarios_de_atendimentos) == 0:
+                datas_atendimentos_paciente.pop(dados["data"])
+                if len(datas_atendimentos_paciente) == 0:
+                    self.__atendimentos.pop(dados["cpf_paciente"])
+                else:
+                    self.__atendimentos.update({dados["cpf_paciente"]: datas_atendimentos_paciente})
+            else:
+                datas_atendimentos_paciente.update({dados["data"]: horarios_de_atendimentos})
+                self.__atendimentos.update({dados["cpf_paciente"]: datas_atendimentos_paciente})
+            self.__view_atendimento.mostrar_mensagem("Atendimento excluído com sucesso!")
 
     def adicionar_procedimento(self):
         dados = self.__view_atendimento.pegar_dados_procedimento_na_consulta()
@@ -139,6 +151,12 @@ class ControllerAtendimento:
                    f' {dados["data"]}, às {dados["horario_inicio"]}.')
             self.__view_atendimento.mostrar_mensagem(msg)
         else:
+            procedimentos = []
+            for procedimento in atendimento.procedimentos_realizados:
+                descricao = procedimento.descricao
+                custo = procedimento.custo
+                profissional = procedimento.profissional
+                procedimentos.append({"descricao": descricao, "custo": custo, "profissional": profissional})
             dados_mostrar = {
                 "clinica": atendimento.clinica.nome,
                 "cidade": atendimento.clinica.cidade,
@@ -150,7 +168,7 @@ class ControllerAtendimento:
                 "horario_fim": atendimento.horario_fim,
                 "tipo_de_atendimento": atendimento.tipo_de_atendimento.tipo,
                 "valor": atendimento.valor,
-                "procedimentos_realizados": atendimento.procedimentos_realizados,
+                "procedimentos_realizados": procedimentos,
                 "responsavel": atendimento.responsavel.nome
             }
             self.__view_atendimento.mostrar_dados_da_consulta(dados_mostrar)
@@ -169,3 +187,12 @@ class ControllerAtendimento:
         else:
             idade = data_atendimento.year - data_de_nascimento.year - 1
         return idade
+
+    def retornar(self):
+        self.__controller_sistema.abrir_tela()
+
+    def abrir_tela(self):
+        opcoes = {0: self.retornar, 1: self.agendar_atendimento, 2: self.adicionar_procedimento,
+                  3: self.consultar_atendimento, 4: self.excluir_atendimento}
+        while True:
+            opcoes[self.__view_atendimento.view_opcoes()]()
