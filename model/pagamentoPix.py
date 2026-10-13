@@ -5,58 +5,11 @@ from exceptions.tipoParametroIncorretoException import TipoParametroIncorretoExc
 
 
 class PagamentoPix(AbstractPagamento):
-    def __init__(self, paciente: str, atendimento: Atendimento, data: Date, valor_pago: float, cpf_pagador: str):
-        super().__init__()
-        self.paciente = paciente
-        self.atendimento = atendimento
-        self.data = data
-        self.valor_pago = valor_pago
-        self.__modalidade = "pix"
+    def __init__(self, paciente: Paciente, atendimento: Atendimento, data: Date,
+                 valor_pago: float, cpf_pagador: str, numero_parcelas: int= 1):
+        super().__init__(paciente, atendimento, data, valor_pago, numero_parcelas)
+        self.__modalidade = "Pix"
         self.cpf_pagador = cpf_pagador
-
-    @property
-    def data(self) -> Date:
-        return self.__data
-
-    @data.setter
-    def data(self, data: Date):
-        if isinstance(data, Date):
-            self.__data = data
-        else:
-            raise TipoParametroIncorretoException("data")
-
-    @property
-    def valor_pago(self) -> float:
-        return self.__valor_pago
-
-    @valor_pago.setter
-    def valor_pago(self, valor_pago:float):
-        if isinstance(valor_pago, float):
-            self.__valor_pago = valor_pago
-        else:
-            raise TipoParametroIncorretoException("float")
-
-    @property
-    def paciente(self) -> str:
-        return self.__paciente
-
-    @paciente.setter
-    def paciente(self, paciente: str):
-        if isinstance(paciente, str):
-            self.__paciente = paciente
-        else:
-            raise TipoParametroIncorretoException("string")
-
-    @property
-    def atendimento(self) -> Atendimento:
-        return self.__atendimento
-
-    @atendimento.setter
-    def atendimento(self, atendimento: Atendimento):
-        if isinstance(atendimento, Atendimento):
-            self.__atendimento = atendimento
-        else:
-            raise TipoParametroIncorretoException("Atendimento")
 
     @property
     def modalidade(self) -> str:
