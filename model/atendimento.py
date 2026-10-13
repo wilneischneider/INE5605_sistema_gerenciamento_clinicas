@@ -1,5 +1,7 @@
 from datetime import date as Date
 from datetime import time as Time
+
+from model.procedimento import Procedimento
 from model.tipoDeAtendimento import TipoDeAtendimento
 from model.paciente import Paciente
 from model.clinica import Clinica
@@ -131,3 +133,9 @@ class Atendimento:
             self.__responsavel = responsavel
         else:
             raise TipoParametroIncorretoException("Pessoa")
+
+    def incluir_procedimento(self, procedimento: Procedimento):
+        if isinstance(procedimento, Procedimento):
+            self.__procedimentos_realizados.append(procedimento)
+        else:
+            raise TipoParametroIncorretoException("Procedimento")

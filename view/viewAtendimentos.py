@@ -79,3 +79,88 @@ class ViewAtendimentos(SuperView):
         return {"cnpj": cnpj, "cpf_paciente": cpf_paciente, "cpf_profissional": cpf_profissional,
                 "data": data, "horario_inicio": horario_inicio, "horario_fim": horario_fim,
                 "tipo_de_atendimento": tipo_de_atendimento, "valor": valor}
+
+    def pegar_dados_procedimento_na_consulta(self):
+        print("--- Incluir Procedimento em Consulta ---")
+        cpf_paciente = input("Informe o CPF do Paciente: ")
+        repetir = 0
+        while repetir == 0:
+            ano_consulta = input("Informe o Ano da Consulta (AAAA): ")
+            mes_consulta = input("Informe o Mês da Consulta (MM): ")
+            dia_consulta = input("Informe o Dia da Consulta (DD): ")
+            try:
+                ano = int(ano_consulta)
+                mes = int(mes_consulta)
+                dia = int(dia_consulta)
+                data = Date(ano, mes, dia)
+                repetir = 1
+            except ValueError:
+                print("Informe ano, mês e dia em numerais, nos formatos indicados. Ex.: Ano: 1990, Mês: 5, Dia: 15")
+        repetir = 0
+        while repetir == 0:
+            hora_consulta = input("Informe a Hora de Início da Consulta (HH): ")
+            minuto_consulta = input("Informe os Minutos de Início da Consulta (MM): ")
+            try:
+                hora = int(hora_consulta)
+                minuto = int(minuto_consulta)
+                horario_inicio = Time(hora, minuto)
+                repetir = 1
+            except ValueError:
+                print("Informe hora e minutos em numerais, nos formatos indicados. Ex.: Hora: 18, Minuto: 27")
+        descricao_procedimento = input("Informe a Descrição do Procedimento Realizado: ")
+        return {"cpf_paciente": cpf_paciente, "data": data, "horario_inicio": horario_inicio,
+                "descricao_procedimento": descricao_procedimento}
+
+    def pegar_dados_da_consulta(self):
+        cpf_paciente = input("Informe o CPF do Paciente: ")
+        repetir = 0
+        while repetir == 0:
+            ano_consulta = input("Informe o Ano da Consulta (AAAA): ")
+            mes_consulta = input("Informe o Mês da Consulta (MM): ")
+            dia_consulta = input("Informe o Dia da Consulta (DD): ")
+            try:
+                ano = int(ano_consulta)
+                mes = int(mes_consulta)
+                dia = int(dia_consulta)
+                data = Date(ano, mes, dia)
+                repetir = 1
+            except ValueError:
+                print("Informe ano, mês e dia em numerais, nos formatos indicados. Ex.: Ano: 1990, Mês: 5, Dia: 15")
+        repetir = 0
+        while repetir == 0:
+            hora_consulta = input("Informe a Hora de Início da Consulta (HH): ")
+            minuto_consulta = input("Informe os Minutos de Início da Consulta (MM): ")
+            try:
+                hora = int(hora_consulta)
+                minuto = int(minuto_consulta)
+                horario_inicio = Time(hora, minuto)
+                repetir = 1
+            except ValueError:
+                print("Informe hora e minutos em numerais, nos formatos indicados. Ex.: Hora: 18, Minuto: 27")
+        return {"cpf_paciente": cpf_paciente, "data": data, "horario_inicio": horario_inicio}
+
+    def mostrar_dados_da_consulta(self, dados):
+        print("--- Dados da Consulta ---")
+        print(f'A(O) {dados["tipo_de_atendimento"]} do(a) paciente {dados["paciente"]} em {dados["data"]}, '
+              f'às {dados["horario_inicio"]} horas, foi na clínica {dados["clinica"]} da cidade de '
+              f'{dados["cidade"]} e teve como profissional o(a) Dr.(a) {dados["profissional"]}, da área de'
+              f'{dados["especialidade"]}. O valor do atendimento foi R$ {dados["valor"]}.')
+        if dados["responsavel"] != None:
+            print(f'Acompanhou o(a) paciente o(a) Sr.(a) {dados["responsavel"]}')
+        # Listar procedimentos realizados
+
+        {
+            : atendimento.clinica.nome,
+            : atendimento.clinica.cidade,
+            : atendimento.paciente.nome,
+            : atendimento.profissional.nome,
+            : atendimento.profissional.especialidade,
+            : atendimento.data,
+            : atendimento.horario_inicio,
+            "horario_fim": atendimento.horario_fim,
+            : atendimento.tipo_de_atendimento.tipo,
+            : atendimento.valor,
+            "procedimentos_realizados": atendimento.procedimentos_realizados,
+            : atendimento.responsavel
+        }
+
