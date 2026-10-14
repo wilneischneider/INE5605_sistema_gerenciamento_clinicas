@@ -11,7 +11,7 @@ class ViewAtendimentos(SuperView):
         print("2 - Registrar Procedimento")
         print("3 - Consultar Atendimento")
         print("4 - Excluir Atendimento")
-        print("0 - Finalizar sistema")
+        print("0 - Retornar")
         opcao = self.entra_opcao_valida("Escolha a opção desejada: ", [0,1,2,3,4])
         return opcao
 

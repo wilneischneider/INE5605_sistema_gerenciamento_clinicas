@@ -14,7 +14,7 @@ class ViewProfissionais(SuperView):
         print("7 - Atualizar Especialidade do(a) Profissional")
         print("8 - Atualizar Registro Profissional")
         print("9 - Corrigir CPF do(a) Profissional")
-        print("0 - Finalizar sistema")
+        print("0 - Retornar")
         opcao = self.entra_opcao_valida("Escolha a opção desejada: ", [0,1,2,3,4,5,6,7,8,9])
         return opcao
 

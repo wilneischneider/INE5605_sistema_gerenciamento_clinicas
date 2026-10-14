@@ -19,7 +19,7 @@ class ViewClinicas(SuperView):
         print("11 - Listar Profissionais de Clínica")
         print("12 - Vincular Profissional à Clínica")
         print("13 - Desvincular Profissional de Clínica")
-        print("0 - Retornar ao Menu Anterior")
+        print("0 - Retornar")
         opcao = self.entra_opcao_valida("Escolha a opção desejada: ", [0,1,2,3,4,5,6,7,8,9,10,11,12,13])
         return opcao
 
