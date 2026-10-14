@@ -30,3 +30,13 @@ class ControllerRelatorios:
         return qt_atendimentos_ordenado
     # CONCLUIR
     # Criar uma única classe de relatorios
+
+    def listar_atendimentos_mais_caros(self):
+
+    def listar_atendimentos_mais_baratos(self):
+
+    def listar_procedimentos_mais_realizados(self):
+
+    def listar_procedimentos_mais_caros(self):
+
+    def listar_procedimentos_mais_baratos(self):

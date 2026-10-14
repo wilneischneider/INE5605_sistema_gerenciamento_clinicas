@@ -1,5 +1,5 @@
 from controller.controllerTiposDeAtendimento import ControllerTipoDeAtendimento
-from controller.relatorios import ControllerRelatorios
+from controller.controllerRelatorios import ControllerRelatorios
 from controller.controllerClinicas import ControllerClinica
 from controller.controllerAtendimentos import ControllerAtendimento
 from controller.controllerPacientes import ControllerPaciente

@@ -1,4 +1,4 @@
-from view import superView
+from view.superView import SuperView
 
 
 class ViewTiposDeAtendimento(SuperView):
