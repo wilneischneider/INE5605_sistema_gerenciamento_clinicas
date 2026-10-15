@@ -75,7 +75,7 @@ class ControllerSistema:
         self.__controller_tipo_de_atendimento.abrir_tela()
 
     def emitir_relatorios(self):
-        self.__relatorios.abrir_tela()
+        self.__controller_relatorios.abrir_tela()
 
     def inicializar_sistema(self):
         self.abrir_tela()
@@ -85,9 +85,7 @@ class ControllerSistema:
                   4: self.gerenciar_procedimentos, 5: self.gerenciar_profissionais, 6: self.gerenciar_clinicas,
                   7: self.gerenciar_tipos_de_atendimento, 8: self.emitir_relatorios, 0: self.encerrar_sistema}
         while True:
-            opcao_escolhida = self.__view_sistema.view_opcoes()
-            funcao_escolhida = opcoes[opcao_escolhida]
-            funcao_escolhida()
+            opcoes[self.__view_sistema.view_opcoes()]()
 
     def encerrar_sistema(self):
         exit(0)
