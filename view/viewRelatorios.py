@@ -28,16 +28,16 @@ class ViewRelatorios(SuperView):
         print("--- 10 Atendimentos Mais Caros ---")
         for registro in dados:
             print(f'Clínica: {registro["cnpj_clinica"]}, Paciente: {registro["nome_paciente"]},'
-                  f'Profissional: {registro["nome_profissional"]}, Especialidade: {registro["especialidade"]},'
-                  f'Valor: {registro["valor"]}')
+                  f' Profissional: {registro["nome_profissional"]}, Especialidade: {registro["especialidade"]},'
+                  f' Valor: {registro["valor"]}')
         print("---------------- Fim do Relatório ----------------")
 
     def mostrar_atendimentos_mais_baratos(self, dados):
         print("--- 10 Atendimentos Mais Baratos ---")
         for registro in dados:
             print(f'Clínica: {registro["cnpj_clinica"]}, Paciente: {registro["nome_paciente"]},'
-                  f'Profissional: {registro["nome_profissional"]}, Especialidade: {registro["especialidade"]},'
-                  f'Valor: {registro["valor"]}')
+                  f' Profissional: {registro["nome_profissional"]}, Especialidade: {registro["especialidade"]},'
+                  f' Valor: {registro["valor"]}')
         print("---------------- Fim do Relatório ----------------")
 
     def mostrar_procedimentos_mais_realizados(self, dados):
