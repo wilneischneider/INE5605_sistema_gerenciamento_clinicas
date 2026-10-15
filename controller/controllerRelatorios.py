@@ -15,7 +15,8 @@ class ControllerRelatorios:
         self.__view_relatorio = ViewRelatorios()
 
     def extrair_atendimentos(self):
-        atendimentos_geral = ControllerAtendimento.atendimentos #{cpf_paciente:{data:{horario_inicio:atendimento}}}
+        controlador_atendimento = self.__controller_sistema.controller_atendimento
+        atendimentos_geral = controlador_atendimento.atendimentos #{cpf_paciente:{data:{horario_inicio:atendimento}}}
         if len(atendimentos_geral) > 0:
             lista_datas = [] #[{data:{horario_inicio:atendimento}}, {data:{horario_inicio:atendimento}}]
             for valor in atendimentos_geral.values():
@@ -109,7 +110,8 @@ class ControllerRelatorios:
             self.__view_relatorio.mostrar_mensagem("Nenhum atendimento encontrado!")
 
     def listar_procedimentos_mais_caros(self):
-        procedimentos = ControllerProcedimento.procedimentos
+        controlador_procedimento = self.__controller_sistema.controller_procedimento
+        procedimentos = controlador_procedimento.procedimentos
         if len(procedimentos) > 0:
             procedimentos_com_custo = {}
             for procedimento in procedimentos.values():
@@ -128,7 +130,8 @@ class ControllerRelatorios:
             self.__view_relatorio.mostrar_mensagem("Nenhum procedimento encontrado!")
 
     def listar_procedimentos_mais_baratos(self):
-        procedimentos = ControllerProcedimento.procedimentos
+        controlador_procedimento = self.__controller_sistema.controller_procedimento
+        procedimentos = controlador_procedimento.procedimentos
         if len(procedimentos) > 0:
             procedimentos_com_custo = {}
             for procedimento in procedimentos.values():

@@ -52,14 +52,15 @@ class ControllerProfissional:
             self.__view_profissional.mostrar_mensagem(f'Profissional de CPF "{dados["cpf"]}" já cadastrado(a)!')
 
     def excluir_profissional(self):
+        controlador_clinica = self.__controller_sistema.controller_clinica
         self.__view_profissional.mostrar_mensagem('--- Excluir Profissional ---')
         cpf = self.__view_profissional.pegar_cpf()
         if cpf in self.listar_cpfs_cadastrados():
             self.__profissionais.pop(cpf)
             self.__view_profissional.mostrar_mensagem(f'Profissional de CPF "{cpf}" excluído(a)!')
             # Excluir tambem o vinculo com as clinicas
-            for cnpj in ControllerClinica.listar_cnpjs_cadastrados():
-                msg = ControllerClinica.desvincular_profissional_das_clinicas(cnpj, cpf)
+            for cnpj in controlador_clinica.listar_cnpjs_cadastrados():
+                msg = controlador_clinica.desvincular_profissional_das_clinicas(cnpj, cpf)
                 self.__view_profissional.mostrar_mensagem(msg)
         else:
             self.__view_profissional.mostrar_mensagem(f'Não há profissional cadastrado(a) com o CPF "{cpf}".')

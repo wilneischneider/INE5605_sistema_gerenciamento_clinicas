@@ -20,7 +20,9 @@ class ControllerAtendimento:
         return self.__atendimentos
 
     def agendar_atendimento(self):
-        from controller.controllerClinicas import ControllerClinica
+        controlador_clinica = self.__controller_sistema.controller_clinica
+        controlador_paciente = self.__controller_sistema.controller_paciente
+        controlador_tipo_atendimento = self.__controller_sistema.controller_tipo_de_atendimento
         dados = self.__view_atendimento.pegar_dados_agendar_atendimento()
         cnpj = dados["cnpj"]
         cpf_paciente = dados["cpf_paciente"]
@@ -30,18 +32,18 @@ class ControllerAtendimento:
         horario_fim = dados["horario_fim"]
         tipo_de_atendimento = dados["tipo_de_atendimento"]
         valor = dados["valor"]
-        if cnpj in ControllerClinica.listar_cnpjs_cadastrados():
-            clinica = ControllerClinica.clinicas[cnpj]
+        if cnpj in controlador_clinica.listar_cnpjs_cadastrados():
+            clinica = controlador_clinica.clinicas[cnpj]
             if (
                 clinica.horario_de_abertura <= horario_inicio
                 and clinica.horario_de_fechamento >= horario_fim
                 and horario_fim > horario_inicio
             ):
-                if cpf_paciente in ControllerPaciente.listar_cpfs_cadastrados():
+                if cpf_paciente in controlador_paciente.listar_cpfs_cadastrados():
                     profissionais_da_clinica = clinica.profissionais
                     if cpf_profissional in profissionais_da_clinica.keys():
-                        if tipo_de_atendimento in ControllerTipoDeAtendimento.listar_descricao_tipos_atendimento():
-                            paciente = ControllerPaciente.pacientes[cpf_paciente]
+                        if tipo_de_atendimento in controlador_tipo_atendimento.listar_descricao_tipos_atendimento():
+                            paciente = controlador_paciente.pacientes[cpf_paciente]
                             idade_paciente = calcular_idade_paciente_na_data_do_atendimento(paciente, data)
                             if idade_paciente < 18:
                                 dados_responsavel = self.__view_atendimento.pegar_dados_do_responsavel()
@@ -51,7 +53,7 @@ class ControllerAtendimento:
                                 except TipoParametroIncorretoException as e:
                                     self.__view_atendimento.mostrar_mensagem(e)
                             profissional = profissionais_da_clinica[cpf_profissional]
-                            for objeto in ControllerTipoDeAtendimento.tipos_de_atendimento:
+                            for objeto in controlador_tipo_atendimento.tipos_de_atendimento:
                                 if objeto.tipo == tipo_de_atendimento:
                                     tipo_atendimento = objeto
                             try:
@@ -74,7 +76,7 @@ class ControllerAtendimento:
                         else:
                             msg = (
                                 f'Tipo de atendimento "{tipo_de_atendimento}" não cadastrado!/n'
-                                f'Tipos cadastrados: {ControllerTipoDeAtendimento.listar_descricao_tipos_atendimento()}'
+                                f'Tipos cadastrados: {controlador_tipo_atendimento.listar_descricao_tipos_atendimento()}'
                             )
                             self.__view_atendimento.mostrar_mensagem(msg)
                     else:
@@ -116,9 +118,10 @@ class ControllerAtendimento:
             self.__view_atendimento.mostrar_mensagem("Atendimento excluído com sucesso!")
 
     def adicionar_procedimento(self):
+        controlador_procedimento = self.__controller_sistema.controller_procedimento
         dados = self.__view_atendimento.pegar_dados_procedimento_na_consulta()
-        if dados["descricao_procedimento"] in ControllerProcedimento.listar_descricao_procedimentos_cadastrados():
-            procedimento = ControllerProcedimento.procedimentos[dados["descricao_procedimento"]]
+        if dados["descricao_procedimento"] in controlador_procedimento.listar_descricao_procedimentos_cadastrados():
+            procedimento = controlador_procedimento.procedimentos[dados["descricao_procedimento"]]
             try:
                 datas_atendimentos_paciente = self.atendimentos[dados["cpf_paciente"]]
                 horarios_de_atendimentos = datas_atendimentos_paciente[dados["data"]]

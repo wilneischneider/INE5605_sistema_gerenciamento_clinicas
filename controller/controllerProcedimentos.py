@@ -1,4 +1,3 @@
-# from controller.controllerProfissionais import ControllerProfissional
 from model.procedimento import Procedimento
 from view.viewProcedimentos import ViewProcedimentos
 from exceptions.tipoParametroIncorretoException import TipoParametroIncorretoException
@@ -36,11 +35,12 @@ class ControllerProcedimento:
             self.__view_procedimento.mostrar_mensagem(f'Não há procedimento com a descrição "{descricao}"!')
 
     def cadastrar_procedimento(self):
+        controlador_profissional = self.__controller_sistema.controller_profissional
         dados = self.__view_procedimento.pegar_dados_procedimento()
         if dados["descricao"] not in self.listar_descricao_procedimentos_cadastrados():
-            if dados["cpf_profissional"] in ControllerProfissional.listar_cpfs_cadastrados():
+            if dados["cpf_profissional"] in controlador_profissional.listar_cpfs_cadastrados():
                 try:
-                    profissional = ControllerProfissional.profissionais[dados["cpf_profissional"]]
+                    profissional = controlador_profissional.profissionais[dados["cpf_profissional"]]
                     procedimento = Procedimento(dados["descricao"], dados["custo"], profissional)
                     self.__procedimentos.update({dados["descricao"]: procedimento})
                 except TipoParametroIncorretoException as e:
@@ -75,11 +75,12 @@ class ControllerProcedimento:
             self.__view_procedimento.mostrar_mensagem(f'Não há procedimento com a descrição "{dados["descricao"]}"!')
 
     def alterar_profissional_responsavel(self):
+        controlador_profissional = self.__controller_sistema.controller_profissional
         dados = self.__view_procedimento.pegar_novo_profissional()
         if dados["descricao"] in self.listar_descricao_procedimentos_cadastrados():
-            if dados["cpf_profissional"] in ControllerProfissional.listar_cpfs_cadastrados():
+            if dados["cpf_profissional"] in controlador_profissional.listar_cpfs_cadastrados():
                 try:
-                    profissional = ControllerProfissional.profissionais[dados["cpf_profissional"]]
+                    profissional = controlador_profissional.profissionais[dados["cpf_profissional"]]
                     procedimento = self.__procedimentos[dados["descricao"]]
                     procedimento.profissional = profissional
                     self.__procedimentos.update({dados["descricao"]: procedimento})

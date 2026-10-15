@@ -11,7 +11,7 @@ class ViewRelatorios(SuperView):
         print("4 - Procedimentos mais realizados")
         print("5 - Procedimentos mais caros")
         print("6 - Procedimentos mais baratos")
-        print("0 - Finalizar sistema")
+        print("0 - Retornar")
         opcao = self.entra_opcao_valida("Escolha a opção desejada: ", [0,1,2,3,4,5,6])
         return opcao
 

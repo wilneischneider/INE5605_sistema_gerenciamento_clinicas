@@ -37,13 +37,27 @@ class ViewProcedimentos(SuperView):
     def pegar_dados_procedimento(self):
         print("-------- CADASTRO DE PROCEDIMENTO ----------")
         descricao = input("Descrição: ")
-        custo = input("Custo (informar apenas valor): ")
+        repetir = 0
+        while repetir == 0:
+            custo_entrada = input("Custo (informar apenas valor): ")
+            try:
+                custo = float(custo_entrada)
+                repetir = 1
+            except ValueError:
+                print("Informe apenas números, utilizando ponto '.' como separador de decimal")
         cpf_profissional = input("CPF do Profissional Responsável: ")
         return {"descricao": descricao, "custo": custo, "cpf_profissional": cpf_profissional}
 
     def pegar_novo_custo(self):
         descricao = input("Informe a descrição do Procedimento: ")
-        custo = input("Informe o novo custo: ")
+        repetir = 0
+        while repetir == 0:
+            custo_entrada = input("Informe o novo custo: ")
+            try:
+                custo = float(custo_entrada)
+                repetir = 1
+            except ValueError:
+                print("Informe apenas números, utilizando ponto '.' como separador de decimal")
         return {"descricao": descricao, "custo": custo}
 
     def pegar_novo_profissional(self):

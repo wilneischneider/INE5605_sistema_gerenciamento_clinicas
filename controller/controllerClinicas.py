@@ -80,7 +80,7 @@ class ControllerClinica:
                 clinica.nome = dados["nome"]
                 self.__clinicas.update({dados_clinica["cnpj"]: clinica})
                 self.__view_clinica.mostrar_mensagem('Nome da Clínica atualizado com sucesso!')
-            except tipoParametroIncorretoException as e:
+            except TipoParametroIncorretoException as e:
                 self.__view_clinica.mostrar_mensagem(e)
         else:
             self.__view_clinica.mostrar_mensagem(f'O CNPJ "{dados["cnpj"]}" não foi encontrado!')
@@ -93,7 +93,7 @@ class ControllerClinica:
                 clinica.cidade = dados["cidade"]
                 self.__clinicas.update({dados_clinica["cnpj"]: clinica})
                 self.__view_clinica.mostrar_mensagem('Cidade da Clínica atualizada com sucesso!')
-            except tipoParametroIncorretoException as e:
+            except TipoParametroIncorretoException as e:
                 self.__view_clinica.mostrar_mensagem(e)
         else:
             self.__view_clinica.mostrar_mensagem(f'O CNPJ "{dados["cnpj"]}" não foi encontrado!')
@@ -106,7 +106,7 @@ class ControllerClinica:
                 clinica.descricao = dados["descricao"]
                 self.__clinicas.update({dados_clinica["cnpj"]: clinica})
                 self.__view_clinica.mostrar_mensagem('Descrição da Clínica atualizada com sucesso!')
-            except tipoParametroIncorretoException as e:
+            except TipoParametroIncorretoException as e:
                 self.__view_clinica.mostrar_mensagem(e)
         else:
             self.__view_clinica.mostrar_mensagem(f'O CNPJ "{dados["cnpj"]}" não foi encontrado!')
@@ -121,7 +121,7 @@ class ControllerClinica:
                     self.__clinicas.pop(dados["cnpj_cadastrado"])
                     self.__clinicas.update({dados["cnpj_correto"]: clinica})
                     self.__view_clinica.mostrar_mensagem(f'CNPJ corrigido com sucesso!')
-                except tipoParametroIncorretoException as e:
+                except TipoParametroIncorretoException as e:
                     self.__view_clinica.mostrar_mensagem(e)
             else:
                 self.__view_clinica.mostrar_mensagem(f'O CNPJ "{dados["cnpj_cadastrado"]}" não foi encontrado!')
@@ -136,7 +136,7 @@ class ControllerClinica:
                 clinica.horario_de_abertura = dados["horario_de_abertura"]
                 self.__clinicas.update({dados["cnpj"]: clinica})
                 self.__view_clinica.mostrar_mensagem(f'Horário de abertura atualizado com sucesso!')
-            except tipoParametroIncorretoException as e:
+            except TipoParametroIncorretoException as e:
                 self.__view_clinica.mostrar_mensagem(e)
         else:
             self.__view_clinica.mostrar_mensagem(f'O CNPJ "{dados["cnpj"]}" não foi encontrado!')
@@ -149,7 +149,7 @@ class ControllerClinica:
                 clinica.horario_de_fechamento = dados["horario_de_fechamento"]
                 self.__clinicas.update({dados["cnpj"]: clinica})
                 self.__view_clinica.mostrar_mensagem(f'Horário de fechamento atualizado com sucesso!')
-            except tipoParametroIncorretoException as e:
+            except TipoParametroIncorretoException as e:
                 self.__view_clinica.mostrar_mensagem(e)
         else:
             self.__view_clinica.mostrar_mensagem(f'O CNPJ "{dados["cnpj"]}" não foi encontrado!')
@@ -170,18 +170,18 @@ class ControllerClinica:
             self.__view_clinica.mostrar_mensagem(f'O CNPJ "{cnpj}" não foi encontrado!')
 
     def vincular_profissional_a_clinica(self):
-        from controller.controllerProfissionais import ControllerProfissional
+        controlador_profissional = self.__controller_sistema.controller_profissional
         dados = self.__view_clinica.pegar_cpf_vincular_desvincular()
         if dados["cnpj"] in self.listar_cnpjs_cadastrados():
             clinica = self.__clinicas[dados["cnpj"]]
             profissionais_da_clinica = clinica.profissionais
             if dados["cpf"] not in profissionais_da_clinica.keys():
-                if dados["cpf"] in ControllerProfissional.listar_cpfs_cadastrados():
+                if dados["cpf"] in controlador_profissional.listar_cpfs_cadastrados():
                     try:
-                        clinica.vincular_profissional(ControllerProfissional.profissionais[dados["cpf"]])
+                        clinica.vincular_profissional(controlador_profissional.profissionais[dados["cpf"]])
                         self.__clinicas.update({dados["cnpj"]: clinica})
                         self.__view_clinica.mostrar_mensagem(f'Profissional vinculado com sucesso!')
-                    except tipoParametroIncorretoException as e:
+                    except TipoParametroIncorretoException as e:
                         self.__view_clinica.mostrar_mensagem(e)
                 else:
                     self.__view_clinica.mostrar_mensagem(
@@ -202,7 +202,7 @@ class ControllerClinica:
                     clinica.desvincular_profissional(dados["cpf"])
                     self.__clinicas.update({dados["cnpj"]: clinica})
                     self.__view_clinica.mostrar_mensagem(f'Profissional desvinculado com sucesso!')
-                except tipoParametroIncorretoException as e:
+                except TipoParametroIncorretoException as e:
                     self.__view_clinica.mostrar_mensagem(e)
             else:
                 self.__view_clinica.mostrar_mensagem(
@@ -220,7 +220,7 @@ class ControllerClinica:
                     clinica.desvincular_profissional(cpf)
                     self.__clinicas.update({cnpj: clinica})
                     return f'Desvinculado também da Clínica de CNPJ "{cnpj}"'
-                except tipoParametroIncorretoException as e:
+                except TipoParametroIncorretoException as e:
                     return e
             else:
                 return ''

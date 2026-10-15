@@ -1,5 +1,3 @@
-# from controller.controllerAtendimentos import ControllerAtendimento
-# from exceptions.tipoParametroIncorretoException import TipoParametroIncorretoException
 from view.viewPagamentos import ViewPagamentos
 from model.pagamentoDinheiro import PagamentoDinheiro
 from model.pagamentoPix import PagamentoPix
@@ -20,11 +18,12 @@ class ControllerPagamento:
         self.abrir_tela_opcoes_pagamento()
 
     def pagamento_dinheiro(self):
+        controlador_atendimento = self.__controller_sistema.controller_atendimento
         cpf_paciente = self.__view_pagamento.pegar_cpf_paciente()
         data_atendimento = self.__view_pagamento.pegar_data_da_consulta()
         horario_atendimento = self.__view_pagamento.pegar_horario_da_consulta()
         try:
-            datas_atendimentos = ControllerAtendimento.atendimentos[cpf_paciente]
+            datas_atendimentos = controlador_atendimento.atendimentos[cpf_paciente]
             horarios_atendimentos = datas_atendimentos[data_atendimento]
             atendimento = horarios_atendimentos[horario_atendimento]
         except KeyError:
@@ -39,11 +38,12 @@ class ControllerPagamento:
             self.__view_pagamento.mostrar_mensagem("Pagamento realizado com sucesso!")
 
     def pagamento_pix(self):
+        controlador_atendimento = self.__controller_sistema.controller_atendimento
         cpf_paciente = self.__view_pagamento.pegar_cpf_paciente()
         data_atendimento = self.__view_pagamento.pegar_data_da_consulta()
         horario_atendimento = self.__view_pagamento.pegar_horario_da_consulta()
         try:
-            datas_atendimentos = ControllerAtendimento.atendimentos[cpf_paciente]
+            datas_atendimentos = controlador_atendimento.atendimentos[cpf_paciente]
             horarios_atendimentos = datas_atendimentos[data_atendimento]
             atendimento = horarios_atendimentos[horario_atendimento]
         except KeyError:
@@ -59,11 +59,12 @@ class ControllerPagamento:
             self.__view_pagamento.mostrar_mensagem("Pagamento realizado com sucesso!")
 
     def pagamento_cartao(self):
+        controlador_atendimento = self.__controller_sistema.controller_atendimento
         cpf_paciente = self.__view_pagamento.pegar_cpf_paciente()
         data_atendimento = self.__view_pagamento.pegar_data_da_consulta()
         horario_atendimento = self.__view_pagamento.pegar_horario_da_consulta()
         try:
-            datas_atendimentos = ControllerAtendimento.atendimentos[cpf_paciente]
+            datas_atendimentos = controlador_atendimento.atendimentos[cpf_paciente]
             horarios_atendimentos = datas_atendimentos[data_atendimento]
             atendimento = horarios_atendimentos[horario_atendimento]
         except KeyError:
@@ -83,8 +84,9 @@ class ControllerPagamento:
             self.__view_pagamento.mostrar_mensagem("Pagamento realizado com sucesso!")
 
     def consultar_saldo_devedor(self):
+        controlador_atendimento = self.__controller_sistema.controller_atendimento
         cpf_paciente = self.__view_pagamento.pegar_cpf_paciente()
-        datas_atendimentos = ControllerAtendimento.atendimentos[cpf_paciente] #{data:{horario_inicio:atendimento}, data:{horario_inicio:atendimento}}
+        datas_atendimentos = controlador_atendimento.atendimentos[cpf_paciente] #{data:{horario_inicio:atendimento}, data:{horario_inicio:atendimento}}
         lista_datas_atendimentos = []
         valor_total = 0
         for data, horario_inicio in datas_atendimentos.items():
