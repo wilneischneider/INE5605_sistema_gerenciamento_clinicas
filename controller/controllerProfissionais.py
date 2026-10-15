@@ -1,7 +1,7 @@
 from exceptions.tipoParametroIncorretoException import TipoParametroIncorretoException
 from model.pessoa import Pessoa
 from model.profissional import Profissional
-from controller.controllerClinicas import ControllerClinica
+# from controller.controllerClinicas import ControllerClinica
 from view.viewProfissionais import ViewProfissionais
 
 

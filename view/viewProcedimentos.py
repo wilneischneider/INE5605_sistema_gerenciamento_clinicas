@@ -1,4 +1,4 @@
-from view import superView
+from view.superView import SuperView
 
 
 class ViewProcedimentos(SuperView):
@@ -11,7 +11,7 @@ class ViewProcedimentos(SuperView):
         print("4 - Excluir Procedimento")
         print("5 - Alterar Custo do Procedimento")
         print("6 - Alterar Profissional Responsável")
-        print("7 - Corrigir Descrição)
+        print("7 - Corrigir Descrição")
         print("0 - Retornar")
         opcao = self.entra_opcao_valida("Escolha a opção desejada: ", [0,1,2,3,4,5,6,7])
         return opcao

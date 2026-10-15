@@ -1,6 +1,6 @@
 from datetime import date as Date
 from datetime import time as Time
-
+from model.pessoa import Pessoa
 from model.procedimento import Procedimento
 from model.tipoDeAtendimento import TipoDeAtendimento
 from model.paciente import Paciente

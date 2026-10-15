@@ -1,5 +1,5 @@
-from controller.controllerAtendimentos import ControllerAtendimento
-from controller.controllerProcedimentos import ControllerProcedimento
+# from controller.controllerAtendimentos import ControllerAtendimento
+# from controller.controllerProcedimentos import ControllerProcedimento
 from model.atendimento import Atendimento
 from model.clinica import Clinica
 from collections import Counter

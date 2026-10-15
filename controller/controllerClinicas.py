@@ -1,6 +1,6 @@
 from exceptions.tipoParametroIncorretoException import TipoParametroIncorretoException
 from model.clinica import Clinica
-from controller.controllerProfissionais import ControllerProfissional
+# from controller.controllerProfissionais import ControllerProfissional
 from view.viewClinicas import ViewClinicas
 
 
@@ -170,6 +170,7 @@ class ControllerClinica:
             self.__view_clinica.mostrar_mensagem(f'O CNPJ "{cnpj}" não foi encontrado!')
 
     def vincular_profissional_a_clinica(self):
+        from controller.controllerProfissionais import ControllerProfissional
         dados = self.__view_clinica.pegar_cpf_vincular_desvincular()
         if dados["cnpj"] in self.listar_cnpjs_cadastrados():
             clinica = self.__clinicas[dados["cnpj"]]

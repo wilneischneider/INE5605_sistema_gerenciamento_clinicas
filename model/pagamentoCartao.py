@@ -1,5 +1,6 @@
-from abstractPagamento import AbstractPagamento
+from model.abstractPagamento import AbstractPagamento
 from model.atendimento import Atendimento
+from model.paciente import Paciente
 from datetime import date as Date
 from exceptions.tipoParametroIncorretoException import TipoParametroIncorretoException
 

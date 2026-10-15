@@ -1,7 +1,7 @@
-from controller.controllerProcedimentos import ControllerProcedimento
-from controller.controllerTiposDeAtendimento import ControllerTipoDeAtendimento
-from controllerClinicas import ControllerClinica
-from controllerPacientes import ControllerPaciente
+# from controller.controllerProcedimentos import ControllerProcedimento
+# from controller.controllerTiposDeAtendimento import ControllerTipoDeAtendimento
+# from controllerClinicas import ControllerClinica
+# from controllerPacientes import ControllerPaciente
 from datetime import date as Date
 from model.atendimento import Atendimento
 from model.paciente import Paciente
@@ -20,6 +20,7 @@ class ControllerAtendimento:
         return self.__atendimentos
 
     def agendar_atendimento(self):
+        from controller.controllerClinicas import ControllerClinica
         dados = self.__view_atendimento.pegar_dados_agendar_atendimento()
         cnpj = dados["cnpj"]
         cpf_paciente = dados["cpf_paciente"]

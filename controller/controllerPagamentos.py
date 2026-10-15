@@ -1,5 +1,5 @@
-from controller.controllerAtendimentos import ControllerAtendimento
-from exceptions.tipoParametroIncorretoException import TipoParametroIncorretoException
+# from controller.controllerAtendimentos import ControllerAtendimento
+# from exceptions.tipoParametroIncorretoException import TipoParametroIncorretoException
 from view.viewPagamentos import ViewPagamentos
 from model.pagamentoDinheiro import PagamentoDinheiro
 from model.pagamentoPix import PagamentoPix

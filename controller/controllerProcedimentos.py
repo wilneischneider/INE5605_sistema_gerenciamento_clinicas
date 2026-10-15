@@ -1,6 +1,5 @@
-from controller.controllerProfissionais import ControllerProfissional
+# from controller.controllerProfissionais import ControllerProfissional
 from model.procedimento import Procedimento
-from exceptions.procedimentoNaoEncontradoException import ProcedimentoNaoEncontradoException
 from view.viewProcedimentos import ViewProcedimentos
 from exceptions.tipoParametroIncorretoException import TipoParametroIncorretoException
 
@@ -35,12 +34,6 @@ class ControllerProcedimento:
             self.__view_procedimento.mostrar_dados_procedimento(lista_dados)
         else:
             self.__view_procedimento.mostrar_mensagem(f'Não há procedimento com a descrição "{descricao}"!')
-
-
-        if descricao in self.listar_descricao_procedimentos_cadastrados():
-            return self.__procedimentos[descricao]
-        else:
-            raise ProcedimentoNaoEncontradoException(descricao)
 
     def cadastrar_procedimento(self):
         dados = self.__view_procedimento.pegar_dados_procedimento()
