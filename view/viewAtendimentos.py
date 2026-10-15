@@ -147,8 +147,8 @@ class ViewAtendimentos(SuperView):
               f'{dados["especialidade"]}. O valor do atendimento foi R$ {dados["valor"]}.')
         if dados["responsavel"] != None:
             print(f'Acompanhou o(a) paciente o(a) Sr.(a) {dados["responsavel"]}')
-        if len(dados["procedimentos_realizados"] > 0):
+        if len(dados["procedimentos_realizados"]) > 0:
             print(f'Durante o (a) {dados["tipo_de_atendimento"]}, foram realizados os seguintes procedimentos:')
             for procedimento in dados["procedimentos_realizados"]:
-                print(f'Descrição: {procedimento["descricao"]} (R$ {procedimento["descricao"]}),'
+                print(f'Descrição: {procedimento["descricao"]} (R$ {procedimento["custo"]}),'
                       f' Responsável: {procedimento["profissional"]}')

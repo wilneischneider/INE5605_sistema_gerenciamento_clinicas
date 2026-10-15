@@ -23,6 +23,7 @@ class ControllerAtendimento:
         controlador_clinica = self.__controller_sistema.controller_clinica
         controlador_paciente = self.__controller_sistema.controller_paciente
         controlador_tipo_atendimento = self.__controller_sistema.controller_tipo_de_atendimento
+        controlador_pagamento = self.__controller_sistema.controller_pagamento
         dados = self.__view_atendimento.pegar_dados_agendar_atendimento()
         cnpj = dados["cnpj"]
         cpf_paciente = dados["cpf_paciente"]
@@ -44,7 +45,7 @@ class ControllerAtendimento:
                     if cpf_profissional in profissionais_da_clinica.keys():
                         if tipo_de_atendimento in controlador_tipo_atendimento.listar_descricao_tipos_atendimento():
                             paciente = controlador_paciente.pacientes[cpf_paciente]
-                            idade_paciente = calcular_idade_paciente_na_data_do_atendimento(paciente, data)
+                            idade_paciente = self.calcular_idade_paciente_na_data_do_atendimento(paciente, data)
                             if idade_paciente < 18:
                                 dados_responsavel = self.__view_atendimento.pegar_dados_do_responsavel()
                                 try:
@@ -71,12 +72,13 @@ class ControllerAtendimento:
                                     atendimento.responsavel = responsavel
                                 self.__atendimentos.update({cpf_paciente:{data:{horario_inicio:atendimento}}})
                                 self.__view_atendimento.mostrar_mensagem("Atendimento agendado com sucesso!")
+                                controlador_pagamento.escolher_forma_pagamento()
                             except TipoParametroIncorretoException as e:
                                 self.__view_atendimento.mostrar_mensagem(e)
                         else:
                             msg = (
-                                f'Tipo de atendimento "{tipo_de_atendimento}" não cadastrado!/n'
-                                f'Tipos cadastrados: {controlador_tipo_atendimento.listar_descricao_tipos_atendimento()}'
+                                f'Tipo de atendimento "{tipo_de_atendimento}" não cadastrado!'
+                                f' Tipos cadastrados: {controlador_tipo_atendimento.listar_descricao_tipos_atendimento()}'
                             )
                             self.__view_atendimento.mostrar_mensagem(msg)
                     else:
@@ -86,8 +88,8 @@ class ControllerAtendimento:
                     self.__view_atendimento.mostrar_mensagem(f'Não há paciente de CPF "{cpf_paciente}" cadastrado!')
             else:
                 msg = (
-                    f'Não foi possível agendar!/n'
-                    f'Horário de funcionamento da clínica: {clinica.horario_de_abertura} às {clinica.horario_de_fechamento}'
+                    f'Não foi possível agendar!'
+                    f' Horário de funcionamento da clínica: {clinica.horario_de_abertura} às {clinica.horario_de_fechamento}'
                 )
                 self.__view_atendimento.mostrar_mensagem(msg)
         else:
@@ -159,23 +161,40 @@ class ControllerAtendimento:
             for procedimento in atendimento.procedimentos_realizados:
                 descricao = procedimento.descricao
                 custo = procedimento.custo
-                profissional = procedimento.profissional
+                profissional = procedimento.profissional.nome
                 procedimentos.append({"descricao": descricao, "custo": custo, "profissional": profissional})
-            dados_mostrar = {
-                "clinica": atendimento.clinica.nome,
-                "cidade": atendimento.clinica.cidade,
-                "paciente": atendimento.paciente.nome,
-                "profissional": atendimento.profissional.nome,
-                "especialidade": atendimento.profissional.especialidade,
-                "data": atendimento.data,
-                "horario_inicio": atendimento.horario_inicio,
-                "horario_fim": atendimento.horario_fim,
-                "tipo_de_atendimento": atendimento.tipo_de_atendimento.tipo,
-                "valor": atendimento.valor,
-                "procedimentos_realizados": procedimentos,
-                "responsavel": atendimento.responsavel.nome
-            }
-            self.__view_atendimento.mostrar_dados_da_consulta(dados_mostrar)
+            if atendimento.responsavel == None:
+                dados_mostrar = {
+                    "clinica": atendimento.clinica.nome,
+                    "cidade": atendimento.clinica.cidade,
+                    "paciente": atendimento.paciente.nome,
+                    "profissional": atendimento.profissional.nome,
+                    "especialidade": atendimento.profissional.especialidade,
+                    "data": atendimento.data,
+                    "horario_inicio": atendimento.horario_inicio,
+                    "horario_fim": atendimento.horario_fim,
+                    "tipo_de_atendimento": atendimento.tipo_de_atendimento.tipo,
+                    "valor": atendimento.valor,
+                    "procedimentos_realizados": procedimentos,
+                    "responsavel": None
+                }
+                self.__view_atendimento.mostrar_dados_da_consulta(dados_mostrar)
+            else:
+                dados_mostrar = {
+                    "clinica": atendimento.clinica.nome,
+                    "cidade": atendimento.clinica.cidade,
+                    "paciente": atendimento.paciente.nome,
+                    "profissional": atendimento.profissional.nome,
+                    "especialidade": atendimento.profissional.especialidade,
+                    "data": atendimento.data,
+                    "horario_inicio": atendimento.horario_inicio,
+                    "horario_fim": atendimento.horario_fim,
+                    "tipo_de_atendimento": atendimento.tipo_de_atendimento.tipo,
+                    "valor": atendimento.valor,
+                    "procedimentos_realizados": procedimentos,
+                    "responsavel": atendimento.responsavel.nome
+                }
+                self.__view_atendimento.mostrar_dados_da_consulta(dados_mostrar)
 
     def calcular_idade_paciente_na_data_do_atendimento(
             self,

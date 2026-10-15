@@ -26,16 +26,21 @@ class ControllerPagamento:
             datas_atendimentos = controlador_atendimento.atendimentos[cpf_paciente]
             horarios_atendimentos = datas_atendimentos[data_atendimento]
             atendimento = horarios_atendimentos[horario_atendimento]
+            msg = f'Data de vencimento: {data_atendimento}'
+            self.__view_pagamento.mostrar_mensagem(msg)
         except KeyError:
             self.__view_pagamento.mostrar_mensagem("Não há atendimento para os dados informados!")
         else:
-            paciente = atendimento.paciente
-            data = self.__view_pagamento.pegar_data_de_pagamento()
-            valor_pago = self.__view_pagamento.pegar_valor_do_pagamento()
-            parcelas = self.__view_pagamento.pegar_numero_parcelas()
-            pagamento = PagamentoDinheiro(paciente, atendimento, data, valor_pago, parcelas)
-            self.__pagamentos.append(pagamento)
-            self.__view_pagamento.mostrar_mensagem("Pagamento realizado com sucesso!")
+            if data <= data_atendimento:
+                paciente = atendimento.paciente
+                data = self.__view_pagamento.pegar_data_de_pagamento()
+                valor_pago = self.__view_pagamento.pegar_valor_do_pagamento()
+                parcelas = self.__view_pagamento.pegar_numero_parcelas()
+                pagamento = PagamentoDinheiro(paciente, atendimento, data, valor_pago, parcelas)
+                self.__pagamentos.append(pagamento)
+                self.__view_pagamento.mostrar_mensagem("Pagamento realizado com sucesso!")
+            else:
+                self.__view_pagamento.mostrar_mensagem("Prazo vencido! Não foi possível pagar!")
 
     def pagamento_pix(self):
         controlador_atendimento = self.__controller_sistema.controller_atendimento
@@ -46,17 +51,22 @@ class ControllerPagamento:
             datas_atendimentos = controlador_atendimento.atendimentos[cpf_paciente]
             horarios_atendimentos = datas_atendimentos[data_atendimento]
             atendimento = horarios_atendimentos[horario_atendimento]
+            msg = f'Data de vencimento: {data_atendimento}'
+            self.__view_pagamento.mostrar_mensagem(msg)
         except KeyError:
             self.__view_pagamento.mostrar_mensagem("Não há atendimento para os dados informados!")
         else:
-            paciente = atendimento.paciente
-            data = self.__view_pagamento.pegar_data_de_pagamento()
-            valor_pago = self.__view_pagamento.pegar_valor_do_pagamento()
-            parcelas = self.__view_pagamento.pegar_numero_parcelas()
-            cpf_pagador = self.__view_pagamento.pegar_cpf_pagador()
-            pagamento = PagamentoPix(paciente, atendimento, data, valor_pago, cpf_pagador, parcelas)
-            self.__pagamentos.append(pagamento)
-            self.__view_pagamento.mostrar_mensagem("Pagamento realizado com sucesso!")
+            if data <= data_atendimento:
+                paciente = atendimento.paciente
+                data = self.__view_pagamento.pegar_data_de_pagamento()
+                valor_pago = self.__view_pagamento.pegar_valor_do_pagamento()
+                parcelas = self.__view_pagamento.pegar_numero_parcelas()
+                cpf_pagador = self.__view_pagamento.pegar_cpf_pagador()
+                pagamento = PagamentoPix(paciente, atendimento, data, valor_pago, cpf_pagador, parcelas)
+                self.__pagamentos.append(pagamento)
+                self.__view_pagamento.mostrar_mensagem("Pagamento realizado com sucesso!")
+            else:
+                self.__view_pagamento.mostrar_mensagem("Prazo vencido! Não foi possível pagar!")
 
     def pagamento_cartao(self):
         controlador_atendimento = self.__controller_sistema.controller_atendimento
@@ -67,21 +77,26 @@ class ControllerPagamento:
             datas_atendimentos = controlador_atendimento.atendimentos[cpf_paciente]
             horarios_atendimentos = datas_atendimentos[data_atendimento]
             atendimento = horarios_atendimentos[horario_atendimento]
+            msg = f'Data de vencimento: {data_atendimento}'
+            self.__view_pagamento.mostrar_mensagem(msg)
         except KeyError:
             self.__view_pagamento.mostrar_mensagem("Não há atendimento para os dados informados!")
         else:
-            paciente = atendimento.paciente
-            data = self.__view_pagamento.pegar_data_de_pagamento()
-            valor_pago = self.__view_pagamento.pegar_valor_do_pagamento()
-            parcelas = self.__view_pagamento.pegar_numero_parcelas()
-            cpf_pagador = self.__view_pagamento.pegar_cpf_pagador()
-            cartao = self.__view_pagamento.pegar_dados_do_cartao()
-            cartao_numero = cartao["numero"]
-            cartao_bandeira = cartao["bandeira"]
-            pagamento = PagamentoCartao(paciente, atendimento, data, valor_pago, cpf_pagador,
-                                        cartao_numero, cartao_bandeira, parcelas)
-            self.__pagamentos.append(pagamento)
-            self.__view_pagamento.mostrar_mensagem("Pagamento realizado com sucesso!")
+            if data <= data_atendimento:
+                paciente = atendimento.paciente
+                data = self.__view_pagamento.pegar_data_de_pagamento()
+                valor_pago = self.__view_pagamento.pegar_valor_do_pagamento()
+                parcelas = self.__view_pagamento.pegar_numero_parcelas()
+                cpf_pagador = self.__view_pagamento.pegar_cpf_pagador()
+                cartao = self.__view_pagamento.pegar_dados_do_cartao()
+                cartao_numero = cartao["numero"]
+                cartao_bandeira = cartao["bandeira"]
+                pagamento = PagamentoCartao(paciente, atendimento, data, valor_pago, cpf_pagador,
+                                            cartao_numero, cartao_bandeira, parcelas)
+                self.__pagamentos.append(pagamento)
+                self.__view_pagamento.mostrar_mensagem("Pagamento realizado com sucesso!")
+            else:
+                self.__view_pagamento.mostrar_mensagem("Prazo vencido! Não foi possível pagar!")
 
     def consultar_saldo_devedor(self):
         controlador_atendimento = self.__controller_sistema.controller_atendimento

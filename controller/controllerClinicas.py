@@ -63,7 +63,7 @@ class ControllerClinica:
         else:
             self.__view_clinica.mostrar_mensagem(f'O CNPJ {dados_clinica["cnpj"]} já está cadastrado!')
 
-    def excluir_clinica(self, cnpj):
+    def excluir_clinica(self):
         self.__view_clinica.mostrar_mensagem('--- Excluir Clínica ---')
         cnpj = self.__view_clinica.pegar_cnpj()
         if cnpj in self.listar_cnpjs_cadastrados():
@@ -78,7 +78,7 @@ class ControllerClinica:
             try:
                 clinica = self.__clinicas[dados["cnpj"]]
                 clinica.nome = dados["nome"]
-                self.__clinicas.update({dados_clinica["cnpj"]: clinica})
+                self.__clinicas.update({dados["cnpj"]: clinica})
                 self.__view_clinica.mostrar_mensagem('Nome da Clínica atualizado com sucesso!')
             except TipoParametroIncorretoException as e:
                 self.__view_clinica.mostrar_mensagem(e)
@@ -91,7 +91,7 @@ class ControllerClinica:
             try:
                 clinica = self.__clinicas[dados["cnpj"]]
                 clinica.cidade = dados["cidade"]
-                self.__clinicas.update({dados_clinica["cnpj"]: clinica})
+                self.__clinicas.update({dados["cnpj"]: clinica})
                 self.__view_clinica.mostrar_mensagem('Cidade da Clínica atualizada com sucesso!')
             except TipoParametroIncorretoException as e:
                 self.__view_clinica.mostrar_mensagem(e)
@@ -104,7 +104,7 @@ class ControllerClinica:
             try:
                 clinica = self.__clinicas[dados["cnpj"]]
                 clinica.descricao = dados["descricao"]
-                self.__clinicas.update({dados_clinica["cnpj"]: clinica})
+                self.__clinicas.update({dados["cnpj"]: clinica})
                 self.__view_clinica.mostrar_mensagem('Descrição da Clínica atualizada com sucesso!')
             except TipoParametroIncorretoException as e:
                 self.__view_clinica.mostrar_mensagem(e)
