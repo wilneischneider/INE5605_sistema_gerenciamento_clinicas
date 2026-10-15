@@ -31,9 +31,9 @@ class ControllerPagamento:
         except KeyError:
             self.__view_pagamento.mostrar_mensagem("Não há atendimento para os dados informados!")
         else:
+            data = self.__view_pagamento.pegar_data_de_pagamento()
             if data <= data_atendimento:
                 paciente = atendimento.paciente
-                data = self.__view_pagamento.pegar_data_de_pagamento()
                 valor_pago = self.__view_pagamento.pegar_valor_do_pagamento()
                 parcelas = self.__view_pagamento.pegar_numero_parcelas()
                 pagamento = PagamentoDinheiro(paciente, atendimento, data, valor_pago, parcelas)
@@ -56,9 +56,9 @@ class ControllerPagamento:
         except KeyError:
             self.__view_pagamento.mostrar_mensagem("Não há atendimento para os dados informados!")
         else:
+            data = self.__view_pagamento.pegar_data_de_pagamento()
             if data <= data_atendimento:
                 paciente = atendimento.paciente
-                data = self.__view_pagamento.pegar_data_de_pagamento()
                 valor_pago = self.__view_pagamento.pegar_valor_do_pagamento()
                 parcelas = self.__view_pagamento.pegar_numero_parcelas()
                 cpf_pagador = self.__view_pagamento.pegar_cpf_pagador()
@@ -82,9 +82,9 @@ class ControllerPagamento:
         except KeyError:
             self.__view_pagamento.mostrar_mensagem("Não há atendimento para os dados informados!")
         else:
+            data = self.__view_pagamento.pegar_data_de_pagamento()
             if data <= data_atendimento:
                 paciente = atendimento.paciente
-                data = self.__view_pagamento.pegar_data_de_pagamento()
                 valor_pago = self.__view_pagamento.pegar_valor_do_pagamento()
                 parcelas = self.__view_pagamento.pegar_numero_parcelas()
                 cpf_pagador = self.__view_pagamento.pegar_cpf_pagador()

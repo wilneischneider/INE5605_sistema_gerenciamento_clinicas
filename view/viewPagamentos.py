@@ -1,4 +1,6 @@
 from view.superView import SuperView
+from datetime import date as Date
+from datetime import time as Time
 
 
 class ViewPagamentos(SuperView):
