@@ -10,7 +10,7 @@ from view.viewAtendimentos import ViewAtendimentos
 
 
 class ControllerAtendimento:
-    def __init__(self, controller_sistema: ControllerSistema):
+    def __init__(self, controller_sistema):
         self.__atendimentos = {} #{cpf_paciente:{data:{horario_inicio:atendimento}}}
         self.__controller_sistema = controller_sistema
         self.__view_atendimento = ViewAtendimentos()

@@ -1,13 +1,12 @@
 from controller.controllerProfissionais import ControllerProfissional
 from model.procedimento import Procedimento
 from exceptions.procedimentoNaoEncontradoException import ProcedimentoNaoEncontradoException
-from controller.controllerSistema import ControllerSistema
 from view.viewProcedimentos import ViewProcedimentos
 from exceptions.tipoParametroIncorretoException import TipoParametroIncorretoException
 
 
 class ControllerProcedimento:
-    def __init__(self, controller_sistema: ControllerSistema):
+    def __init__(self, controller_sistema):
         self.__procedimentos = {}
         self.__controller_sistema = controller_sistema
         self.__view_procedimento = ViewProcedimentos()
@@ -46,7 +45,7 @@ class ControllerProcedimento:
     def cadastrar_procedimento(self):
         dados = self.__view_procedimento.pegar_dados_procedimento()
         if dados["descricao"] not in self.listar_descricao_procedimentos_cadastrados():
-            if dados["cpf_profissional"] in ControllerProfissional.listar_cpfs_cadastrados()
+            if dados["cpf_profissional"] in ControllerProfissional.listar_cpfs_cadastrados():
                 try:
                     profissional = ControllerProfissional.profissionais[dados["cpf_profissional"]]
                     procedimento = Procedimento(dados["descricao"], dados["custo"], profissional)
@@ -85,7 +84,7 @@ class ControllerProcedimento:
     def alterar_profissional_responsavel(self):
         dados = self.__view_procedimento.pegar_novo_profissional()
         if dados["descricao"] in self.listar_descricao_procedimentos_cadastrados():
-            if dados["cpf_profissional"] in ControllerProfissional.listar_cpfs_cadastrados()
+            if dados["cpf_profissional"] in ControllerProfissional.listar_cpfs_cadastrados():
                 try:
                     profissional = ControllerProfissional.profissionais[dados["cpf_profissional"]]
                     procedimento = self.__procedimentos[dados["descricao"]]
@@ -109,7 +108,8 @@ class ControllerProcedimento:
                     procedimento.descricao = dados["descricao_correta"]
                     self.__procedimentos.pop(dados["descricao_cadastrada"])
                     self.__procedimentos.update({dados["descricao_correta"]: procedimento})
-                    return True
+                except TipoParametroIncorretoException as e:
+                    self.__view_procedimento.mostrar_mensagem(e)
             else:
                 msg = f'Não há procedimento com a descrição "{dados["descricao_cadastrada"]}".'
                 self.__view_procedimento.mostrar_mensagem(msg)

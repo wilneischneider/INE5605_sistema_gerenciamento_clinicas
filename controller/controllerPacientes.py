@@ -1,4 +1,3 @@
-from controller.controllerSistema import ControllerSistema
 from model.paciente import Paciente
 from exceptions.tipoParametroIncorretoException import TipoParametroIncorretoException
 from model.pessoa import Pessoa
@@ -6,7 +5,7 @@ from view.viewPacientes import ViewPacientes
 
 
 class ControllerPaciente:
-    def __init__(self, controller_sistema: ControllerSistema):
+    def __init__(self, controller_sistema):
         self.__pacientes = {}
         self.__controller_sistema = controller_sistema
         self.__view_paciente = ViewPacientes()

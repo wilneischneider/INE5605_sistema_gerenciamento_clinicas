@@ -2,12 +2,11 @@ from exceptions.tipoParametroIncorretoException import TipoParametroIncorretoExc
 from model.pessoa import Pessoa
 from model.profissional import Profissional
 from controller.controllerClinicas import ControllerClinica
-from controller.controllerSistema import ControllerSistema
 from view.viewProfissionais import ViewProfissionais
 
 
 class ControllerProfissional:
-    def __init__(self, controller_sistema: ControllerSistema):
+    def __init__(self, controller_sistema):
         self.__profissionais = {}
         self.__controller_sistema = controller_sistema
         self.__view_profissional = ViewProfissionais()
@@ -18,7 +17,7 @@ class ControllerProfissional:
 
     def listar_profissionais_cadastrados(self):
         lista_dados = []
-        for profissional in self.profissionais.values()
+        for profissional in self.profissionais.values():
             registro = {"nome": profissional.nome, "cpf": profissional.cpf, "celular": profissional.celular,
                      "especialidade": profissional.especialidade,
                      "registro_profissional": profissional.registro_profissional}

@@ -1,6 +1,5 @@
 from controller.controllerAtendimentos import ControllerAtendimento
 from controller.controllerProcedimentos import ControllerProcedimento
-from controller.controllerSistema import ControllerSistema
 from model.atendimento import Atendimento
 from model.clinica import Clinica
 from collections import Counter
@@ -11,7 +10,7 @@ from view.viewRelatorios import ViewRelatorios
 
 
 class ControllerRelatorios:
-    def __init__(self, controller_sistema: ControllerSistema):
+    def __init__(self, controller_sistema):
         self.__controller_sistema = controller_sistema
         self.__view_relatorio = ViewRelatorios()
 

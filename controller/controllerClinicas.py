@@ -1,12 +1,11 @@
 from exceptions.tipoParametroIncorretoException import TipoParametroIncorretoException
 from model.clinica import Clinica
 from controller.controllerProfissionais import ControllerProfissional
-from controller.controllerSistema import ControllerSistema
 from view.viewClinicas import ViewClinicas
 
 
 class ControllerClinica:
-    def __init__(self, controller_sistema: ControllerSistema):
+    def __init__(self, controller_sistema):
         self.__clinicas = {}
         self.__controller_sistema = controller_sistema
         self.__view_clinica = ViewClinicas()

@@ -1,6 +1,5 @@
 from controller.controllerAtendimentos import ControllerAtendimento
 from exceptions.tipoParametroIncorretoException import TipoParametroIncorretoException
-from controller.controllerSistema import ControllerSistema
 from view.viewPagamentos import ViewPagamentos
 from model.pagamentoDinheiro import PagamentoDinheiro
 from model.pagamentoPix import PagamentoPix
@@ -8,7 +7,7 @@ from model.pagamentoCartao import PagamentoCartao
 
 
 class ControllerPagamento:
-    def __init__(self, controller_sistema: ControllerSistema):
+    def __init__(self, controller_sistema):
         self.__pagamentos = []
         self.__controller_sistema = controller_sistema
         self.__view_pagamento = ViewPagamentos()
