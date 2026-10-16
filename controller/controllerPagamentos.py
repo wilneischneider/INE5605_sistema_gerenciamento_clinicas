@@ -101,30 +101,33 @@ class ControllerPagamento:
     def consultar_saldo_devedor(self):
         controlador_atendimento = self.__controller_sistema.controller_atendimento
         cpf_paciente = self.__view_pagamento.pegar_cpf_paciente()
-        datas_atendimentos = controlador_atendimento.atendimentos[cpf_paciente] #{data:{horario_inicio:atendimento}, data:{horario_inicio:atendimento}}
-        lista_datas_atendimentos = []
-        valor_total = 0
-        for data, horario_inicio in datas_atendimentos.items():
-            for horario, atendimento in horario_inicio.items():
-                valor_atendimento = atendimento.valor
-                valor_procedimentos = 0
-                for procedimento in atendimento.procedimentos_realizados:
-                    valor_procedimentos = valor_procedimentos + procedimento.custo
-                valor_total = valor_total + valor_atendimento + valor_procedimentos
-                valores = {"data": data, "horario": horario, "valor_atendimento": valor_atendimento,
-                           "valor_procedimentos": valor_procedimentos}
-                lista_datas_atendimentos.append(valores)
-        if len(lista_datas_atendimentos) > 0:
-            pagamentos_realizados = 0
-            for pagamento in self.__pagamentos:
-                if pagamento.paciente.cpf == cpf_paciente:
-                    pagamentos_realizados = pagamentos_realizados + pagamento.valor_pago
-            saldo_devedor = valor_total - pagamentos_realizados
-            dados = {"atendimentos": lista_datas_atendimentos, "total_pago": pagamentos_realizados,
-                    "saldo": saldo_devedor}
-            self.__view_pagamento.mostrar_valores_em_aberto(dados)
-        else:
-            self.__view_pagamento.mostrar_mensagem('Não há atendimento para os dados informados!')
+        try:
+            datas_atendimentos = controlador_atendimento.atendimentos[cpf_paciente] #{data:{horario_inicio:atendimento}, data:{horario_inicio:atendimento}}
+            lista_datas_atendimentos = []
+            valor_total = 0
+            for data, horario_inicio in datas_atendimentos.items():
+                for horario, atendimento in horario_inicio.items():
+                    valor_atendimento = atendimento.valor
+                    valor_procedimentos = 0
+                    for procedimento in atendimento.procedimentos_realizados:
+                        valor_procedimentos = valor_procedimentos + procedimento.custo
+                    valor_total = valor_total + valor_atendimento + valor_procedimentos
+                    valores = {"data": data, "horario": horario, "valor_atendimento": valor_atendimento,
+                               "valor_procedimentos": valor_procedimentos}
+                    lista_datas_atendimentos.append(valores)
+            if len(lista_datas_atendimentos) > 0:
+                pagamentos_realizados = 0
+                for pagamento in self.__pagamentos:
+                    if pagamento.paciente.cpf == cpf_paciente:
+                        pagamentos_realizados = pagamentos_realizados + pagamento.valor_pago
+                saldo_devedor = valor_total - pagamentos_realizados
+                dados = {"atendimentos": lista_datas_atendimentos, "total_pago": pagamentos_realizados,
+                        "saldo": saldo_devedor}
+                self.__view_pagamento.mostrar_valores_em_aberto(dados)
+            else:
+                self.__view_pagamento.mostrar_mensagem('Não há atendimento para os dados informados!')
+        except KeyError:
+            self.__view_pagamento.mostrar_mensagem('Não há atendimento para o CPF informado!')
 
     def consultar_pagamentos(self):
         cpf_paciente = self.__view_pagamento.pegar_cpf_paciente()
