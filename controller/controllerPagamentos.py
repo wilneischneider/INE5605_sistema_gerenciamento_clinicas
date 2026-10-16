@@ -105,7 +105,6 @@ class ControllerPagamento:
         lista_datas_atendimentos = []
         valor_total = 0
         for data, horario_inicio in datas_atendimentos.items():
-            self.__view_pagamento.mostrar_mensagem('--- Atendimentos ---')
             for horario, atendimento in horario_inicio.items():
                 valor_atendimento = atendimento.valor
                 valor_procedimentos = 0

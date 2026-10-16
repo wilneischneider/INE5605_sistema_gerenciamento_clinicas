@@ -11,8 +11,9 @@ class ViewAtendimentos(SuperView):
         print("2 - Registrar Procedimento")
         print("3 - Consultar Atendimento")
         print("4 - Excluir Atendimento")
+        print("5 - Listar Atendimentos")
         print("0 - Retornar")
-        opcao = self.entra_opcao_valida("Escolha a opção desejada: ", [0,1,2,3,4])
+        opcao = self.entra_opcao_valida("Escolha a opção desejada: ", [0,1,2,3,4,5])
         return opcao
 
     def mostrar_mensagem(self, mensagem):
@@ -152,3 +153,11 @@ class ViewAtendimentos(SuperView):
             for procedimento in dados["procedimentos_realizados"]:
                 print(f'Descrição: {procedimento["descricao"]} (R$ {procedimento["custo"]}),'
                       f' Responsável: {procedimento["profissional"]}')
+
+    def mostrar_lista_atendimentos(self, dados):
+        print("--- Lista de Atendimentos ---")
+        for atendimento in dados:
+            print(f'Clínica: {atendimento["nome_clinica"]} [{atendimento["cnpj_clinica"]}],'
+                  f' Tipo: {atendimento["tipo_atendimento"]}, Data: {atendimento["data_atendimento"]},'
+                  f' Hora: {atendimento["hora_atendimento"]}, Profissional: {atendimento["nome_profissional"]},'
+                  f' Paciente: {atendimento["nome_paciente"]}, Valor: {atendimento["valor_atendimento"]}')

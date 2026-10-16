@@ -1,5 +1,3 @@
-# from controller.controllerAtendimentos import ControllerAtendimento
-# from controller.controllerProcedimentos import ControllerProcedimento
 from model.atendimento import Atendimento
 from model.clinica import Clinica
 from collections import Counter
@@ -14,33 +12,9 @@ class ControllerRelatorios:
         self.__controller_sistema = controller_sistema
         self.__view_relatorio = ViewRelatorios()
 
-    def extrair_atendimentos(self):
-        controlador_atendimento = self.__controller_sistema.controller_atendimento
-        atendimentos_geral = controlador_atendimento.atendimentos #{cpf_paciente:{data:{horario_inicio:atendimento}}}
-        if len(atendimentos_geral) > 0:
-            lista_datas = [] #[{data:{horario_inicio:atendimento}}, {data:{horario_inicio:atendimento}}]
-            for valor in atendimentos_geral.values():
-                lista_datas.append(valor)
-            lista_horarios = []
-            for data in lista_datas:
-                lista_horarios.append(data.values())
-            lista_atendimentos = []
-            a = 0
-            while a < len(lista_horarios):
-                horario = list(lista_horarios[a])
-                b = 0
-                while b < len(horario):
-                    atendimento = horario[b].values()
-                    for registro in atendimento:
-                        lista_atendimentos.append(registro)
-                    b += 1
-                a += 1
-            return lista_atendimentos
-        else:
-            return []
-
     def listar_clinicas_com_mais_atendimentos(self):
-        lista_atendimentos = self.extrair_atendimentos()
+        controlador_atendimento = self.__controller_sistema.controller_atendimento
+        lista_atendimentos = controlador_atendimento.extrair_atendimentos()
         if len(lista_atendimentos) > 0:
             ocorrencias_clinicas = []
             for atendimento in lista_atendimentos:
@@ -51,7 +25,8 @@ class ControllerRelatorios:
             self.__view_relatorio.mostrar_mensagem("Nenhum atendimento encontrado!")
 
     def listar_atendimentos_mais_caros(self):
-        lista_atendimentos = self.extrair_atendimentos()
+        controlador_atendimento = self.__controller_sistema.controller_atendimento
+        lista_atendimentos = controlador_atendimento.extrair_atendimentos()
         if len(lista_atendimentos) > 0:
             atendimentos_com_precos = {}
             for atendimento in lista_atendimentos:
@@ -74,7 +49,8 @@ class ControllerRelatorios:
             self.__view_relatorio.mostrar_mensagem("Nenhum atendimento encontrado!")
 
     def listar_atendimentos_mais_baratos(self):
-        lista_atendimentos = self.extrair_atendimentos()
+        controlador_atendimento = self.__controller_sistema.controller_atendimento
+        lista_atendimentos = controlador_atendimento.extrair_atendimentos()
         if len(lista_atendimentos) > 0:
             atendimentos_com_precos = {}
             for atendimento in lista_atendimentos:
@@ -97,7 +73,8 @@ class ControllerRelatorios:
             self.__view_relatorio.mostrar_mensagem("Nenhum atendimento encontrado!")
 
     def listar_procedimentos_mais_realizados(self):
-        lista_atendimentos = self.extrair_atendimentos()
+        controlador_atendimento = self.__controller_sistema.controller_atendimento
+        lista_atendimentos = controlador_atendimento.extrair_atendimentos()
         if len(lista_atendimentos) > 0:
             ocorrencias_procedimentos = []
             for atendimento in lista_atendimentos:

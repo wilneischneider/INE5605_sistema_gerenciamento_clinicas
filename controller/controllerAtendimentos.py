@@ -1,6 +1,9 @@
+from os import supports_dir_fd
+
 from exceptions.tipoParametroIncorretoException import TipoParametroIncorretoException
 from datetime import date as Date
 from model.atendimento import Atendimento
+from model.clinica import Clinica
 from model.paciente import Paciente
 from model.pessoa import Pessoa
 from view.viewAtendimentos import ViewAtendimentos
@@ -67,9 +70,25 @@ class ControllerAtendimento:
                                 )
                                 if idade_paciente < 18:
                                     atendimento.responsavel = responsavel
-                                self.__atendimentos.update({cpf_paciente:{data:{horario_inicio:atendimento}}})
-                                self.__view_atendimento.mostrar_mensagem("Atendimento agendado com sucesso!")
-                                controlador_pagamento.escolher_forma_pagamento()
+                                if cpf_paciente in self.atendimentos.keys():
+                                    if data in self.atendimentos[cpf_paciente].keys():
+                                        if horario_inicio in self.atendimentos[cpf_paciente][data].keys():
+                                            msg = "Erro! Já existe atendimento para este paciente no mesmo horário!"
+                                            self.__view_atendimento.mostrar_mensagem(msg)
+                                        else:
+                                            self.__atendimentos[cpf_paciente][data].update(
+                                                {horario_inicio: atendimento})
+                                            self.__view_atendimento.mostrar_mensagem(
+                                                "Atendimento agendado com sucesso!")
+                                            controlador_pagamento.escolher_forma_pagamento()
+                                    else:
+                                        self.__atendimentos[cpf_paciente].update({data:{horario_inicio:atendimento}})
+                                        self.__view_atendimento.mostrar_mensagem("Atendimento agendado com sucesso!")
+                                        controlador_pagamento.escolher_forma_pagamento()
+                                else:
+                                    self.__atendimentos.update({cpf_paciente:{data:{horario_inicio:atendimento}}})
+                                    self.__view_atendimento.mostrar_mensagem("Atendimento agendado com sucesso!")
+                                    controlador_pagamento.escolher_forma_pagamento()
                             except TipoParametroIncorretoException as e:
                                 self.__view_atendimento.mostrar_mensagem(e)
                         else:
@@ -193,6 +212,53 @@ class ControllerAtendimento:
                 }
                 self.__view_atendimento.mostrar_dados_da_consulta(dados_mostrar)
 
+    def extrair_atendimentos(self):
+        atendimentos_geral = self.atendimentos #{cpf_paciente:{data:{horario_inicio:atendimento}}}
+        if len(atendimentos_geral) > 0:
+            lista_datas = [] #[{data:{horario_inicio:atendimento}}, {data:{horario_inicio:atendimento}}]
+            for valor in atendimentos_geral.values():
+                lista_datas.append(valor)
+            lista_horarios = []
+            for data in lista_datas:
+                lista_horarios.append(data.values())
+            lista_atendimentos = []
+            a = 0
+            while a < len(lista_horarios):
+                horario = list(lista_horarios[a])
+                b = 0
+                while b < len(horario):
+                    atendimento = horario[b].values()
+                    for registro in atendimento:
+                        lista_atendimentos.append(registro)
+                    b += 1
+                a += 1
+            return lista_atendimentos
+        else:
+            return []
+
+    def listar_atendimentos(self):
+        lista_atendimentos = self.extrair_atendimentos()
+        if len(lista_atendimentos) > 0:
+            dados = []
+            for atendimento in lista_atendimentos:
+                nome_clinica = atendimento.clinica.nome
+                cnpj_clinica = atendimento.clinica.cnpj
+                tipo_atendimento = atendimento.tipo_de_atendimento.tipo
+                data_atendimento = atendimento.data
+                hora_atendimento = atendimento.horario_inicio
+                nome_profissional = atendimento.profissional.nome
+                nome_paciente = atendimento.paciente.nome
+                valor_atendimento = atendimento.valor
+                registro = {"nome_clinica": nome_clinica, "cnpj_clinica": cnpj_clinica,
+                            "tipo_atendimento": tipo_atendimento, "data_atendimento": data_atendimento,
+                            "hora_atendimento": hora_atendimento, "nome_profissional": nome_profissional,
+                            "nome_paciente": nome_paciente, "valor_atendimento": valor_atendimento}
+                dados.append(registro)
+            self.__view_atendimento.mostrar_lista_atendimentos(dados)
+        else:
+            msg = f'Não há atendimento cadastrado!'
+            self.__view_atendimento.mostrar_mensagem(msg)
+
     def calcular_idade_paciente_na_data_do_atendimento(
             self,
             paciente: Paciente,
@@ -213,6 +279,6 @@ class ControllerAtendimento:
 
     def abrir_tela(self):
         opcoes = {0: self.retornar, 1: self.agendar_atendimento, 2: self.adicionar_procedimento,
-                  3: self.consultar_atendimento, 4: self.excluir_atendimento}
+                  3: self.consultar_atendimento, 4: self.excluir_atendimento, 5: self.listar_atendimentos}
         while True:
             opcoes[self.__view_atendimento.view_opcoes()]()
