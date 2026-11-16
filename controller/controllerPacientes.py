@@ -1,26 +1,27 @@
 from model.paciente import Paciente
 from exceptions.tipoParametroIncorretoException import TipoParametroIncorretoException
-from model.pessoa import Pessoa
 from view.viewPacientes import ViewPacientes
+from daos.daoPacientes import DaoPacientes
 
 
 class ControllerPaciente:
     def __init__(self, controller_sistema):
-        self.__pacientes = {}
+        self.__pacientes_dao = DaoPacientes()
         self.__controller_sistema = controller_sistema
         self.__view_paciente = ViewPacientes()
 
-    @property
     def pacientes(self):
-        return self.__pacientes
+        return self.__pacientes_dao.get_dict()
 
     def listar_cpfs_cadastrados(self) -> list:
-        return self.__pacientes.keys()
+        pacientes = self.pacientes()
+        return list(pacientes.keys())
 
     def retornar_paciente(self):
         cpf = self.__view_paciente.pegar_cpf()
         if cpf in self.listar_cpfs_cadastrados():
-            paciente = self.pacientes[cpf]
+            pacientes = self.pacientes()
+            paciente = pacientes[cpf]
             lista_dados = [{"nome": paciente.nome, "celular": paciente.celular,
                      "cpf": paciente.cpf, "data_de_nascimento": paciente.data_de_nascimento}]
             self.__view_paciente.mostrar_dados_paciente(lista_dados)
@@ -29,7 +30,8 @@ class ControllerPaciente:
 
     def listar_pacientes(self):
         lista_dados = []
-        for paciente in self.pacientes.values():
+        pacientes = self.pacientes()
+        for paciente in pacientes.values():
             registro = {"nome": paciente.nome, "celular": paciente.celular,
                      "cpf": paciente.cpf, "data_de_nascimento": paciente.data_de_nascimento}
             lista_dados.append(registro)
@@ -40,7 +42,7 @@ class ControllerPaciente:
         if dados["cpf"] not in self.listar_cpfs_cadastrados():
             try:
                 paciente = Paciente(dados["nome"], dados["celular"], dados["cpf"], dados["data_de_nascimento"])
-                self.__pacientes.update({dados["cpf"]: paciente})
+                self.__pacientes_dao.add(paciente)
                 self.__view_paciente.mostrar_mensagem(f'Paciente cadastrado(a) com sucesso!')
             except TipoParametroIncorretoException as e:
                 self.__view_paciente.mostrar_mensagem(e)
@@ -51,7 +53,7 @@ class ControllerPaciente:
         self.__view_paciente.mostrar_mensagem('--- Excluir Paciente ---')
         cpf = self.__view_paciente.pegar_cpf()
         if cpf in self.listar_cpfs_cadastrados():
-            self.__pacientes.pop(cpf)
+            self.__pacientes_dao.remove(cpf)
             self.__view_paciente.mostrar_mensagem(f'Paciente de CPF "{cpf}" excluído(a) com sucesso!')
         else:
             self.__view_paciente.mostrar_mensagem(f'Não há paciente cadastrado(a) com o CPF "{cpf}"!')
@@ -60,9 +62,10 @@ class ControllerPaciente:
         dados = self.__view_paciente.pegar_novo_nome()
         if dados["cpf"] in self.listar_cpfs_cadastrados():
             try:
-                paciente = self.__pacientes[dados["cpf"]]
+                pacientes = self.pacientes()
+                paciente = pacientes[dados["cpf"]]
                 paciente.nome = dados["nome"]
-                self.__pacientes.update({dados["cpf"]:paciente})
+                self.__pacientes_dao.update(paciente)
                 self.__view_paciente.mostrar_mensagem('Nome atualizado com sucesso!')
             except TipoParametroIncorretoException as e:
                 self.__view_paciente.mostrar_mensagem(e)
@@ -73,9 +76,10 @@ class ControllerPaciente:
         dados = self.__view_paciente.pegar_novo_celular()
         if dados["cpf"] in self.listar_cpfs_cadastrados():
             try:
-                paciente = self.__pacientes[dados["cpf"]]
+                pacientes = self.pacientes()
+                paciente = pacientes[dados["cpf"]]
                 paciente.celular = dados["celular"]
-                self.__pacientes.update({dados["cpf"]: paciente})
+                self.__pacientes_dao.update(paciente)
                 self.__view_paciente.mostrar_mensagem('Celular atualizado com sucesso!')
             except TipoParametroIncorretoException as e:
                 self.__view_paciente.mostrar_mensagem(e)
@@ -86,9 +90,10 @@ class ControllerPaciente:
         dados = self.__view_paciente.pegar_data_de_nascimento()
         if dados["cpf"] in self.listar_cpfs_cadastrados():
             try:
-                paciente = self.__pacientes[dados["cpf"]]
+                pacientes = self.pacientes()
+                paciente = pacientes[dados["cpf"]]
                 paciente.data_de_nascimento = dados["data_de_nascimento"]
-                self.__pacientes.update({dados["cpf"]: paciente})
+                self.__pacientes_dao.update(paciente)
                 self.__view_paciente.mostrar_mensagem('Data de nascimento atualizada com sucesso!')
             except TipoParametroIncorretoException as e:
                 self.__view_paciente.mostrar_mensagem(e)
@@ -100,10 +105,11 @@ class ControllerPaciente:
         if dados["cpf_correto"] not in self.listar_cpfs_cadastrados():
             if dados["cpf_cadastrado"] in self.listar_cpfs_cadastrados():
                 try:
-                    paciente = self.__pacientes[dados["cpf_cadastrado"]]
+                    pacientes = self.pacientes()
+                    paciente = pacientes[dados["cpf_cadastrado"]]
                     paciente.cpf = dados["cpf_correto"]
-                    self.__pacientes.pop(dados["cpf_cadastrado"])
-                    self.__pacientes.update({dados["cpf_correto"]: paciente})
+                    self.__pacientes_dao.remove(dados["cpf_cadastrado"])
+                    self.__pacientes_dao.add(paciente)
                     self.__view_paciente.mostrar_mensagem("CPF corrigido com sucesso!")
                 except TipoParametroIncorretoException as e:
                     self.__view_paciente.mostrar_mensagem(e)
