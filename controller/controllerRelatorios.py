@@ -88,7 +88,7 @@ class ControllerRelatorios:
 
     def listar_procedimentos_mais_caros(self):
         controlador_procedimento = self.__controller_sistema.controller_procedimento
-        procedimentos = controlador_procedimento.procedimentos
+        procedimentos = controlador_procedimento.procedimentos()
         if len(procedimentos) > 0:
             procedimentos_com_custo = {}
             for procedimento in procedimentos.values():
@@ -108,7 +108,7 @@ class ControllerRelatorios:
 
     def listar_procedimentos_mais_baratos(self):
         controlador_procedimento = self.__controller_sistema.controller_procedimento
-        procedimentos = controlador_procedimento.procedimentos
+        procedimentos = controlador_procedimento.procedimentos()
         if len(procedimentos) > 0:
             procedimentos_com_custo = {}
             for procedimento in procedimentos.values():
