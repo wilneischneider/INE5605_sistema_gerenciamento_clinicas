@@ -1,21 +1,22 @@
 from exceptions.tipoParametroIncorretoException import TipoParametroIncorretoException
 from view.viewTiposDeAtendimento import ViewTiposDeAtendimento
 from model.tipoDeAtendimento import TipoDeAtendimento
+from daos.daoTiposDeAtendimento import DaoTipoDeAtendimento
 
 
 class ControllerTipoDeAtendimento:
     def __init__(self, controller_sistema):
-        self.__tipos_de_atendimento = []
+        self.__tipos_de_atendimento_dao = DaoTipoDeAtendimento()
         self.__controller_sistema = controller_sistema
         self.__view_tipos_de_atendimento = ViewTiposDeAtendimento()
 
-    @property
     def tipos_de_atendimento(self):
-        return self.__tipos_de_atendimento
+        return self.__tipos_de_atendimento_dao.get_all()
 
     def listar_descricao_tipos_atendimento(self):
         descricao = []
-        for objeto in self.tipos_de_atendimento:
+        tipos_de_atendimento = self.tipos_de_atendimento()
+        for objeto in tipos_de_atendimento:
             descricao.append(objeto.tipo)
         return descricao
 
@@ -28,7 +29,7 @@ class ControllerTipoDeAtendimento:
         if tipo not in self.listar_descricao_tipos_atendimento():
             try:
                 novo_tipo = TipoDeAtendimento(tipo)
-                self.__tipos_de_atendimento.append(novo_tipo)
+                self.__tipos_de_atendimento_dao.add(novo_tipo)
                 self.__view_tipos_de_atendimento.mostrar_mensagem(f'O tipo "{tipo}" foi cadastrado com sucesso!')
             except TipoParametroIncorretoException as e:
                 self.__view_tipos_de_atendimento.mostrar_mensagem(e)
@@ -39,10 +40,8 @@ class ControllerTipoDeAtendimento:
         self.__view_tipos_de_atendimento.mostrar_mensagem('--- Excluir Tipo de Atendimento ---')
         tipo = self.__view_tipos_de_atendimento.pegar_tipo_atendimento()
         if tipo in self.listar_descricao_tipos_atendimento():
-            for objeto in self.__tipos_de_atendimento:
-                if objeto.tipo == tipo:
-                    self.__tipos_de_atendimento.remove(objeto)
-                    self.__view_tipos_de_atendimento.mostrar_mensagem('Tipo de atendimento excluído com sucesso!')
+            self.__tipos_de_atendimento_dao.remove(tipo)
+            self.__view_tipos_de_atendimento.mostrar_mensagem('Tipo de atendimento excluído com sucesso!')
         else:
             self.__view_tipos_de_atendimento.mostrar_mensagem(f'Não há atendimento do tipo "{tipo}" cadastrado!')
 

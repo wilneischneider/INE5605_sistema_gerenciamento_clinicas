@@ -1,33 +1,35 @@
 from model.procedimento import Procedimento
 from view.viewProcedimentos import ViewProcedimentos
 from exceptions.tipoParametroIncorretoException import TipoParametroIncorretoException
+from daos.daoProcedimentos import DaoProcedimentos
 
 
 class ControllerProcedimento:
     def __init__(self, controller_sistema):
-        self.__procedimentos = {}
+        self.__procedimentos_dao = DaoProcedimentos()
         self.__controller_sistema = controller_sistema
         self.__view_procedimento = ViewProcedimentos()
 
-    @property
     def procedimentos(self):
-        return self.__procedimentos
+        return self.__procedimentos_dao.get_dict()
 
     def listar_procedimentos_cadastrados(self):
         lista_dados = []
-        for procedimento in self.procedimentos.values():
+        for procedimento in self.__procedimentos_dao.get_all():
             registro = {"descricao": procedimento.descricao, "custo": procedimento.custo,
                         "profissional": procedimento.profissional.nome}
             lista_dados.append(registro)
         self.__view_procedimento.mostrar_dados_procedimento(lista_dados)
 
     def listar_descricao_procedimentos_cadastrados(self):
-        return self.__procedimentos.keys()
+        procedimentos = self.__procedimentos_dao.get_dict()
+        return list(procedimentos.keys())
 
     def retornar_procedimento(self):
         descricao = self.__view_procedimento.pegar_descricao()
         if descricao in self.listar_descricao_procedimentos_cadastrados():
-            procedimento = self.procedimentos[descricao]
+            procedimentos = self.procedimentos()
+            procedimento = procedimentos[descricao]
             lista_dados = [{"descricao": procedimento.descricao, "custo": procedimento.custo,
                             "profissional": procedimento.profissional.nome}]
             self.__view_procedimento.mostrar_dados_procedimento(lista_dados)
@@ -42,7 +44,7 @@ class ControllerProcedimento:
                 try:
                     profissional = controlador_profissional.profissionais[dados["cpf_profissional"]]
                     procedimento = Procedimento(dados["descricao"], dados["custo"], profissional)
-                    self.__procedimentos.update({dados["descricao"]: procedimento})
+                    self.__procedimentos_dao.add(procedimento)
                 except TipoParametroIncorretoException as e:
                     self.__view_procedimento.mostrar_mensagem(e)
             else:
@@ -56,7 +58,7 @@ class ControllerProcedimento:
         self.__view_procedimento.mostrar_mensagem('--- Excluir Procedimento ---')
         descricao = self.__view_procedimento.pegar_descricao()
         if descricao in self.listar_descricao_procedimentos_cadastrados():
-            self.__procedimentos.pop(descricao)
+            self.__procedimentos_dao.remove(descricao)
             self.__view_procedimento.mostrar_mensagem('Procedimento excluído com sucesso!')
         else:
             self.__view_procedimento.mostrar_mensagem(f'Não há procedimento com a descrição "{descricao}"!')
@@ -65,9 +67,10 @@ class ControllerProcedimento:
         dados = self.__view_procedimento.pegar_novo_custo()
         if dados["descricao"] in self.listar_descricao_procedimentos_cadastrados():
             try:
-                procedimento = self.__procedimentos[dados["descricao"]]
+                procedimentos = self.__procedimentos_dao.get_dict()
+                procedimento = procedimentos[dados["descricao"]]
                 procedimento.custo = dados["custo"]
-                self.__procedimentos.update({dados["descricao"]: procedimento})
+                self.__procedimentos_dao.update(procedimento)
                 self.__view_procedimento.mostrar_mensagem('Custo do procedimento atualizado com sucesso!')
             except TipoParametroIncorretoException as e:
                 self.__view_procedimento.mostrar_mensagem(e)
@@ -80,10 +83,11 @@ class ControllerProcedimento:
         if dados["descricao"] in self.listar_descricao_procedimentos_cadastrados():
             if dados["cpf_profissional"] in controlador_profissional.listar_cpfs_cadastrados():
                 try:
+                    procedimentos = self.__procedimentos_dao.get_dict()
                     profissional = controlador_profissional.profissionais[dados["cpf_profissional"]]
-                    procedimento = self.__procedimentos[dados["descricao"]]
+                    procedimento = procedimentos[dados["descricao"]]
                     procedimento.profissional = profissional
-                    self.__procedimentos.update({dados["descricao"]: procedimento})
+                    self.__procedimentos_dao.update(procedimento)
                     self.__view_procedimento.mostrar_mensagem('Profissional do procedimento atualizado com sucesso!')
                 except TipoParametroIncorretoException as e:
                     self.__view_procedimento.mostrar_mensagem(e)
@@ -98,10 +102,11 @@ class ControllerProcedimento:
         if dados["descricao_correta"] not in self.listar_descricao_procedimentos_cadastrados():
             if dados["descricao_cadastrada"] in self.listar_descricao_procedimentos_cadastrados():
                 try:
-                    procedimento = self.__procedimentos[dados["descricao_cadastrada"]]
+                    procedimentos = self.__procedimentos_dao.get_dict()
+                    procedimento = procedimentos[dados["descricao_cadastrada"]]
                     procedimento.descricao = dados["descricao_correta"]
-                    self.__procedimentos.pop(dados["descricao_cadastrada"])
-                    self.__procedimentos.update({dados["descricao_correta"]: procedimento})
+                    self.__procedimentos_dao.remove(dados["descricao_cadastrada"])
+                    self.__procedimentos_dao.add(procedimento)
                 except TipoParametroIncorretoException as e:
                     self.__view_procedimento.mostrar_mensagem(e)
             else:
