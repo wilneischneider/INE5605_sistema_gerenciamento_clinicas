@@ -42,7 +42,8 @@ class ControllerProcedimento:
         if dados["descricao"] not in self.listar_descricao_procedimentos_cadastrados():
             if dados["cpf_profissional"] in controlador_profissional.listar_cpfs_cadastrados():
                 try:
-                    profissional = controlador_profissional.profissionais[dados["cpf_profissional"]]
+                    profissionais = controlador_profissional.profissionais()
+                    profissional = profissionais[dados["cpf_profissional"]]
                     procedimento = Procedimento(dados["descricao"], dados["custo"], profissional)
                     self.__procedimentos_dao.add(procedimento)
                 except TipoParametroIncorretoException as e:
@@ -84,7 +85,8 @@ class ControllerProcedimento:
             if dados["cpf_profissional"] in controlador_profissional.listar_cpfs_cadastrados():
                 try:
                     procedimentos = self.__procedimentos_dao.get_dict()
-                    profissional = controlador_profissional.profissionais[dados["cpf_profissional"]]
+                    profissionais = controlador_profissional.profissionais()
+                    profissional = profissionais[dados["cpf_profissional"]]
                     procedimento = procedimentos[dados["descricao"]]
                     procedimento.profissional = profissional
                     self.__procedimentos_dao.update(procedimento)

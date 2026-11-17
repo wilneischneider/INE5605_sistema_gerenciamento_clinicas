@@ -187,7 +187,8 @@ class ControllerClinica:
             if dados["cpf"] not in profissionais_da_clinica.keys():
                 if dados["cpf"] in controlador_profissional.listar_cpfs_cadastrados():
                     try:
-                        clinica.vincular_profissional(controlador_profissional.profissionais[dados["cpf"]])
+                        profissionais = controlador_profissional.profissionais()
+                        clinica.vincular_profissional(profissionais[dados["cpf"]])
                         self.__clinicas_dao.update(clinica)
                         self.__view_clinica.mostrar_mensagem(f'Profissional vinculado com sucesso!')
                     except TipoParametroIncorretoException as e:
