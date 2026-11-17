@@ -146,9 +146,10 @@ class ControllerPagamento:
     def consultar_pagamentos(self):
         cpf_paciente = self.__view_pagamento.pegar_cpf_paciente()
         pagamentos_paciente = []
-        for registro in self.pagamentos():
+        pagamentos = self.__pagamentos_dao.get_dict()
+        for chave, registro in pagamentos.items():
             if registro.paciente.cpf == cpf_paciente:
-                pagto = {"data": registro.data, "valor": registro.valor_pago}
+                pagto = {"id": chave, "data": registro.data, "valor": registro.valor_pago}
                 pagamentos_paciente.append(pagto)
         if len(pagamentos_paciente) > 0:
             self.__view_pagamento.mostrar_pagamentos_paciente(pagamentos_paciente)
@@ -166,12 +167,22 @@ class ControllerPagamento:
         else:
             self.__view_pagamento.mostrar_mensagem('Não há pagamentos registrados!')
 
+    def excluir_pagamento(self):
+        self.consultar_pagamentos()
+        id_pagamento = self.__view_pagamento.pegar_id_pagamento()
+        pagamentos = self.__pagamentos_dao.get_dict()
+        if id_pagamento in pagamentos.keys():
+            self.__pagamentos_dao.remove(id_pagamento)
+            self.__view_pagamento.mostrar_mensagem('Pagamento excluido com sucesso!')
+        else:
+            self.__view_pagamento.mostrar_mensagem('Id incorreto! Pagamento não encontrado!')
+
     def retornar(self):
         self.__controller_sistema.abrir_tela()
 
     def abrir_tela(self):
         opcoes = {0: self.retornar, 1: self.escolher_forma_pagamento, 2: self.consultar_pagamentos,
-                  3: self.listar_pagamentos, 4: self.consultar_saldo_devedor}
+                  3: self.listar_pagamentos, 4: self.consultar_saldo_devedor, 5: self.excluir_pagamento}
         while True:
             opcoes[self.__view_pagamento.view_opcoes()]()
 

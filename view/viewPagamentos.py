@@ -11,8 +11,9 @@ class ViewPagamentos(SuperView):
         print("2 - Consultar Pagamentos")
         print("3 - Listar Pagamentos")
         print("4 - Consultar Saldo Devedor")
+        print("5 - Excluir Pagamento")
         print("0 - Retornar")
-        opcao = self.entra_opcao_valida("Escolha a opção desejada: ", [0,1,2,3,4])
+        opcao = self.entra_opcao_valida("Escolha a opção desejada: ", [0,1,2,3,4,5])
         return opcao
 
     def pegar_cpf_pagador(self):
@@ -28,9 +29,13 @@ class ViewPagamentos(SuperView):
         cpf_paciente = input("Informe o CPF do Paciente: ")
         return cpf_paciente
 
+    def pegar_id_pagamento(self):
+        id_pagamento = input("Informe o Id do pagamento que deseja excluir: ")
+        return id_pagamento
+
     def mostrar_pagamentos_paciente(self, dados):
         for pagamento in dados:
-            print(f'Data: {pagamento["data"]}, Valor: {pagamento["valor"]}')
+            print(f'Id: {pagamento["id"]}, Data: {pagamento["data"]}, Valor: {pagamento["valor"]}')
 
     def mostrar_pagamentos(self, dados):
         for pagto in dados:
