@@ -2,17 +2,18 @@ from view.viewPagamentos import ViewPagamentos
 from model.pagamentoDinheiro import PagamentoDinheiro
 from model.pagamentoPix import PagamentoPix
 from model.pagamentoCartao import PagamentoCartao
+from daos.daoPagamentos import DaoPagamentos
+from datetime import datetime
 
 
 class ControllerPagamento:
     def __init__(self, controller_sistema):
-        self.__pagamentos = []
+        self.__pagamentos_dao = DaoPagamentos()
         self.__controller_sistema = controller_sistema
         self.__view_pagamento = ViewPagamentos()
 
-    @property
     def pagamentos(self):
-        return self.__pagamentos
+        return self.__pagamentos_dao.get_all()
 
     def escolher_forma_pagamento(self):
         self.abrir_tela_opcoes_pagamento()
@@ -23,7 +24,8 @@ class ControllerPagamento:
         data_atendimento = self.__view_pagamento.pegar_data_da_consulta()
         horario_atendimento = self.__view_pagamento.pegar_horario_da_consulta()
         try:
-            datas_atendimentos = controlador_atendimento.atendimentos[cpf_paciente]
+            atendimentos = controlador_atendimento.atendimentos()
+            datas_atendimentos = atendimentos[cpf_paciente]
             horarios_atendimentos = datas_atendimentos[data_atendimento]
             atendimento = horarios_atendimentos[horario_atendimento]
             msg = f'Data de vencimento: {data_atendimento}'
@@ -37,7 +39,10 @@ class ControllerPagamento:
                 valor_pago = self.__view_pagamento.pegar_valor_do_pagamento()
                 parcelas = self.__view_pagamento.pegar_numero_parcelas()
                 pagamento = PagamentoDinheiro(paciente, atendimento, data, valor_pago, parcelas)
-                self.__pagamentos.append(pagamento)
+                agora = datetime.now()
+                agora_formatado = agora.strftime("%Y%m%d%H%M%S")
+                chave = agora_formatado + "_" + paciente.cpf
+                self.__pagamentos_dao.add(chave, pagamento)
                 self.__view_pagamento.mostrar_mensagem("Pagamento realizado com sucesso!")
             else:
                 self.__view_pagamento.mostrar_mensagem("Prazo vencido! Não foi possível pagar!")
@@ -48,7 +53,8 @@ class ControllerPagamento:
         data_atendimento = self.__view_pagamento.pegar_data_da_consulta()
         horario_atendimento = self.__view_pagamento.pegar_horario_da_consulta()
         try:
-            datas_atendimentos = controlador_atendimento.atendimentos[cpf_paciente]
+            atendimentos = controlador_atendimento.atendimentos()
+            datas_atendimentos = atendimentos[cpf_paciente]
             horarios_atendimentos = datas_atendimentos[data_atendimento]
             atendimento = horarios_atendimentos[horario_atendimento]
             msg = f'Data de vencimento: {data_atendimento}'
@@ -63,7 +69,10 @@ class ControllerPagamento:
                 parcelas = self.__view_pagamento.pegar_numero_parcelas()
                 cpf_pagador = self.__view_pagamento.pegar_cpf_pagador()
                 pagamento = PagamentoPix(paciente, atendimento, data, valor_pago, cpf_pagador, parcelas)
-                self.__pagamentos.append(pagamento)
+                agora = datetime.now()
+                agora_formatado = agora.strftime("%Y%m%d%H%M%S")
+                chave = agora_formatado + "_" + paciente.cpf
+                self.__pagamentos_dao.add(chave, pagamento)
                 self.__view_pagamento.mostrar_mensagem("Pagamento realizado com sucesso!")
             else:
                 self.__view_pagamento.mostrar_mensagem("Prazo vencido! Não foi possível pagar!")
@@ -74,7 +83,8 @@ class ControllerPagamento:
         data_atendimento = self.__view_pagamento.pegar_data_da_consulta()
         horario_atendimento = self.__view_pagamento.pegar_horario_da_consulta()
         try:
-            datas_atendimentos = controlador_atendimento.atendimentos[cpf_paciente]
+            atendimentos = controlador_atendimento.atendimentos()
+            datas_atendimentos = atendimentos[cpf_paciente]
             horarios_atendimentos = datas_atendimentos[data_atendimento]
             atendimento = horarios_atendimentos[horario_atendimento]
             msg = f'Data de vencimento: {data_atendimento}'
@@ -93,7 +103,10 @@ class ControllerPagamento:
                 cartao_bandeira = cartao["bandeira"]
                 pagamento = PagamentoCartao(paciente, atendimento, data, valor_pago, cpf_pagador,
                                             cartao_numero, cartao_bandeira, parcelas)
-                self.__pagamentos.append(pagamento)
+                agora = datetime.now()
+                agora_formatado = agora.strftime("%Y%m%d%H%M%S")
+                chave = agora_formatado + "_" + paciente.cpf
+                self.__pagamentos_dao.add(chave, pagamento)
                 self.__view_pagamento.mostrar_mensagem("Pagamento realizado com sucesso!")
             else:
                 self.__view_pagamento.mostrar_mensagem("Prazo vencido! Não foi possível pagar!")
@@ -102,7 +115,8 @@ class ControllerPagamento:
         controlador_atendimento = self.__controller_sistema.controller_atendimento
         cpf_paciente = self.__view_pagamento.pegar_cpf_paciente()
         try:
-            datas_atendimentos = controlador_atendimento.atendimentos[cpf_paciente] #{data:{horario_inicio:atendimento}, data:{horario_inicio:atendimento}}
+            atendimentos = controlador_atendimento.atendimentos()
+            datas_atendimentos = atendimentos[cpf_paciente] #{data:{horario_inicio:atendimento}, data:{horario_inicio:atendimento}}
             lista_datas_atendimentos = []
             valor_total = 0
             for data, horario_inicio in datas_atendimentos.items():
@@ -132,7 +146,7 @@ class ControllerPagamento:
     def consultar_pagamentos(self):
         cpf_paciente = self.__view_pagamento.pegar_cpf_paciente()
         pagamentos_paciente = []
-        for registro in self.__pagamentos:
+        for registro in self.pagamentos():
             if registro.paciente.cpf == cpf_paciente:
                 pagto = {"data": registro.data, "valor": registro.valor_pago}
                 pagamentos_paciente.append(pagto)
@@ -143,7 +157,7 @@ class ControllerPagamento:
 
     def listar_pagamentos(self):
         pagamentos = []
-        for registro in self.__pagamentos:
+        for registro in self.pagamentos():
             pagto = {"nome_paciente": registro.paciente.nome, "cpf_paciente": registro.paciente.cpf,
                      "data": registro.data, "valor": registro.valor_pago}
             pagamentos.append(pagto)
