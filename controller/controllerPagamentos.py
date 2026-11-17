@@ -131,7 +131,7 @@ class ControllerPagamento:
                     lista_datas_atendimentos.append(valores)
             if len(lista_datas_atendimentos) > 0:
                 pagamentos_realizados = 0
-                for pagamento in self.__pagamentos:
+                for pagamento in self.pagamentos():
                     if pagamento.paciente.cpf == cpf_paciente:
                         pagamentos_realizados = pagamentos_realizados + pagamento.valor_pago
                 saldo_devedor = valor_total - pagamentos_realizados

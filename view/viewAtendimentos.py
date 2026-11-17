@@ -144,7 +144,7 @@ class ViewAtendimentos(SuperView):
         print("--- Dados da Consulta ---")
         print(f'A(O) {dados["tipo_de_atendimento"]} do(a) paciente {dados["paciente"]} em {dados["data"]}, '
               f'às {dados["horario_inicio"]} horas, foi na clínica {dados["clinica"]} da cidade de '
-              f'{dados["cidade"]} e teve como profissional o(a) Dr.(a) {dados["profissional"]}, da área de'
+              f'{dados["cidade"]} e teve como profissional o(a) Dr.(a) {dados["profissional"]}, da área de '
               f'{dados["especialidade"]}. O valor do atendimento foi R$ {dados["valor"]}.')
         if dados["responsavel"] != None:
             print(f'Acompanhou o(a) paciente o(a) Sr.(a) {dados["responsavel"]}')
