@@ -1,23 +1,21 @@
-from os import supports_dir_fd
-
 from exceptions.tipoParametroIncorretoException import TipoParametroIncorretoException
 from datetime import date as Date
 from model.atendimento import Atendimento
-from model.clinica import Clinica
 from model.paciente import Paciente
 from model.pessoa import Pessoa
 from view.viewAtendimentos import ViewAtendimentos
+from daos.daoAtendimentos import DaoAtendimentos
 
 
 class ControllerAtendimento:
     def __init__(self, controller_sistema):
-        self.__atendimentos = {} #{cpf_paciente:{data:{horario_inicio:atendimento}}}
+        self.__atendimentos_dao = DaoAtendimentos()
+        #self.__atendimentos = {} #{cpf_paciente:{data:{horario_inicio:atendimento}}}
         self.__controller_sistema = controller_sistema
         self.__view_atendimento = ViewAtendimentos()
 
-    @property
     def atendimentos(self) -> dict:
-        return self.__atendimentos
+        return self.__atendimentos_dao.get_dict()
 
     def agendar_atendimento(self):
         controlador_clinica = self.__controller_sistema.controller_clinica
@@ -34,7 +32,8 @@ class ControllerAtendimento:
         tipo_de_atendimento = dados["tipo_de_atendimento"]
         valor = dados["valor"]
         if cnpj in controlador_clinica.listar_cnpjs_cadastrados():
-            clinica = controlador_clinica.clinicas[cnpj]
+            clinicas = controlador_clinica.clinicas()
+            clinica = clinicas[cnpj]
             if (
                 clinica.horario_de_abertura <= horario_inicio
                 and clinica.horario_de_fechamento >= horario_fim
@@ -44,7 +43,8 @@ class ControllerAtendimento:
                     profissionais_da_clinica = clinica.profissionais
                     if cpf_profissional in profissionais_da_clinica.keys():
                         if tipo_de_atendimento in controlador_tipo_atendimento.listar_descricao_tipos_atendimento():
-                            paciente = controlador_paciente.pacientes[cpf_paciente]
+                            pacientes = controlador_paciente.pacientes()
+                            paciente = pacientes[cpf_paciente]
                             idade_paciente = self.calcular_idade_paciente_na_data_do_atendimento(paciente, data)
                             if idade_paciente < 18:
                                 dados_responsavel = self.__view_atendimento.pegar_dados_do_responsavel()
@@ -54,7 +54,7 @@ class ControllerAtendimento:
                                 except TipoParametroIncorretoException as e:
                                     self.__view_atendimento.mostrar_mensagem(e)
                             profissional = profissionais_da_clinica[cpf_profissional]
-                            for objeto in controlador_tipo_atendimento.tipos_de_atendimento:
+                            for objeto in controlador_tipo_atendimento.tipos_de_atendimento():
                                 if objeto.tipo == tipo_de_atendimento:
                                     tipo_atendimento = objeto
                             try:
@@ -70,23 +70,28 @@ class ControllerAtendimento:
                                 )
                                 if idade_paciente < 18:
                                     atendimento.responsavel = responsavel
-                                if cpf_paciente in self.atendimentos.keys():
-                                    if data in self.atendimentos[cpf_paciente].keys():
+                                atendimentos = self.atendimentos()
+                                if cpf_paciente in atendimentos.keys():
+                                    if data in atendimentos[cpf_paciente].keys():
                                         if horario_inicio in self.atendimentos[cpf_paciente][data].keys():
                                             msg = "Erro! Já existe atendimento para este paciente no mesmo horário!"
                                             self.__view_atendimento.mostrar_mensagem(msg)
                                         else:
-                                            self.__atendimentos[cpf_paciente][data].update(
+                                            atendimentos_paciente = atendimentos[cpf_paciente]
+                                            atendimentos_paciente[cpf_paciente][data].update(
                                                 {horario_inicio: atendimento})
+                                            self.__atendimentos_dao.update(cpf_paciente, atendimentos_paciente)
                                             self.__view_atendimento.mostrar_mensagem(
                                                 "Atendimento agendado com sucesso!")
                                             controlador_pagamento.escolher_forma_pagamento()
                                     else:
-                                        self.__atendimentos[cpf_paciente].update({data:{horario_inicio:atendimento}})
+                                        atendimentos_paciente = atendimentos[cpf_paciente]
+                                        atendimentos_paciente.update({data:{horario_inicio:atendimento}})
+                                        self.__atendimentos_dao.update(cpf_paciente, atendimentos_paciente)
                                         self.__view_atendimento.mostrar_mensagem("Atendimento agendado com sucesso!")
                                         controlador_pagamento.escolher_forma_pagamento()
                                 else:
-                                    self.__atendimentos.update({cpf_paciente:{data:{horario_inicio:atendimento}}})
+                                    self.__atendimentos_dao.add(cpf_paciente, {data:{horario_inicio:atendimento}})
                                     self.__view_atendimento.mostrar_mensagem("Atendimento agendado com sucesso!")
                                     controlador_pagamento.escolher_forma_pagamento()
                             except TipoParametroIncorretoException as e:
@@ -115,7 +120,8 @@ class ControllerAtendimento:
         self.__view_atendimento.mostrar_mensagem("--- Excluir atendimento ---")
         dados = self.__view_atendimento.pegar_dados_da_consulta()
         try:
-            datas_atendimentos_paciente = self.atendimentos[dados["cpf_paciente"]]
+            atendimentos = self.atendimentos()
+            datas_atendimentos_paciente = atendimentos[dados["cpf_paciente"]]
             horarios_de_atendimentos = datas_atendimentos_paciente[dados["data"]]
             horarios_de_atendimentos[dados["horario_inicio"]]
         except KeyError:
@@ -127,21 +133,23 @@ class ControllerAtendimento:
             if len(horarios_de_atendimentos) == 0:
                 datas_atendimentos_paciente.pop(dados["data"])
                 if len(datas_atendimentos_paciente) == 0:
-                    self.__atendimentos.pop(dados["cpf_paciente"])
+                    self.__atendimentos_dao.remove(dados["cpf_paciente"])
                 else:
-                    self.__atendimentos.update({dados["cpf_paciente"]: datas_atendimentos_paciente})
+                    self.__atendimentos_dao.update(dados["cpf_paciente"], datas_atendimentos_paciente)
             else:
                 datas_atendimentos_paciente.update({dados["data"]: horarios_de_atendimentos})
-                self.__atendimentos.update({dados["cpf_paciente"]: datas_atendimentos_paciente})
+                self.__atendimentos_dao.update(dados["cpf_paciente"], datas_atendimentos_paciente)
             self.__view_atendimento.mostrar_mensagem("Atendimento excluído com sucesso!")
 
     def adicionar_procedimento(self):
         controlador_procedimento = self.__controller_sistema.controller_procedimento
         dados = self.__view_atendimento.pegar_dados_procedimento_na_consulta()
         if dados["descricao_procedimento"] in controlador_procedimento.listar_descricao_procedimentos_cadastrados():
-            procedimento = controlador_procedimento.procedimentos[dados["descricao_procedimento"]]
+            procedimentos = controlador_procedimento.procedimentos()
+            procedimento = procedimentos[dados["descricao_procedimento"]]
             try:
-                datas_atendimentos_paciente = self.atendimentos[dados["cpf_paciente"]]
+                atendimentos = self.atendimentos()
+                datas_atendimentos_paciente = atendimentos[dados["cpf_paciente"]]
                 horarios_de_atendimentos = datas_atendimentos_paciente[dados["data"]]
                 atendimento = horarios_de_atendimentos[dados["horario_inicio"]]
             except KeyError:
@@ -156,7 +164,7 @@ class ControllerAtendimento:
                 else:
                     horarios_de_atendimentos.update({dados["horario_inicio"]:atendimento})
                     datas_atendimentos_paciente.update({dados["data"]:horarios_de_atendimentos})
-                    self.__atendimentos.update({dados["cpf_paciente"]:datas_atendimentos_paciente})
+                    self.__atendimentos_dao.update(dados["cpf_paciente"], datas_atendimentos_paciente)
                     self.__view_atendimento.mostrar_mensagem("Procedimento incluído com sucesso!")
         else:
             msg = f'Não há procedimento cadastrado com a descrição "{dados["descricao_procedimento"]}"'
@@ -165,7 +173,8 @@ class ControllerAtendimento:
     def consultar_atendimento(self):
         dados = self.__view_atendimento.pegar_dados_da_consulta()
         try:
-            datas_atendimentos_paciente = self.atendimentos[dados["cpf_paciente"]]
+            atendimentos = self.atendimentos()
+            datas_atendimentos_paciente = atendimentos[dados["cpf_paciente"]]
             horarios_de_atendimentos = datas_atendimentos_paciente[dados["data"]]
             atendimento = horarios_de_atendimentos[dados["horario_inicio"]]
         except KeyError:
@@ -213,7 +222,7 @@ class ControllerAtendimento:
                 self.__view_atendimento.mostrar_dados_da_consulta(dados_mostrar)
 
     def extrair_atendimentos(self):
-        atendimentos_geral = self.atendimentos #{cpf_paciente:{data:{horario_inicio:atendimento}}}
+        atendimentos_geral = self.atendimentos() #{cpf_paciente:{data:{horario_inicio:atendimento}}}
         if len(atendimentos_geral) > 0:
             lista_datas = [] #[{data:{horario_inicio:atendimento}}, {data:{horario_inicio:atendimento}}]
             for valor in atendimentos_geral.values():

@@ -6,20 +6,23 @@ class DaoAtendimentos(DAO):
     def __init__(self):
         super().__init__("atendimentos.pkl")
 
-    def add(self, atendimento: Atendimento):
+    def add(self, cpf_paciente:str, atendimentos: dict):
         if (
-            atendimento is not None
-            and isinstance(atendimento, Atendimento)
+            cpf_paciente is not None
+            and atendimentos is not None
+            and isinstance(cpf_paciente, str)
+            and isinstance(atendimentos, dict)
         ):
-            super().add(paciente.cpf, paciente) #{cpf_paciente:{data:{horario_inicio:atendimento}}}
+            super().add(cpf_paciente, atendimentos) #{cpf_paciente:{data:{horario_inicio:atendimento}}}
 
-    def update(self, paciente: Paciente):
+    def update(self, cpf_paciente:str, atendimentos: dict):
         if (
-            paciente is not None
-            and isinstance(paciente, Paciente)
-            and isinstance(paciente.cpf, str)
+            cpf_paciente is not None
+            and atendimentos is not None
+            and isinstance(cpf_paciente, str)
+            and isinstance(atendimentos, dict)
         ):
-            super().update(paciente.cpf, paciente)
+            super().add(cpf_paciente, atendimentos)
 
     def get(self, chave: str):
         if isinstance(chave, str):
