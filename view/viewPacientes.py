@@ -30,7 +30,7 @@ class ViewPacientes():
             [sg.Radio("Retornar ao Menu Inicial", "RD1", key="0")],
             [sg.Button("Confirmar"), sg.Button("Cancelar")]
         ]
-        self.__window = sg.Window("Módulo de Gestão de Atendimentos").layout(layout)
+        self.__window = sg.Window("Módulo de Gestão de Pacientes").layout(layout)
 
     def view_opcoes(self):
         self.init_opcoes()
