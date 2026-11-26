@@ -302,46 +302,21 @@ class ViewAtendimentos():
         else:
             return None
 
-    # def pegar_dados_da_consulta(self):
-    #     cpf_paciente = input("Informe o CPF do Paciente: ")
-    #     repetir = 0
-    #     while repetir == 0:
-    #         ano_consulta = input("Informe o Ano da Consulta (AAAA): ")
-    #         mes_consulta = input("Informe o Mês da Consulta (MM): ")
-    #         dia_consulta = input("Informe o Dia da Consulta (DD): ")
-    #         try:
-    #             ano = int(ano_consulta)
-    #             mes = int(mes_consulta)
-    #             dia = int(dia_consulta)
-    #             data = Date(ano, mes, dia)
-    #             repetir = 1
-    #         except ValueError:
-    #             print("Informe ano, mês e dia em numerais, nos formatos indicados. Ex.: Ano: 1990, Mês: 5, Dia: 15")
-    #     repetir = 0
-    #     while repetir == 0:
-    #         hora_consulta = input("Informe a Hora de Início da Consulta (HH): ")
-    #         minuto_consulta = input("Informe os Minutos de Início da Consulta (MM): ")
-    #         try:
-    #             hora = int(hora_consulta)
-    #             minuto = int(minuto_consulta)
-    #             horario_inicio = Time(hora, minuto)
-    #             repetir = 1
-    #         except ValueError:
-    #             print("Informe hora e minutos em numerais, nos formatos indicados. Ex.: Hora: 18, Minuto: 27")
-    #     return {"cpf_paciente": cpf_paciente, "data": data, "horario_inicio": horario_inicio}
-
     def mostrar_dados_da_consulta(self, dados: dict):
         sg.change_look_and_feel("LightGrey1")
-        lista_procedimentos = [sg.Text("Lista de Procedimentos", font=("Helvica", 14))]
-        for procedimento in dados["procedimentos_realizados"]:
-            lista_procedimentos.append(
-                [sg.Text(
-                    f"Procedimento: {procedimento['descricao']},"
-                    f" Custo: R$ {procedimento['custo']},"
-                    f" Profissional: {procedimento['profissional']}",
-                    font=("Helvica", 12))
-                ]
-            )
+        if len(dados["procedimentos_realizados"]) > 0:
+            lista_procedimentos = [[sg.Text("Lista de Procedimentos", font=("Helvica", 14))]]
+            for procedimento in dados["procedimentos_realizados"]:
+                lista_procedimentos.append(
+                    [sg.Text(
+                        f"- {procedimento['descricao']},"
+                        f" Custo: R$ {procedimento['custo']},"
+                        f" Profissional: {procedimento['profissional']}",
+                        font=("Helvica", 12))
+                    ]
+                )
+        else:
+            lista_procedimentos = []
         if dados["responsavel"] != None:
             responsavel = [sg.Text(f"Responsável: {dados['responsavel']}", font=("Helvica", 12))]
         else:
@@ -366,43 +341,32 @@ class ViewAtendimentos():
         self.open()
         self.close()
         return None
-        # if button is not None and button == "Confirmar":
-        #     return dados
-        # else:
-        #     return None
-        #
-        # {"descricao": descricao, "custo": custo, "profissional": profissional}
-        # {
-        #     # "clinica": atendimento.clinica.nome,
-        #     # "cidade": atendimento.clinica.cidade,
-        #     # "paciente": atendimento.paciente.nome,
-        #     # "profissional": atendimento.profissional.nome,
-        #     # "especialidade": atendimento.profissional.especialidade,
-        #     # "data": atendimento.data,
-        #     # "horario_inicio": atendimento.horario_inicio,
-        #     # "horario_fim": atendimento.horario_fim,
-        #     "tipo_de_atendimento": atendimento.tipo_de_atendimento.tipo,
-        #     "valor": atendimento.valor,
-        #     "procedimentos_realizados": procedimentos,
-        #     "responsavel": responsavel
-        # }
-        # print("--- Dados da Consulta ---")
-        # print(f'A(O) {dados["tipo_de_atendimento"]} do(a) paciente {} em {dados["data"]}, '
-        #       f'às {dados["horario_inicio"]} horas, foi na clínica {dados["clinica"]} da cidade de '
-        #       f'{dados["cidade"]} e teve como profissional o(a) Dr.(a) {dados["profissional"]}, da área de '
-        #       f'{dados["especialidade"]}. O valor do atendimento foi R$ {dados["valor"]}.')
-        # if dados["responsavel"] != None:
-        #     print(f'Acompanhou o(a) paciente o(a) Sr.(a) {dados["responsavel"]}')
-        # if len(dados["procedimentos_realizados"]) > 0:
-        #     print(f'Durante o (a) {dados["tipo_de_atendimento"]}, foram realizados os seguintes procedimentos:')
-        #     for procedimento in dados["procedimentos_realizados"]:
-        #         print(f'Descrição: {procedimento["descricao"]} (R$ {procedimento["custo"]}),'
-        #               f' Responsável: {procedimento["profissional"]}')
 
-    def mostrar_lista_atendimentos(self, dados):
-        print("--- Lista de Atendimentos ---")
+    def mostrar_lista_atendimentos(self, dados: list):
+        sg.change_look_and_feel("LightGrey1")
+        lista_atendimentos = []
         for atendimento in dados:
-            print(f'Clínica: {atendimento["nome_clinica"]} [{atendimento["cnpj_clinica"]}],'
-                  f' Tipo: {atendimento["tipo_atendimento"]}, Data: {atendimento["data_atendimento"]},'
-                  f' Hora: {atendimento["hora_atendimento"]}, Profissional: {atendimento["nome_profissional"]},'
-                  f' Paciente: {atendimento["nome_paciente"]}, Valor: {atendimento["valor_atendimento"]}')
+            lista_atendimentos.append(
+                f'Clínica: {atendimento["nome_clinica"]} [{atendimento["cnpj_clinica"]}]\n'
+                f'Tipo: {atendimento["tipo_atendimento"]}\n'
+                f'Data: {atendimento["data_atendimento"]} às {atendimento["hora_atendimento"]}\n'
+                f'Profissional: {atendimento["nome_profissional"]}\n'
+                f'Paciente: {atendimento["nome_paciente"]}\n'
+                f'Valor: R$ {atendimento["valor_atendimento"]}\n'
+                '-----------------------------------------------------\n\n'
+            )
+        listagem = "".join(lista_atendimentos)
+
+        layout = [
+            [sg.Text("LISTA DE ATENDIMENTOS", font=("Helvica", 25))],
+            [sg.Multiline(default_text=listagem,
+                          size=(70, 40),
+                          disabled=True,
+                          autoscroll=False)],
+            [sg.Button("Fechar")]
+        ]
+        self.__window = sg.Window("Módulo de Gestão de Atendimentos").layout(layout)
+
+        self.open()
+        self.close()
+        return None

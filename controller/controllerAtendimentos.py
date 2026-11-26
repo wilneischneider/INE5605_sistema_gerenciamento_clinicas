@@ -31,6 +31,9 @@ class ControllerAtendimento:
             self.__view_atendimento.mostrar_mensagem("Clínica não encontrada!")
             self.abrir_tela()
         profissionais = clinica.profissionais
+        if len(profissionais) == 0:
+            self.__view_atendimento.mostrar_mensagem("Não há profissional associado à Clínica!")
+            self.abrir_tela()
         cpf_profissional = self.__view_atendimento.pegar_profissional(profissionais)
         if cpf_profissional == None:
             self.abrir_tela()
@@ -48,6 +51,9 @@ class ControllerAtendimento:
         else:
             tipo_de_atendimento = tipo_selecionado
         pacientes = controlador_paciente.pacientes()
+        if len(pacientes) == 0:
+            self.__view_atendimento.mostrar_mensagem("Nenhum paciente cadastrado!")
+            self.abrir_tela()
         cpf_paciente = self.__view_atendimento.pegar_paciente(pacientes)
         if cpf_paciente == None:
             self.abrir_tela()
@@ -135,6 +141,9 @@ class ControllerAtendimento:
     def excluir_atendimento(self):
         controlador_paciente = self.__controller_sistema.controller_paciente
         pacientes = controlador_paciente.pacientes()
+        if len(pacientes) == 0:
+            self.__view_atendimento.mostrar_mensagem("Nenhum paciente cadastrado!")
+            self.abrir_tela()
         cpf_paciente = self.__view_atendimento.pegar_paciente(pacientes)
         if cpf_paciente == None:
             self.abrir_tela()
@@ -167,6 +176,9 @@ class ControllerAtendimento:
         controlador_procedimento = self.__controller_sistema.controller_procedimento
         controlador_paciente = self.__controller_sistema.controller_paciente
         pacientes = controlador_paciente.pacientes()
+        if len(pacientes) == 0:
+            self.__view_atendimento.mostrar_mensagem("Nenhum paciente cadastrado!")
+            self.abrir_tela()
         cpf_paciente = self.__view_atendimento.pegar_paciente(pacientes)
         if cpf_paciente == None:
             self.abrir_tela()
@@ -185,6 +197,9 @@ class ControllerAtendimento:
             self.abrir_tela()
         atendimento = horarios_de_atendimentos[horario_atendimento]
         procedimentos = controlador_procedimento.procedimentos()
+        if len(procedimentos) == 0:
+            self.__view_atendimento.mostrar_mensagem("Nenhum procedimento cadastrado!")
+            self.abrir_tela()
         procedimento = self.__view_atendimento.pegar_procedimento(procedimentos)
         if procedimento == None:
             self.abrir_tela()
@@ -201,6 +216,9 @@ class ControllerAtendimento:
     def consultar_atendimento(self):
         controlador_paciente = self.__controller_sistema.controller_paciente
         pacientes = controlador_paciente.pacientes()
+        if len(pacientes) == 0:
+            self.__view_atendimento.mostrar_mensagem("Nenhum paciente cadastrado!")
+            self.abrir_tela()
         cpf_paciente = self.__view_atendimento.pegar_paciente(pacientes)
         if cpf_paciente == None:
             self.abrir_tela()
@@ -288,9 +306,11 @@ class ControllerAtendimento:
                             "nome_paciente": nome_paciente, "valor_atendimento": valor_atendimento}
                 dados.append(registro)
             self.__view_atendimento.mostrar_lista_atendimentos(dados)
+            self.abrir_tela()
         else:
             msg = f'Não há atendimento cadastrado!'
             self.__view_atendimento.mostrar_mensagem(msg)
+            self.abrir_tela()
 
     def calcular_idade_paciente_na_data_do_atendimento(
             self,
