@@ -1,74 +1,236 @@
-from view.superView import SuperView
+import FreeSimpleGUI as sg
 
 
-class ViewProfissionais(SuperView):
+class ViewProfissionais():
+    def __init__(self):
+        self.__window = None
+        self.init_opcoes()
+
+    def close(self):
+        self.__window.Close()
+
+    def open(self):
+        button, values = self.__window.Read()
+        return button, values
+
+    def init_opcoes(self):
+        sg.change_look_and_feel("LightGrey1")
+        layout = [
+            [sg.Text("MÓDULO DE GESTÃO DE PROFISSIONAIS", font=("Helvica", 25))],
+            [sg.Text("Escolha sua opção", font=("Helvica", 15))],
+            [sg.Radio("Listar Profissionais", "RD1", key="1")],
+            [sg.Radio("Cadastrar Profissional", "RD1", key="2")],
+            [sg.Radio("Buscar Profissional", "RD1", key="3")],
+            [sg.Radio("Excluir Profissional", "RD1", key="4")],
+            [sg.Radio("Atualizar Nome do(a) Profissional", "RD1", key="5")],
+            [sg.Radio("Atualizar Celular do(a) Profissional", "RD1", key="6")],
+            [sg.Radio("Atualizar Especialidade do(a) Profissional", "RD1", key="7")],
+            [sg.Radio("Atualizar Registro Profissional", "RD1", key="8")],
+            [sg.Radio("Corrigir CPF do(a) Profissional", "RD1", key="9")],
+            [sg.Radio("Retornar ao Menu Inicial", "RD1", key="0")],
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
+        self.__window = sg.Window("Módulo de Gestão de Profissionais").layout(layout)
+
     def view_opcoes(self):
-        print("-------- MÓDULO DE GESTÃO DE PROFISSIONAIS ---------")
-        print("Escolha sua opção:")
-        print("1 - Listar Profissionais")
-        print("2 - Cadastrar Profissional")
-        print("3 - Buscar Profissional")
-        print("4 - Excluir Profissional")
-        print("5 - Atualizar Nome do(a) Profissional")
-        print("6 - Atualizar Celular do(a) Profissional")
-        print("7 - Atualizar Especialidade do(a) Profissional")
-        print("8 - Atualizar Registro Profissional")
-        print("9 - Corrigir CPF do(a) Profissional")
-        print("0 - Retornar")
-        opcao = self.entra_opcao_valida("Escolha a opção desejada: ", [0,1,2,3,4,5,6,7,8,9])
+        self.init_opcoes()
+        button, values = self.open()
+        if values["1"]:
+            opcao = 1
+        if values["2"]:
+            opcao = 2
+        if values["3"]:
+            opcao = 3
+        if values["4"]:
+            opcao = 4
+        if values["5"]:
+            opcao = 5
+        if values["6"]:
+            opcao = 6
+        if values["7"]:
+            opcao = 7
+        if values["8"]:
+            opcao = 8
+        if values["9"]:
+            opcao = 9
+        if values["0"] or button in (None, "Cancelar"):
+            opcao = 0
+        self.close()
         return opcao
 
     def mostrar_mensagem(self, mensagem):
-        print(mensagem)
+        sg.popup(mensagem)
 
-    def pegar_cpf(self):
-        cpf = input("Informe o CPF do(a) Profissional: ")
-        return cpf
+    def pegar_cpf(self, profissionais: dict):
+        sg.change_look_and_feel("LightGrey1")
+        lista_profissionais = []
+        for cpf, valor in profissionais.items():
+            lista_profissionais.append([sg.Radio(f"{valor.nome} [CPF: {cpf}]", "RD1", key=cpf)])
 
-    def mostrar_dados_profissional(self, lista_dados):
-        print("--- PROFISSIONAL(IS) CADASTRADO(S) ---")
-        if len(lista_dados) > 0:
-            for dados_profissional in lista_dados:
-                print("Nome: ", dados_profissional["nome"])
-                print("Celular: ", dados_profissional["celular"])
-                print("CPF: ", dados_profissional["cpf"])
-                print("Especialidade: ", dados_profissional["especialidade"])
-                print("Registro Profissional: ", dados_profissional["registro_profissional"])
-                print("--------------------------------")
+        layout = [
+            [sg.Text("Selecione o(a) Profissional:", font=("Helvica", 20))],
+            *lista_profissionais,
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
+        self.__window = sg.Window("Módulo de Gestão de Profissionais").layout(layout)
+
+        button, values = self.open()
+        dados = values
+        self.close()
+        if button is not None and button == "Confirmar":
+            for cpf, resposta in dados.items():
+                if resposta == True:
+                    return cpf
+                    break
         else:
-            print("Nenhum profissional encontrado!")
+            return None
+
+    def mostrar_dados_profissional(self, lista_dados: list):
+        sg.change_look_and_feel("LightGrey1")
+        if len(lista_dados) > 0:
+            lista_profissionais = []
+            for profissional in lista_dados:
+                lista_profissionais.append(
+                    f'Nome: {profissional["nome"]}\n'
+                    f'Celular: {profissional["celular"]}\n'
+                    f'CPF: {profissional["cpf"]}\n'
+                    f'Especialidade: {profissional["especialidade"]}\n'
+                    f'Registro Profissional: {profissional["registro_profissional"]}\n'
+                    '--------------------------------------\n\n'
+                )
+            listagem = "".join(lista_profissionais)
+
+            layout = [
+                [sg.Text("PROFISSIONAL(IS) CADASTRADO(S)", font=("Helvica", 20))],
+                [sg.Multiline(default_text=listagem,
+                              size=(40, 40),
+                              disabled=True,
+                              autoscroll=False)],
+                [sg.Button("Fechar")]
+            ]
+            self.__window = sg.Window("Módulo de Gestão de Profissionais").layout(layout)
+
+            self.open()
+            self.close()
+        else:
+            sg.popup("Nenhum profissional encontrado!")
 
     def pegar_dados_profissional(self):
-        print("-------- CADASTRO DE PROFISSIONAL ----------")
-        nome = input("Nome: ")
-        celular = input("Celular: ")
-        cpf = input("CPF: ")
-        especialidade = input("Especialidade: ")
-        registro_profissional = input("Registro Profissional: ")
-        return {"nome": nome, "celular": celular, "cpf": cpf, "especialidade": especialidade,
-                "registro_profissional": registro_profissional}
+        sg.change_look_and_feel("LightGrey1")
+        layout = [
+            [sg.Text("CADASTRO DE PROFISSIONAL", font=("Helvica", 20))],
+            [sg.Text("Dados do Profissional", font=("Helvica", 15))],
+            [sg.Text("Nome", size=(20, 1)), sg.InputText("", key="nome")],
+            [sg.Text("Celular", size=(20, 1)), sg.InputText("", key="celular")],
+            [sg.Text("CPF", size=(20, 1)), sg.InputText("", key="cpf")],
+            [sg.Text("Especialidade", size=(20, 1)), sg.InputText("", key="especialidade")],
+            [sg.Text("Registro Profissional", size=(20, 1)),
+             sg.InputText("", key="registro_profissional")],
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
+        self.__window = sg.Window("Módulo de Gestão de Profissionais").layout(layout)
 
-    def pegar_novo_nome(self):
-        cpf = input("Informe o CPF do(a) Profissional: ")
-        nome = input("Informe o novo nome do(a) Profissional: ")
-        return {"nome": nome, "cpf": cpf}
+        button, values = self.open()
+        dados_bruto = values
+        self.close()
+        if button is not None and button == "Confirmar":
+            dados = {
+                'nome': dados_bruto['nome'],
+                'celular': dados_bruto['celular'],
+                'cpf': dados_bruto['cpf'],
+                'especialidade': dados_bruto['especialidade'],
+                'registro_profissional': dados_bruto['registro_profissional']
+            }
+            return dados
+        else:
+            return None
 
-    def pegar_novo_celular(self):
-        cpf = input("Informe o CPF do(a) Profissional: ")
-        celular = input("Informe o novo celular do(a) Profissional: ")
-        return {"celular": celular, "cpf": cpf}
+    def pegar_novo_nome(self, nome_anterior: str):
+        sg.change_look_and_feel("LightGrey1")
+        layout = [
+            [sg.Text("Atualizar Nome do Profissional", font=("Helvica", 20))],
+            [sg.Text(f"Nome anterior: {nome_anterior}", font=("Helvica", 15))],
+            [sg.Text("Novo nome", size=(20, 1)), sg.InputText("", key="nome")],
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
+        self.__window = sg.Window("Módulo de Gestão de Profissionais").layout(layout)
 
-    def pegar_nova_especialidade(self):
-        cpf = input("Informe o CPF do(a) Profissional: ")
-        especialidade = input("Informe a nova especialidade do(a) Profissional: ")
-        return {"especialidade": especialidade, "cpf": cpf}
+        button, values = self.open()
+        dados = values
+        self.close()
+        if button is not None and button == "Confirmar":
+            return dados["nome"]
+        else:
+            return None
 
-    def pegar_novo_registro_profissional(self):
-        cpf = input("Informe o CPF do(a) Profissional: ")
-        registro_profissional = input("Informe o novo registro profissional: ")
-        return {"registro_profissional": registro_profissional, "cpf": cpf}
+    def pegar_novo_celular(self, celular_anterior: str):
+        sg.change_look_and_feel("LightGrey1")
+        layout = [
+            [sg.Text("Atualizar Celular do Profissional", font=("Helvica", 20))],
+            [sg.Text(f"Celular anterior: {celular_anterior}", font=("Helvica", 15))],
+            [sg.Text("Novo Celular", size=(20, 1)), sg.InputText("", key="novo_celular")],
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
+        self.__window = sg.Window("Módulo de Gestão de Profissionais").layout(layout)
 
-    def pegar_cpf_correto(self):
-        cpf_correto = input("Informe o CPF correto do(a) Profissional: ")
-        cpf_cadastrado = input("Informe o CPF cadastrado: ")
-        return {"cpf_correto": cpf_correto, "cpf_cadastrado": cpf_cadastrado}
+        button, values = self.open()
+        dados = values
+        self.close()
+        if button is not None and button == "Confirmar":
+            return dados["novo_celular"]
+        else:
+            return None
+
+    def pegar_nova_especialidade(self, especialidade_anterior: str):
+        sg.change_look_and_feel("LightGrey1")
+        layout = [
+            [sg.Text("Atualizar Especialidade do Profissional", font=("Helvica", 20))],
+            [sg.Text(f"Especialidade anterior: {especialidade_anterior}", font=("Helvica", 15))],
+            [sg.Text("Nova especialidade", size=(20, 1)), sg.InputText("", key="nova_especialidade")],
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
+        self.__window = sg.Window("Módulo de Gestão de Profissionais").layout(layout)
+
+        button, values = self.open()
+        dados = values
+        self.close()
+        if button is not None and button == "Confirmar":
+            return dados["nova_especialidade"]
+        else:
+            return None
+
+    def pegar_novo_registro_profissional(self, registro_anterior: str):
+        sg.change_look_and_feel("LightGrey1")
+        layout = [
+            [sg.Text("Atualizar Registro Profissional", font=("Helvica", 20))],
+            [sg.Text(f"Registro anterior: {registro_anterior}", font=("Helvica", 15))],
+            [sg.Text("Novo registro", size=(20, 1)), sg.InputText("", key="novo_registro")],
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
+        self.__window = sg.Window("Módulo de Gestão de Profissionais").layout(layout)
+
+        button, values = self.open()
+        dados = values
+        self.close()
+        if button is not None and button == "Confirmar":
+            return dados["novo_registro"]
+        else:
+            return None
+
+    def pegar_cpf_correto(self, cpf_cadastrado: str):
+        sg.change_look_and_feel("LightGrey1")
+        layout = [
+            [sg.Text("Corrigir CPF do(a) Profissional", font=("Helvica", 20))],
+            [sg.Text(f"CPF cadastrado: {cpf_cadastrado}", font=("Helvica", 15))],
+            [sg.Text("CPF correto", size=(20, 1)), sg.InputText("", key="cpf_correto")],
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
+        self.__window = sg.Window("Módulo de Gestão de Profissionais").layout(layout)
+
+        button, values = self.open()
+        dados = values
+        self.close()
+        if button is not None and button == "Confirmar":
+            return dados["cpf_correto"]
+        else:
+            return None
