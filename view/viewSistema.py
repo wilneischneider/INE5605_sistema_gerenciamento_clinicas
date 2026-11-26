@@ -1,4 +1,3 @@
-# from view.superView import SuperView (pode ser excluido depois porque nao faz mais sentido)
 import FreeSimpleGUI as sg
 
 
@@ -55,7 +54,3 @@ class ViewSistema():
             opcao = 0
         self.close()
         return opcao
-
-    # Apenas exemplo, apagar depois
-    def mostra_mensagem(self, msg):
-        sg.popup("", msg)

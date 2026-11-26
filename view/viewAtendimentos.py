@@ -1,158 +1,403 @@
-from view.superView import SuperView
 from datetime import date as Date
 from datetime import time as Time
+import FreeSimpleGUI as sg
 
 
-class ViewAtendimentos(SuperView):
+class ViewAtendimentos():
+    def __init__(self):
+        self.__window = None
+        self.init_opcoes()
+
+    def close(self):
+        self.__window.Close()
+
+    def open(self):
+        button, values = self.__window.Read()
+        return button, values
+
+    def init_opcoes(self):
+        sg.change_look_and_feel("LightGrey1")
+        layout = [
+            [sg.Text("MÓDULO DE GESTÃO DE ATENDIMENTOS", font=("Helvica", 25))],
+            [sg.Text("Escolha sua opção", font=("Helvica", 15))],
+            [sg.Radio("Agendar Atendimento", "RD1", key="1")],
+            [sg.Radio("Registrar Procedimento", "RD1", key="2")],
+            [sg.Radio("Consultar Atendimento", "RD1", key="3")],
+            [sg.Radio("Excluir Atendimento", "RD1", key="4")],
+            [sg.Radio("Listar Atendimentos", "RD1", key="5")],
+            [sg.Radio("Retornar ao Menu Inicial", "RD1", key="0")],
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
+        self.__window = sg.Window("Módulo de Gestão de Atendimentos").layout(layout)
+
     def view_opcoes(self):
-        print("-------- MÓDULO DE GESTÃO DE ATENDIMENTOS ---------")
-        print("Escolha sua opção:")
-        print("1 - Agendar Atendimento")
-        print("2 - Registrar Procedimento")
-        print("3 - Consultar Atendimento")
-        print("4 - Excluir Atendimento")
-        print("5 - Listar Atendimentos")
-        print("0 - Retornar")
-        opcao = self.entra_opcao_valida("Escolha a opção desejada: ", [0,1,2,3,4,5])
+        self.init_opcoes()
+        button, values = self.open()
+        if values["1"]:
+            opcao = 1
+        if values["2"]:
+            opcao = 2
+        if values["3"]:
+            opcao = 3
+        if values["4"]:
+            opcao = 4
+        if values["5"]:
+            opcao = 5
+        if values["0"] or button in (None, "Cancelar"):
+            opcao = 0
+        self.close()
         return opcao
 
-    def mostrar_mensagem(self, mensagem):
-        print(mensagem)
+    def mostrar_mensagem(self, msg):
+        sg.popup("", msg)
 
     def pegar_dados_do_responsavel(self):
-        print("!!! PACIENTE MENOR DE 18 ANOS NA DATA DA CONSULTA !!!")
-        print("Necessário acompanhamento de Responsável!")
-        print("--- Dados do Responsável ---")
-        nome = input("Informe o nome do Responsável: ")
-        celular = input("Informe o número de celular do Responsável: ")
-        cpf = input("Informe o CPF do Responsável: ")
-        return {"nome": nome, "celular": celular, "cpf": cpf}
+        sg.change_look_and_feel("LightGrey1")
+        layout = [
+            [sg.Text("PACIENTE MENOR DE 18 ANOS NA DATA DA CONSULTA", font=("Helvica", 25))],
+            [sg.Text("Necessário acompanhamento de Responsável!", font=("Helvica", 12))],
+            [sg.Text("Dados do Responsável", font=("Helvica", 15))],
+            [sg.Text("Nome do(a) Responsável", size=(37, 1)), sg.InputText("", key="nome")],
+            [sg.Text("Número do Celular do(a) Responsável", size=(37, 1)), sg.InputText("", key="celular")],
+            [sg.Text("CPF do(a) Responsável", size=(37, 1)), sg.InputText("", key="cpf")],
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
+        self.__window = sg.Window("Módulo de Gestão de Atendimentos").layout(layout)
 
-    def pegar_dados_agendar_atendimento(self):
-        print("-------- AGENDAMENTO DE ATENDIMENTO ----------")
-        cnpj = input("CNPJ da Clínica do Atendimento: ")
-        cpf_paciente = input("CPF do Paciente: ")
-        cpf_profissional = input("CPF do Profissional: ")
-        tipo_de_atendimento = input("Tipo de Atendimento desejado: ")
-        repetir = 0
-        while repetir == 0:
-            ano_consulta = input("Ano da Consulta (AAAA): ")
-            mes_consulta = input("Mês da Consulta (MM): ")
-            dia_consulta = input("Dia da Consulta (DD): ")
-            try:
-                ano = int(ano_consulta)
-                mes = int(mes_consulta)
-                dia = int(dia_consulta)
-                data = Date(ano, mes, dia)
-                repetir = 1
-            except ValueError:
-                print("Informe ano, mês e dia em numerais, nos formatos indicados. Ex.: Ano: 1990, Mês: 5, Dia: 15")
-        repetir = 0
-        while repetir == 0:
-            hora_consulta = input("Hora de Início da Consulta (HH): ")
-            minuto_consulta = input("Minutos de Início da Consulta (MM): ")
-            try:
-                hora = int(hora_consulta)
-                minuto = int(minuto_consulta)
-                horario_inicio = Time(hora, minuto)
-                repetir = 1
-            except ValueError:
-                print("Informe hora e minutos em numerais, nos formatos indicados. Ex.: Hora: 18, Minuto: 27")
-        repetir = 0
-        while repetir == 0:
-            hora_consulta = input("Hora de Fim da Consulta (HH): ")
-            minuto_consulta = input("Minutos de Fim da Consulta (MM): ")
-            try:
-                hora = int(hora_consulta)
-                minuto = int(minuto_consulta)
-                horario_fim = Time(hora, minuto)
-                repetir = 1
-            except ValueError:
-                print("Informe hora e minutos em numerais, nos formatos indicados. Ex.: Hora: 18, Minuto: 27")
-        repetir = 0
-        while repetir == 0:
-            valor = input("Valor do Atendimento (em R$): ")
-            try:
-                valor = float(valor)
-                repetir = 1
-            except ValueError:
-                print("Informe apenas valores, utilizando ponto '.' como separador de decimal.")
-        return {"cnpj": cnpj, "cpf_paciente": cpf_paciente, "cpf_profissional": cpf_profissional,
-                "data": data, "horario_inicio": horario_inicio, "horario_fim": horario_fim,
-                "tipo_de_atendimento": tipo_de_atendimento, "valor": valor}
+        button, values = self.open()
+        dados = values
+        self.close()
+        if button is not None and button == "Confirmar":
+            return dados
+        else:
+            return None
 
-    def pegar_dados_procedimento_na_consulta(self):
-        print("--- Incluir Procedimento em Consulta ---")
-        cpf_paciente = input("Informe o CPF do Paciente: ")
-        repetir = 0
-        while repetir == 0:
-            ano_consulta = input("Informe o Ano da Consulta (AAAA): ")
-            mes_consulta = input("Informe o Mês da Consulta (MM): ")
-            dia_consulta = input("Informe o Dia da Consulta (DD): ")
-            try:
-                ano = int(ano_consulta)
-                mes = int(mes_consulta)
-                dia = int(dia_consulta)
-                data = Date(ano, mes, dia)
-                repetir = 1
-            except ValueError:
-                print("Informe ano, mês e dia em numerais, nos formatos indicados. Ex.: Ano: 1990, Mês: 5, Dia: 15")
-        repetir = 0
-        while repetir == 0:
-            hora_consulta = input("Informe a Hora de Início da Consulta (HH): ")
-            minuto_consulta = input("Informe os Minutos de Início da Consulta (MM): ")
-            try:
-                hora = int(hora_consulta)
-                minuto = int(minuto_consulta)
-                horario_inicio = Time(hora, minuto)
-                repetir = 1
-            except ValueError:
-                print("Informe hora e minutos em numerais, nos formatos indicados. Ex.: Hora: 18, Minuto: 27")
-        descricao_procedimento = input("Informe a Descrição do Procedimento Realizado: ")
-        return {"cpf_paciente": cpf_paciente, "data": data, "horario_inicio": horario_inicio,
-                "descricao_procedimento": descricao_procedimento}
+    def pegar_clinica(self, clinicas: dict):
+        sg.change_look_and_feel("LightGrey1")
+        lista_clinicas = []
+        for chave, valor in clinicas.items():
+            lista_clinicas.append([sg.Radio(f"{valor.nome} - {valor.cidade}", "RD1", key=chave)])
 
-    def pegar_dados_da_consulta(self):
-        cpf_paciente = input("Informe o CPF do Paciente: ")
-        repetir = 0
-        while repetir == 0:
-            ano_consulta = input("Informe o Ano da Consulta (AAAA): ")
-            mes_consulta = input("Informe o Mês da Consulta (MM): ")
-            dia_consulta = input("Informe o Dia da Consulta (DD): ")
-            try:
-                ano = int(ano_consulta)
-                mes = int(mes_consulta)
-                dia = int(dia_consulta)
-                data = Date(ano, mes, dia)
-                repetir = 1
-            except ValueError:
-                print("Informe ano, mês e dia em numerais, nos formatos indicados. Ex.: Ano: 1990, Mês: 5, Dia: 15")
-        repetir = 0
-        while repetir == 0:
-            hora_consulta = input("Informe a Hora de Início da Consulta (HH): ")
-            minuto_consulta = input("Informe os Minutos de Início da Consulta (MM): ")
-            try:
-                hora = int(hora_consulta)
-                minuto = int(minuto_consulta)
-                horario_inicio = Time(hora, minuto)
-                repetir = 1
-            except ValueError:
-                print("Informe hora e minutos em numerais, nos formatos indicados. Ex.: Hora: 18, Minuto: 27")
-        return {"cpf_paciente": cpf_paciente, "data": data, "horario_inicio": horario_inicio}
+        layout = [
+            [sg.Text("SELEÇÃO DE CLÍNICA", font=("Helvica", 25))],
+            [sg.Text("Selecione a clínica desejada:", font=("Helvica", 20))],
+            *lista_clinicas,
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
+        self.__window = sg.Window("Módulo de Gestão de Atendimentos").layout(layout)
 
-    def mostrar_dados_da_consulta(self, dados):
-        print("--- Dados da Consulta ---")
-        print(f'A(O) {dados["tipo_de_atendimento"]} do(a) paciente {dados["paciente"]} em {dados["data"]}, '
-              f'às {dados["horario_inicio"]} horas, foi na clínica {dados["clinica"]} da cidade de '
-              f'{dados["cidade"]} e teve como profissional o(a) Dr.(a) {dados["profissional"]}, da área de '
-              f'{dados["especialidade"]}. O valor do atendimento foi R$ {dados["valor"]}.')
+        button, values = self.open()
+        for chave, valor in values.items():
+            if valor == True:
+                dados = chave
+                break
+        self.close()
+        if button is not None and button == "Confirmar":
+            return dados
+        else:
+            return None
+
+    def pegar_profissional(self, profissionais: dict):
+        sg.change_look_and_feel("LightGrey1")
+        lista_profissionais = []
+        for chave, valor in profissionais.items():
+            lista_profissionais.append([sg.Radio(f"{valor.nome} - {valor.especialidade}", "RD1", key=chave)])
+
+        layout = [
+            [sg.Text("SELEÇÃO DE PROFISSIONAL", font=("Helvica", 25))],
+            [sg.Text("Selecione o(a) profissional desejado(a):", font=("Helvica", 20))],
+            *lista_profissionais,
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
+        self.__window = sg.Window("Módulo de Gestão de Atendimentos").layout(layout)
+
+        button, values = self.open()
+        for chave, valor in values.items():
+            if valor == True:
+                dados = chave
+                break
+        self.close()
+        if button is not None and button == "Confirmar":
+            return dados
+        else:
+            return None
+
+    def pegar_tipo_atendimento(self, tipos_atendimento: list):
+        sg.change_look_and_feel("LightGrey1")
+        lista_tipos_atendimento = []
+        for tipo in tipos_atendimento:
+            lista_tipos_atendimento.append([sg.Radio(f"{tipo}", "RD1", key=tipo)])
+
+        layout = [
+            [sg.Text("SELEÇÃO DE TIPO DE ATENDIMENTO", font=("Helvica", 25))],
+            [sg.Text("Selecione o tipo de atendimento desejado:", font=("Helvica", 20))],
+            *lista_tipos_atendimento,
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
+        self.__window = sg.Window("Módulo de Gestão de Atendimentos").layout(layout)
+
+        button, values = self.open()
+        for chave, valor in values.items():
+            if valor == True:
+                dados = chave
+                break
+        self.close()
+        if button is not None and button == "Confirmar":
+            return dados
+        else:
+            return None
+
+    def pegar_paciente(self, pacientes: dict):
+        sg.change_look_and_feel("LightGrey1")
+        lista_pacientes = []
+        for chave, valor in pacientes.items():
+            lista_pacientes.append([sg.Radio(f"{valor.nome} [CPF: {valor.cpf}]", "RD1", key=chave)])
+
+        layout = [
+            [sg.Text("SELEÇÃO DE PACIENTE", font=("Helvica", 25))],
+            [sg.Text("Selecione o(a) paciente:", font=("Helvica", 20))],
+            *lista_pacientes,
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
+        self.__window = sg.Window("Módulo de Gestão de Atendimentos").layout(layout)
+
+        button, values = self.open()
+        for chave, valor in values.items():
+            if valor == True:
+                dados = chave
+                break
+        self.close()
+        if button is not None and button == "Confirmar":
+            return dados
+        else:
+            return None
+
+    def pegar_dados_agendar_atendimento(self, horario_atendimento: dict):
+        sg.change_look_and_feel("LightGrey1")
+        horas = [f"{h:02d}" for h in range(0, 24)]
+        minutos = [f"{m:02d}" for m in range(0, 60, 1)]
+        abre = horario_atendimento['abre']
+        fecha = horario_atendimento['fecha']
+        layout = [
+            [sg.Text("DATA E HORA DO ATENDIMENTO", font=("Helvica", 25))],
+            [sg.Text("Informe a data e o horário do atendimento:", font=("Helvica", 20))],
+            [sg.Text(f"Horário de funcionamento da Clínica: {abre} às {fecha}", size=(50, 1))],
+            [sg.Text("Data e hora do atendimento", size=(50, 1), font=("Helvica", 18))],
+            [
+                sg.Text("Data:", size=(7, 1)),
+                sg.InputText("", key="data", size=(20, 1), readonly=True),
+                sg.CalendarButton(
+                    "Selecione a data",
+                    target="data",
+                    format="%Y-%m-%d",
+                    close_when_date_chosen=True
+                ),
+                sg.Text("Horário Início:", size=(15, 1)),
+                sg.Spin(horas, initial_value=abre.hour, key="hora_inicio", size=(3, 1), readonly=True),
+                sg.Text(":"),
+                sg.Spin(minutos, initial_value=abre.minute, key="minuto_inicio", size=(3, 1), readonly=True),
+                sg.Text("Horário Fim:", size=(15, 1)),
+                sg.Spin(horas, initial_value=abre.hour, key="hora_fim", size=(3, 1), readonly=True),
+                sg.Text(":"),
+                sg.Spin(minutos, initial_value=abre.minute, key="minuto_fim", size=(3, 1), readonly=True)
+            ],
+            [sg.Text("Valor da consulta (R$):", size=(24, 1)), sg.InputText("", key="valor")],
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
+        self.__window = sg.Window("Módulo de Gestão de Atendimentos").layout(layout)
+
+        button, values = self.open()
+        dados_bruto = values
+        self.close()
+        if button is not None and button == "Confirmar":
+            try:
+                dados = {
+                    'data': Date.strptime(dados_bruto['data'], "%Y-%m-%d"),
+                    'horario_inicio': Time(int(dados_bruto['hora_inicio']), int(dados_bruto['minuto_inicio'])),
+                    'horario_fim': Time(int(dados_bruto['hora_fim']), int(dados_bruto['minuto_fim'])),
+                    'valor': float(dados_bruto['valor'])
+                }
+                return dados
+            except ValueError:
+                sg.popup("Erro no valor do atendimento! Utilize ponto '.' para separar decimais.")
+                return None
+        else:
+            return None
+
+    def pegar_data_atendimento(self, datas: list):
+        sg.change_look_and_feel("LightGrey1")
+        lista_atendimentos = []
+        for data in datas:
+            lista_atendimentos.append([sg.Radio(f"{data}", "RD1", key=data)])
+
+        layout = [
+            [sg.Text("SELEÇÃO DE ATENDIMENTO", font=("Helvica", 25))],
+            [sg.Text("Selecione a data do atendimento desejado:", font=("Helvica", 37))],
+            *lista_atendimentos,
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
+        self.__window = sg.Window("Módulo de Gestão de Atendimentos").layout(layout)
+
+        button, values = self.open()
+        for chave, valor in values.items():
+            if valor == True:
+                dados = chave
+                break
+        self.close()
+        if button is not None and button == "Confirmar":
+            return dados
+        else:
+            return None
+
+    def pegar_horario_atendimento(self, horarios: list):
+        sg.change_look_and_feel("LightGrey1")
+        lista_atendimentos = []
+        for horario in horarios:
+            lista_atendimentos.append([sg.Radio(f"{horario}", "RD1", key=horario)])
+
+        layout = [
+            [sg.Text("SELEÇÃO DE ATENDIMENTO", font=("Helvica", 25))],
+            [sg.Text("Selecione o horário do atendimento desejado:", font=("Helvica", 37))],
+            *lista_atendimentos,
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
+        self.__window = sg.Window("Módulo de Gestão de Atendimentos").layout(layout)
+
+        button, values = self.open()
+        for chave, valor in values.items():
+            if valor == True:
+                dados = chave
+                break
+        self.close()
+        if button is not None and button == "Confirmar":
+            return dados
+        else:
+            return None
+
+    def pegar_procedimento(self, procedimentos: dict):
+        sg.change_look_and_feel("LightGrey1")
+        lista_procedimentos = []
+        for chave, valor in procedimentos.items():
+            lista_procedimentos.append(
+                [sg.Radio(f"Procedimento: {chave}, Responsável: {valor.profissional.nome}, Custo (R$): {valor.custo}",
+                          "RD1", key=chave)]
+            )
+
+        layout = [
+            [sg.Text("SELEÇÃO DE PROCEDIMENTO", font=("Helvica", 25))],
+            [sg.Text("Selecione o procedimento desejado:", font=("Helvica", 37))],
+            *lista_procedimentos,
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
+        self.__window = sg.Window("Módulo de Gestão de Atendimentos").layout(layout)
+
+        button, values = self.open()
+        for chave, valor in values.items():
+            if valor == True:
+                dados = procedimentos[chave]
+                break
+        self.close()
+        if button is not None and button == "Confirmar":
+            return dados
+        else:
+            return None
+
+    # def pegar_dados_da_consulta(self):
+    #     cpf_paciente = input("Informe o CPF do Paciente: ")
+    #     repetir = 0
+    #     while repetir == 0:
+    #         ano_consulta = input("Informe o Ano da Consulta (AAAA): ")
+    #         mes_consulta = input("Informe o Mês da Consulta (MM): ")
+    #         dia_consulta = input("Informe o Dia da Consulta (DD): ")
+    #         try:
+    #             ano = int(ano_consulta)
+    #             mes = int(mes_consulta)
+    #             dia = int(dia_consulta)
+    #             data = Date(ano, mes, dia)
+    #             repetir = 1
+    #         except ValueError:
+    #             print("Informe ano, mês e dia em numerais, nos formatos indicados. Ex.: Ano: 1990, Mês: 5, Dia: 15")
+    #     repetir = 0
+    #     while repetir == 0:
+    #         hora_consulta = input("Informe a Hora de Início da Consulta (HH): ")
+    #         minuto_consulta = input("Informe os Minutos de Início da Consulta (MM): ")
+    #         try:
+    #             hora = int(hora_consulta)
+    #             minuto = int(minuto_consulta)
+    #             horario_inicio = Time(hora, minuto)
+    #             repetir = 1
+    #         except ValueError:
+    #             print("Informe hora e minutos em numerais, nos formatos indicados. Ex.: Hora: 18, Minuto: 27")
+    #     return {"cpf_paciente": cpf_paciente, "data": data, "horario_inicio": horario_inicio}
+
+    def mostrar_dados_da_consulta(self, dados: dict):
+        sg.change_look_and_feel("LightGrey1")
+        lista_procedimentos = [sg.Text("Lista de Procedimentos", font=("Helvica", 14))]
+        for procedimento in dados["procedimentos_realizados"]:
+            lista_procedimentos.append(
+                [sg.Text(
+                    f"Procedimento: {procedimento['descricao']},"
+                    f" Custo: R$ {procedimento['custo']},"
+                    f" Profissional: {procedimento['profissional']}",
+                    font=("Helvica", 12))
+                ]
+            )
         if dados["responsavel"] != None:
-            print(f'Acompanhou o(a) paciente o(a) Sr.(a) {dados["responsavel"]}')
-        if len(dados["procedimentos_realizados"]) > 0:
-            print(f'Durante o (a) {dados["tipo_de_atendimento"]}, foram realizados os seguintes procedimentos:')
-            for procedimento in dados["procedimentos_realizados"]:
-                print(f'Descrição: {procedimento["descricao"]} (R$ {procedimento["custo"]}),'
-                      f' Responsável: {procedimento["profissional"]}')
+            responsavel = [sg.Text(f"Responsável: {dados['responsavel']}", font=("Helvica", 12))]
+        else:
+            responsavel = [sg.Text("", font=("Helvica", 12))]
+
+        layout = [
+            [sg.Text("CONSULTA ATENDIMENTOS", font=("Helvica", 25))],
+            [sg.Text(f"Paciente: {dados['paciente']}", font=("Helvica", 12))],
+            [sg.Text(f"Clínica: {dados['clinica']} - {dados['cidade']}", font=("Helvica", 12))],
+            [sg.Text(f"Profissional: {dados['profissional']} - Especialidade: {dados['especialidade']}",
+                     font=("Helvica", 12))],
+            [sg.Text(f"Data: {dados['data']}, Horário: {dados['horario_inicio']} às {dados['horario_fim']}",
+                     font=("Helvica", 12))],
+            [sg.Text(f"Tipo de Atendimento: {dados['tipo_de_atendimento']}", font=("Helvica", 12))],
+            [sg.Text(f"Valor: R$ {dados['valor']}", font=("Helvica", 12))],
+            *lista_procedimentos,
+            responsavel,
+            [sg.Button("Fechar")]
+        ]
+        self.__window = sg.Window("Módulo de Gestão de Atendimentos").layout(layout)
+
+        self.open()
+        self.close()
+        return None
+        # if button is not None and button == "Confirmar":
+        #     return dados
+        # else:
+        #     return None
+        #
+        # {"descricao": descricao, "custo": custo, "profissional": profissional}
+        # {
+        #     # "clinica": atendimento.clinica.nome,
+        #     # "cidade": atendimento.clinica.cidade,
+        #     # "paciente": atendimento.paciente.nome,
+        #     # "profissional": atendimento.profissional.nome,
+        #     # "especialidade": atendimento.profissional.especialidade,
+        #     # "data": atendimento.data,
+        #     # "horario_inicio": atendimento.horario_inicio,
+        #     # "horario_fim": atendimento.horario_fim,
+        #     "tipo_de_atendimento": atendimento.tipo_de_atendimento.tipo,
+        #     "valor": atendimento.valor,
+        #     "procedimentos_realizados": procedimentos,
+        #     "responsavel": responsavel
+        # }
+        # print("--- Dados da Consulta ---")
+        # print(f'A(O) {dados["tipo_de_atendimento"]} do(a) paciente {} em {dados["data"]}, '
+        #       f'às {dados["horario_inicio"]} horas, foi na clínica {dados["clinica"]} da cidade de '
+        #       f'{dados["cidade"]} e teve como profissional o(a) Dr.(a) {dados["profissional"]}, da área de '
+        #       f'{dados["especialidade"]}. O valor do atendimento foi R$ {dados["valor"]}.')
+        # if dados["responsavel"] != None:
+        #     print(f'Acompanhou o(a) paciente o(a) Sr.(a) {dados["responsavel"]}')
+        # if len(dados["procedimentos_realizados"]) > 0:
+        #     print(f'Durante o (a) {dados["tipo_de_atendimento"]}, foram realizados os seguintes procedimentos:')
+        #     for procedimento in dados["procedimentos_realizados"]:
+        #         print(f'Descrição: {procedimento["descricao"]} (R$ {procedimento["custo"]}),'
+        #               f' Responsável: {procedimento["profissional"]}')
 
     def mostrar_lista_atendimentos(self, dados):
         print("--- Lista de Atendimentos ---")
