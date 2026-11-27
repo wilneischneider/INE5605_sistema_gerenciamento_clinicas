@@ -29,16 +29,18 @@ class ViewTiposDeAtendimento():
     def view_opcoes(self):
         self.init_opcoes()
         button, values = self.open()
-        if values["1"]:
-            opcao = 1
-        if values["2"]:
-            opcao = 2
-        if values["3"]:
-            opcao = 3
-        if values["0"] or button in (None, "Cancelar"):
-            opcao = 0
+        dados = values
         self.close()
-        return opcao
+        if button is not None and button == "Confirmar":
+            if True in dados.values():
+                for opcao, resposta in dados.items():
+                    if resposta == True:
+                        return int(opcao)
+                        break
+            else:
+                return 0
+        else:
+            return 0
 
     def mostrar_mensagem(self, mensagem):
         sg.popup(mensagem)
