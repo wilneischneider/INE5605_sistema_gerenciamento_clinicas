@@ -1,19 +1,51 @@
-from view.superView import SuperView
+import FreeSimpleGUI as sg
 from datetime import date as Date
 from datetime import time as Time
 
 
-class ViewPagamentos(SuperView):
+class ViewPagamentos():
+    def __init__(self):
+        self.__window = None
+        self.init_opcoes()
+
+    def close(self):
+        self.__window.Close()
+
+    def open(self):
+        button, values = self.__window.Read()
+        return button, values
+
+    def init_opcoes(self):
+        sg.change_look_and_feel("LightGrey1")
+        layout = [
+            [sg.Text("MÓDULO DE GESTÃO DE PAGAMENTOS", font=("Helvica", 25))],
+            [sg.Text("Escolha sua opção", font=("Helvica", 15))],
+            [sg.Radio("Realizar Pagamento", "RD1", key="1")],
+            [sg.Radio("Consultar Pagamentos", "RD1", key="2")],
+            [sg.Radio("Listar Pagamentos", "RD1", key="3")],
+            [sg.Radio("Consultar Saldo Devedor", "RD1", key="4")],
+            [sg.Radio("Excluir Pagamento", "RD1", key="5")],
+            [sg.Radio("Retornar ao Menu Inicial", "RD1", key="0")],
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
+        self.__window = sg.Window("Módulo de Gestão de Pagamentos").layout(layout)
+
     def view_opcoes(self):
-        print("-------- MÓDULO DE GESTÃO DE PAGAMENTOS ---------")
-        print("Escolha sua opção:")
-        print("1 - Realizar Pagamento")
-        print("2 - Consultar Pagamentos")
-        print("3 - Listar Pagamentos")
-        print("4 - Consultar Saldo Devedor")
-        print("5 - Excluir Pagamento")
-        print("0 - Retornar")
-        opcao = self.entra_opcao_valida("Escolha a opção desejada: ", [0,1,2,3,4,5])
+        self.init_opcoes()
+        button, values = self.open()
+        if values["1"]:
+            opcao = 1
+        if values["2"]:
+            opcao = 2
+        if values["3"]:
+            opcao = 3
+        if values["4"]:
+            opcao = 4
+        if values["5"]:
+            opcao = 5
+        if values["0"] or button in (None, "Cancelar"):
+            opcao = 0
+        self.close()
         return opcao
 
     def pegar_cpf_pagador(self):
@@ -25,30 +57,135 @@ class ViewPagamentos(SuperView):
         bandeira = input("Bandeira do Cartão: ")
         return {"numero": numero, "bandeira": bandeira}
 
-    def pegar_cpf_paciente(self):
-        cpf_paciente = input("Informe o CPF do Paciente: ")
-        return cpf_paciente
+    def pegar_cpf_paciente(self, pacientes: dict):
+        sg.change_look_and_feel("LightGrey1")
+        lista_pacientes = []
+        for cpf, nome in pacientes.items():
+            lista_pacientes.append([sg.Radio(f"{nome} [CPF: {cpf}]", "RD1", key=cpf)])
 
-    def pegar_id_pagamento(self):
-        id_pagamento = input("Informe o Id do pagamento que deseja excluir: ")
-        return id_pagamento
+        layout = [
+            [sg.Text("Selecione o(a) Paciente:", font=("Helvica", 20))],
+            *lista_pacientes,
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
+        self.__window = sg.Window("Módulo de Gestão de Pagamentos").layout(layout)
 
-    def mostrar_pagamentos_paciente(self, dados):
-        for pagamento in dados:
-            print(f'Id: {pagamento["id"]}, Data: {pagamento["data"]}, Valor: {pagamento["valor"]}')
+        button, values = self.open()
+        dados = values
+        self.close()
+        if button is not None and button == "Confirmar":
+            for cpf, resposta in dados.items():
+                if resposta == True:
+                    return cpf
+                    break
+        else:
+            return None
 
-    def mostrar_pagamentos(self, dados):
-        for pagto in dados:
-            print(f'Paciente: {pagto["nome_paciente"]} [{pagto["cpf_paciente"]}], Data: {pagto["data"]}, Valor: R$ {pagto["valor"]}')
+    def pegar_id_pagamento(self, pagamentos: list):
+        sg.change_look_and_feel("LightGrey1")
+        lista_pagamentos = []
+        for pagamento in pagamentos:
+            id = pagamento["id"]
+            lista_pagamentos.append([sg.Radio(f"Data: {pagamento["data"]}, Valor: R$"
+                                              f" {pagamento["valor"]:.2f}".replace(".", ","), "RD1", key=id)])
 
-    def mostrar_valores_em_aberto(self, dados):
-        print("--- Débitos do Paciente ---")
-        for atendimento in dados["atendimentos"]:
-            print(f'Data: {atendimento["data"]}, Horário: {atendimento["horario"]},'
-                  f' Valor do Atendimento: {atendimento["valor_atendimento"]},'
-                  f' Valor dos Procedimentos: {atendimento["valor_procedimentos"]}')
-        print(f'Total Pago: R$ {dados["total_pago"]}')
-        print(f'SALDO DEVEDOR: R$ {dados["saldo"]}')
+        layout = [
+            [sg.Text("Selecione o Pagamento:", font=("Helvica", 20))],
+            *lista_pagamentos,
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
+        self.__window = sg.Window("Módulo de Gestão de Pagamentos").layout(layout)
+
+        button, values = self.open()
+        dados = values
+        self.close()
+        if button is not None and button == "Confirmar":
+            for chave, resposta in dados.items():
+                if resposta == True:
+                    return chave
+                    break
+        else:
+            return None
+
+    def mostrar_pagamentos_paciente(self, dados: list):
+        sg.change_look_and_feel("LightGrey1")
+        if len(dados) > 0:
+            lista_pagamentos = []
+            for pagamento in dados:
+                lista_pagamentos.append(f'Id: {pagamento["id"]}, Data: {pagamento["data"]}, Valor:'
+                                        f' {pagamento["valor"]}\n\n')
+            listagem = "".join(lista_pagamentos)
+
+            layout = [
+                [sg.Text("PAGAMENTOS DO PACIENTE", font=("Helvica", 20))],
+                [sg.Text("Lista de pagamentos realizados:", font=("Helvica", 12))],
+                [sg.Multiline(default_text=listagem,
+                              size=(150, 25),
+                              disabled=True,
+                              autoscroll=False)],
+                [sg.Button("Fechar")]
+            ]
+            self.__window = sg.Window("Módulo de Gestão de Pagamentos").layout(layout)
+
+            self.open()
+            self.close()
+        else:
+            sg.popup("Nenhum pagamento localizado!")
+
+    def mostrar_pagamentos(self, dados: list):
+        sg.change_look_and_feel("LightGrey1")
+        if len(dados) > 0:
+            lista_pagamentos = []
+            for pagto in dados:
+                lista_pagamentos.append(f'Paciente: {pagto["nome_paciente"]} [{pagto["cpf_paciente"]}], Data:'
+                                        f' {pagto["data"]}, Valor: R$ {pagto["valor"]}\n\n')
+            listagem = "".join(lista_pagamentos)
+
+            layout = [
+                [sg.Text("PAGAMENTOS RECEBIDOS", font=("Helvica", 20))],
+                [sg.Text("Lista de pagamentos:", font=("Helvica", 12))],
+                [sg.Multiline(default_text=listagem,
+                              size=(150, 25),
+                              disabled=True,
+                              autoscroll=False)],
+                [sg.Button("Fechar")]
+            ]
+            self.__window = sg.Window("Módulo de Gestão de Pagamentos").layout(layout)
+
+            self.open()
+            self.close()
+        else:
+            sg.popup("Nenhum pagamento localizado!")
+
+    def mostrar_valores_em_aberto(self, dados: dict):
+        sg.change_look_and_feel("LightGrey1")
+        if len(dados) > 0:
+            lista_atendimentos = []
+            for atendimento in dados["atendimentos"]:
+                lista_atendimentos.append(f'Data: {atendimento["data"]}, Horário: {atendimento["horario"]},'
+                                          f' Valor do Atendimento: {atendimento["valor_atendimento"]},'
+                                          f' Valor dos Procedimentos: {atendimento["valor_procedimentos"]}\n\n')
+            listagem = "".join(lista_atendimentos)
+
+            layout = [
+                [sg.Text("CONSULTAR SALDO DEVEDOR", font=("Helvica", 20))],
+                [sg.Text("Lista de atendimentos realizados:", font=("Helvica", 12))],
+                [sg.Multiline(default_text=listagem,
+                              size=(150, 25),
+                              disabled=True,
+                              autoscroll=False)],
+                [sg.Text(f'Total Pago: R$ {dados["total_pago"]:.2f}'.replace('.', ',').replace("_", "."),
+                         font=("Helvica", 15))],
+                [sg.Text(f'SALDO DEVEDOR: R$ {dados["saldo"]:.2f}'.replace('.', ',').replace("_", "."),
+                         font=("Helvica", 15))],
+                [sg.Button("Fechar")]
+            ]
+            self.__window = sg.Window("Módulo de Gestão de Pagamentos").layout(layout)
+
+            self.open()
+            self.close()
+        else:
+            sg.popup("Nenhum atendimento localizado!")
 
     def pegar_data_da_consulta(self):
         repetir = 0
@@ -121,15 +258,32 @@ class ViewPagamentos(SuperView):
                 print("Informe um valor inteiro maior que zero.")
         return valor
 
+    def init_opcoes_pagamento(self):
+        sg.change_look_and_feel("LightGrey1")
+        layout = [
+            [sg.Text("MÓDULO DE GESTÃO DE PAGAMENTOS", font=("Helvica", 25))],
+            [sg.Text("Selecione a Forma de Pagamento", font=("Helvica", 15))],
+            [sg.Radio("Dinheiro", "RD1", key="1")],
+            [sg.Radio("PIX", "RD1", key="2")],
+            [sg.Radio("Cartão de Crédito", "RD1", key="3")],
+            [sg.Radio("Retornar ao Menu Anterior", "RD1", key="0")],
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
+        self.__window = sg.Window("Módulo de Gestão de Pagamentos").layout(layout)
+
     def selecionar_forma_de_pagamento(self):
-        print("--- Selecione a Forma de Pagamento---")
-        print("Escolha sua opção:")
-        print("1 - Dinheiro")
-        print("2 - PIX")
-        print("3 - Cartão de Crédito")
-        print("0 - Retornar")
-        opcao = self.entra_opcao_valida("Escolha a opção desejada: ", [0, 1, 2, 3])
+        self.init_opcoes_pagamento()
+        button, values = self.open()
+        if values["1"]:
+            opcao = 1
+        if values["2"]:
+            opcao = 2
+        if values["3"]:
+            opcao = 3
+        if values["0"] or button in (None, "Cancelar"):
+            opcao = 0
+        self.close()
         return opcao
 
     def mostrar_mensagem(self, mensagem):
-        print(mensagem)
+        sg.popup(mensagem)

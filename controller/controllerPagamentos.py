@@ -113,7 +113,13 @@ class ControllerPagamento:
 
     def consultar_saldo_devedor(self):
         controlador_atendimento = self.__controller_sistema.controller_atendimento
-        cpf_paciente = self.__view_pagamento.pegar_cpf_paciente()
+        atendimentos = controlador_atendimento.extrair_atendimentos()
+        pacientes = {}
+        for atendimento in atendimentos:
+            pacientes.update({atendimento.paciente.cpf:atendimento.paciente.nome})
+        cpf_paciente = self.__view_pagamento.pegar_cpf_paciente(pacientes)
+        if cpf_paciente == None:
+            self.abrir_tela()
         try:
             atendimentos = controlador_atendimento.atendimentos()
             datas_atendimentos = atendimentos[cpf_paciente] #{data:{horario_inicio:atendimento}, data:{horario_inicio:atendimento}}
@@ -144,17 +150,26 @@ class ControllerPagamento:
             self.__view_pagamento.mostrar_mensagem('Não há atendimento para o CPF informado!')
 
     def consultar_pagamentos(self):
-        cpf_paciente = self.__view_pagamento.pegar_cpf_paciente()
-        pagamentos_paciente = []
-        pagamentos = self.__pagamentos_dao.get_dict()
-        for chave, registro in pagamentos.items():
-            if registro.paciente.cpf == cpf_paciente:
-                pagto = {"id": chave, "data": registro.data, "valor": registro.valor_pago}
-                pagamentos_paciente.append(pagto)
-        if len(pagamentos_paciente) > 0:
-            self.__view_pagamento.mostrar_pagamentos_paciente(pagamentos_paciente)
+        pagamentos = self.pagamentos()
+        if len(pagamentos) == 0:
+            self.__view_pagamento.mostrar_mensagem("Nenhum pagamento encontrado!")
         else:
-            self.__view_pagamento.mostrar_mensagem('Não há pagamentos para o CPF informado!')
+            pacientes = {}
+            for pagamento in pagamentos:
+                pacientes.update({pagamento.paciente.cpf: pagamento.paciente.nome})
+            cpf_paciente = self.__view_pagamento.pegar_cpf_paciente(pacientes)
+            if cpf_paciente == None:
+                self.abrir_tela()
+            pagamentos_paciente = []
+            pagamentos = self.__pagamentos_dao.get_dict()
+            for chave, registro in pagamentos.items():
+                if registro.paciente.cpf == cpf_paciente:
+                    pagto = {"id": chave, "data": registro.data, "valor": registro.valor_pago}
+                    pagamentos_paciente.append(pagto)
+            if len(pagamentos_paciente) > 0:
+                self.__view_pagamento.mostrar_pagamentos_paciente(pagamentos_paciente)
+            else:
+                self.__view_pagamento.mostrar_mensagem('Não há pagamentos para o paciente selecionado!')
 
     def listar_pagamentos(self):
         pagamentos = []
@@ -168,14 +183,33 @@ class ControllerPagamento:
             self.__view_pagamento.mostrar_mensagem('Não há pagamentos registrados!')
 
     def excluir_pagamento(self):
-        self.consultar_pagamentos()
-        id_pagamento = self.__view_pagamento.pegar_id_pagamento()
-        pagamentos = self.__pagamentos_dao.get_dict()
-        if id_pagamento in pagamentos.keys():
-            self.__pagamentos_dao.remove(id_pagamento)
-            self.__view_pagamento.mostrar_mensagem('Pagamento excluido com sucesso!')
+        pagamentos = self.pagamentos()
+        if len(pagamentos) == 0:
+            self.__view_pagamento.mostrar_mensagem("Nenhum pagamento encontrado!")
         else:
-            self.__view_pagamento.mostrar_mensagem('Id incorreto! Pagamento não encontrado!')
+            pacientes = {}
+            for pagamento in pagamentos:
+                pacientes.update({pagamento.paciente.cpf: pagamento.paciente.nome})
+            cpf_paciente = self.__view_pagamento.pegar_cpf_paciente(pacientes)
+            if cpf_paciente == None:
+                self.abrir_tela()
+            pagamentos_paciente = []
+            pagamentos = self.__pagamentos_dao.get_dict()
+            for chave, registro in pagamentos.items():
+                if registro.paciente.cpf == cpf_paciente:
+                    pagto = {"id": chave, "data": registro.data, "valor": registro.valor_pago}
+                    pagamentos_paciente.append(pagto)
+            if len(pagamentos_paciente) > 0:
+                id_pagamento = self.__view_pagamento.pegar_id_pagamento(pagamentos_paciente)
+                if id_pagamento == None:
+                    self.abrir_tela()
+                if id_pagamento in pagamentos.keys():
+                    self.__pagamentos_dao.remove(id_pagamento)
+                    self.__view_pagamento.mostrar_mensagem('Pagamento excluido com sucesso!')
+                else:
+                    self.__view_pagamento.mostrar_mensagem('Id incorreto! Pagamento não encontrado!')
+            else:
+                self.__view_pagamento.mostrar_mensagem('Não há pagamentos para o paciente selecionado!')
 
     def retornar(self):
         self.__controller_sistema.abrir_tela()
