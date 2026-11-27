@@ -17,10 +17,13 @@ class ControllerRelatorios:
         lista_atendimentos = controlador_atendimento.extrair_atendimentos()
         if len(lista_atendimentos) > 0:
             ocorrencias_clinicas = []
+            infos_clinicas = {}
             for atendimento in lista_atendimentos:
                 ocorrencias_clinicas.append(atendimento.clinica.cnpj)
+                infos_clinicas.update({atendimento.clinica.cnpj:
+                                           {"nome":atendimento.clinica.nome, "cidade":atendimento.clinica.cidade}})
             contagem_decrescente = dict(Counter(ocorrencias_clinicas).most_common()[:10])
-            self.__view_relatorio.mostrar_clinicas_com_mais_atendimentos(contagem_decrescente)
+            self.__view_relatorio.mostrar_clinicas_com_mais_atendimentos(contagem_decrescente, infos_clinicas)
         else:
             self.__view_relatorio.mostrar_mensagem("Nenhum atendimento encontrado!")
 
@@ -38,10 +41,13 @@ class ControllerRelatorios:
             resultado = []
             for chave, valor in ordem_dec.items():
                 cnpj_clinica = chave.clinica.cnpj
+                nome_clinica = chave.clinica.nome
+                cidade_clinica = chave.clinica.cidade
                 paciente = chave.paciente.nome
                 profissional = chave.profissional.nome
                 especialidade = chave.profissional.especialidade
-                dicio = {"cnpj_clinica": cnpj_clinica, "nome_paciente": paciente, "nome_profissional": profissional,
+                dicio = {"cnpj_clinica": cnpj_clinica, "nome_clinica": nome_clinica, "cidade_clinica": cidade_clinica,
+                         "nome_paciente": paciente, "nome_profissional": profissional,
                          "especialidade": especialidade, "valor": valor}
                 resultado.append(dicio)
             self.__view_relatorio.mostrar_atendimentos_mais_caros(resultado)
@@ -62,10 +68,13 @@ class ControllerRelatorios:
             resultado = []
             for chave, valor in ordem_cresc.items():
                 cnpj_clinica = chave.clinica.cnpj
+                nome_clinica = chave.clinica.nome
+                cidade_clinica = chave.clinica.cidade
                 paciente = chave.paciente.nome
                 profissional = chave.profissional.nome
                 especialidade = chave.profissional.especialidade
-                dicio = {"cnpj_clinica": cnpj_clinica, "nome_paciente": paciente, "nome_profissional": profissional,
+                dicio = {"cnpj_clinica": cnpj_clinica, "nome_clinica": nome_clinica, "cidade_clinica": cidade_clinica,
+                         "nome_paciente": paciente, "nome_profissional": profissional,
                          "especialidade": especialidade, "valor": valor}
                 resultado.append(dicio)
             self.__view_relatorio.mostrar_atendimentos_mais_baratos(resultado)
