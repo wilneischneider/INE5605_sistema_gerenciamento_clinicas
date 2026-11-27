@@ -21,11 +21,15 @@ class ControllerTipoDeAtendimento:
         return descricao
 
     def listar_tipos_de_atendimento(self):
-        return self.__view_tipos_de_atendimento.mostrar_tipos_atendimento(self.listar_descricao_tipos_atendimento())
+        self.__view_tipos_de_atendimento.mostrar_tipos_atendimento(self.listar_descricao_tipos_atendimento())
 
     def cadastrar_tipo_atendimento(self):
-        self.__view_tipos_de_atendimento.mostrar_mensagem('--- Cadastrar Tipo de Atendimento ---')
-        tipo = self.__view_tipos_de_atendimento.pegar_tipo_atendimento()
+        tipo = self.__view_tipos_de_atendimento.pegar_dados_tipo_atendimento()
+        if tipo == None:
+            self.abrir_tela()
+        if len(tipo) == 0:
+            self.__view_tipos_de_atendimento.mostrar_mensagem("Obrigatório preencher o tipo do atendimento!")
+            self.abrir_tela()
         if tipo not in self.listar_descricao_tipos_atendimento():
             try:
                 novo_tipo = TipoDeAtendimento(tipo)
@@ -37,9 +41,11 @@ class ControllerTipoDeAtendimento:
             self.__view_tipos_de_atendimento.mostrar_mensagem(f'O tipo "{tipo}" já está cadastrado!')
 
     def excluir_tipo_atendimento(self):
-        self.__view_tipos_de_atendimento.mostrar_mensagem('--- Excluir Tipo de Atendimento ---')
-        tipo = self.__view_tipos_de_atendimento.pegar_tipo_atendimento()
-        if tipo in self.listar_descricao_tipos_atendimento():
+        tipos = self.listar_descricao_tipos_atendimento()
+        tipo = self.__view_tipos_de_atendimento.pegar_tipo_atendimento(tipos)
+        if tipo == None:
+            self.abrir_tela()
+        if tipo in tipos:
             self.__tipos_de_atendimento_dao.remove(tipo)
             self.__view_tipos_de_atendimento.mostrar_mensagem('Tipo de atendimento excluído com sucesso!')
         else:
