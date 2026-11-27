@@ -108,12 +108,12 @@ class ControllerAtendimento:
                 atendimentos = self.atendimentos()
                 if cpf_paciente in atendimentos.keys():
                     if data in atendimentos[cpf_paciente].keys():
-                        if horario_inicio in self.atendimentos[cpf_paciente][data].keys():
+                        if horario_inicio in atendimentos[cpf_paciente][data].keys():
                             msg = "Erro! Já existe atendimento para este paciente no mesmo horário!"
                             self.__view_atendimento.mostrar_mensagem(msg)
                         else:
                             atendimentos_paciente = atendimentos[cpf_paciente]
-                            atendimentos_paciente[cpf_paciente][data].update(
+                            atendimentos_paciente[data].update(
                                 {horario_inicio: atendimento})
                             self.__atendimentos_dao.update(cpf_paciente, atendimentos_paciente)
                             self.__view_atendimento.mostrar_mensagem(
