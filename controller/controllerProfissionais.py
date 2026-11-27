@@ -83,7 +83,8 @@ class ControllerProfissional:
             controlador_clinica = self.__controller_sistema.controller_clinica
             for cnpj in controlador_clinica.listar_cnpjs_cadastrados():
                 msg = controlador_clinica.desvincular_profissional_das_clinicas(cnpj, cpf)
-                self.__view_profissional.mostrar_mensagem(msg)
+                if msg != None:
+                    self.__view_profissional.mostrar_mensagem(msg)
         else:
             self.__view_profissional.mostrar_mensagem(f'Não há profissional cadastrado(a) com o CPF "{cpf}".')
 
