@@ -17,7 +17,7 @@ class ViewClinicas():
     def init_opcoes(self):
         sg.change_look_and_feel("LightGrey1")
         layout = [
-            [sg.Text("MÓDULO DE GESTÃO DE CLÍNICAS", font=("Helvica", 25))],
+            [sg.Text("MÓDULO DE GESTÃO DE CLÍNICAS", font=("Helvica", 20))],
             [sg.Text("Escolha sua opção", font=("Helvica", 15))],
             [sg.Radio("Listar Clínicas", "RD1", key="1")],
             [sg.Radio("Cadastrar Clínica", "RD1", key="2")],
@@ -71,7 +71,7 @@ class ViewClinicas():
         listagem = "".join(lista_clinicas)
 
         layout = [
-            [sg.Text("LISTA DE CLÍNICAS", font=("Helvica", 25))],
+            [sg.Text("LISTA DE CLÍNICAS", font=("Helvica", 20))],
             [sg.Multiline(default_text=listagem,
                           size=(70, 40),
                           disabled=True,
@@ -89,7 +89,7 @@ class ViewClinicas():
         horas = [f"{h:02d}" for h in range(0, 24)]
         minutos = [f"{m:02d}" for m in range(0, 60, 1)]
         layout = [
-            [sg.Text("CADASTRAR CLÍNICA", font=("Helvica", 25))],
+            [sg.Text("CADASTRAR CLÍNICA", font=("Helvica", 20))],
             [sg.Text("Informe os dados da clínica", font=("Helvica", 15))],
             [sg.Text("Nome", size=(20, 1)), sg.InputText("", key="nome")],
             [sg.Text("CNPJ", size=(20, 1)), sg.InputText("", key="cnpj")],
@@ -139,8 +139,8 @@ class ViewClinicas():
             )
 
         layout = [
-            [sg.Text("SELEÇÃO DE CLÍNICA", font=("Helvica", 25))],
-            [sg.Text("Selecione a clínica desejada:", font=("Helvica", 37))],
+            [sg.Text("SELEÇÃO DE CLÍNICA", font=("Helvica", 20))],
+            [sg.Text("Selecione a clínica desejada:", font=("Helvica", 15))],
             *lista_clinicas,
             [sg.Button("Confirmar"), sg.Button("Cancelar")]
         ]
@@ -302,8 +302,8 @@ class ViewClinicas():
                 )
 
             layout = [
-                [sg.Text("SELEÇÃO DE PROFISSIONAL", font=("Helvica", 25))],
-                [sg.Text("Selecione o(a) profissional desejado(a):", font=("Helvica", 37))],
+                [sg.Text("SELEÇÃO DE PROFISSIONAL", font=("Helvica", 20))],
+                [sg.Text("Selecione o(a) profissional desejado(a):", font=("Helvica", 15))],
                 *lista_profissionais,
                 [sg.Button("Confirmar"), sg.Button("Cancelar")]
             ]

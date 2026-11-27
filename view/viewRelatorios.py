@@ -16,7 +16,7 @@ class ViewRelatorios():
     def init_opcoes(self):
         sg.change_look_and_feel("LightGrey1")
         layout = [
-            [sg.Text("MÓDULO DE EMISSÃO DE RELATÓRIOS", font=("Helvica", 25))],
+            [sg.Text("MÓDULO DE EMISSÃO DE RELATÓRIOS", font=("Helvica", 20))],
             [sg.Text("Escolha sua opção", font=("Helvica", 15))],
             [sg.Radio("Clínicas com maior número de atendimentos", "RD1", key="1")],
             [sg.Radio("Atendimentos mais caros", "RD1", key="2")],

@@ -18,7 +18,7 @@ class ViewAtendimentos():
     def init_opcoes(self):
         sg.change_look_and_feel("LightGrey1")
         layout = [
-            [sg.Text("MÓDULO DE GESTÃO DE ATENDIMENTOS", font=("Helvica", 25))],
+            [sg.Text("MÓDULO DE GESTÃO DE ATENDIMENTOS", font=("Helvica", 20))],
             [sg.Text("Escolha sua opção", font=("Helvica", 15))],
             [sg.Radio("Agendar Atendimento", "RD1", key="1")],
             [sg.Radio("Registrar Procedimento", "RD1", key="2")],
@@ -52,9 +52,9 @@ class ViewAtendimentos():
     def pegar_dados_do_responsavel(self):
         sg.change_look_and_feel("LightGrey1")
         layout = [
-            [sg.Text("PACIENTE MENOR DE 18 ANOS NA DATA DA CONSULTA", font=("Helvica", 25))],
-            [sg.Text("Necessário acompanhamento de Responsável!", font=("Helvica", 12))],
-            [sg.Text("Dados do Responsável", font=("Helvica", 15))],
+            [sg.Text("PACIENTE MENOR DE 18 ANOS NA DATA DA CONSULTA", font=("Helvica", 20))],
+            [sg.Text("Necessário acompanhamento de Responsável!", font=("Helvica", 15))],
+            [sg.Text("Dados do Responsável", font=("Helvica", 12))],
             [sg.Text("Nome do(a) Responsável", size=(37, 1)), sg.InputText("", key="nome")],
             [sg.Text("Número do Celular do(a) Responsável", size=(37, 1)), sg.InputText("", key="celular")],
             [sg.Text("CPF do(a) Responsável", size=(37, 1)), sg.InputText("", key="cpf")],
@@ -77,8 +77,8 @@ class ViewAtendimentos():
             lista_clinicas.append([sg.Radio(f"{valor.nome} - {valor.cidade}", "RD1", key=chave)])
 
         layout = [
-            [sg.Text("SELEÇÃO DE CLÍNICA", font=("Helvica", 25))],
-            [sg.Text("Selecione a clínica desejada:", font=("Helvica", 20))],
+            [sg.Text("SELEÇÃO DE CLÍNICA", font=("Helvica", 20))],
+            [sg.Text("Selecione a clínica desejada:", font=("Helvica", 15))],
             *lista_clinicas,
             [sg.Button("Confirmar"), sg.Button("Cancelar")]
         ]
@@ -102,8 +102,8 @@ class ViewAtendimentos():
             lista_profissionais.append([sg.Radio(f"{valor.nome} - {valor.especialidade}", "RD1", key=chave)])
 
         layout = [
-            [sg.Text("SELEÇÃO DE PROFISSIONAL", font=("Helvica", 25))],
-            [sg.Text("Selecione o(a) profissional desejado(a):", font=("Helvica", 20))],
+            [sg.Text("SELEÇÃO DE PROFISSIONAL", font=("Helvica", 20))],
+            [sg.Text("Selecione o(a) profissional desejado(a):", font=("Helvica", 15))],
             *lista_profissionais,
             [sg.Button("Confirmar"), sg.Button("Cancelar")]
         ]
@@ -127,8 +127,8 @@ class ViewAtendimentos():
             lista_tipos_atendimento.append([sg.Radio(f"{tipo}", "RD1", key=tipo)])
 
         layout = [
-            [sg.Text("SELEÇÃO DE TIPO DE ATENDIMENTO", font=("Helvica", 25))],
-            [sg.Text("Selecione o tipo de atendimento desejado:", font=("Helvica", 20))],
+            [sg.Text("SELEÇÃO DE TIPO DE ATENDIMENTO", font=("Helvica", 20))],
+            [sg.Text("Selecione o tipo de atendimento desejado:", font=("Helvica", 15))],
             *lista_tipos_atendimento,
             [sg.Button("Confirmar"), sg.Button("Cancelar")]
         ]
@@ -152,8 +152,8 @@ class ViewAtendimentos():
             lista_pacientes.append([sg.Radio(f"{valor.nome} [CPF: {valor.cpf}]", "RD1", key=chave)])
 
         layout = [
-            [sg.Text("SELEÇÃO DE PACIENTE", font=("Helvica", 25))],
-            [sg.Text("Selecione o(a) paciente:", font=("Helvica", 20))],
+            [sg.Text("SELEÇÃO DE PACIENTE", font=("Helvica", 20))],
+            [sg.Text("Selecione o(a) paciente:", font=("Helvica", 15))],
             *lista_pacientes,
             [sg.Button("Confirmar"), sg.Button("Cancelar")]
         ]
@@ -177,10 +177,10 @@ class ViewAtendimentos():
         abre = horario_atendimento['abre']
         fecha = horario_atendimento['fecha']
         layout = [
-            [sg.Text("DATA E HORA DO ATENDIMENTO", font=("Helvica", 25))],
-            [sg.Text("Informe a data e o horário do atendimento:", font=("Helvica", 20))],
+            [sg.Text("DATA E HORA DO ATENDIMENTO", font=("Helvica", 20))],
+            [sg.Text("Informe a data e o horário do atendimento:", font=("Helvica", 12))],
             [sg.Text(f"Horário de funcionamento da Clínica: {abre} às {fecha}", size=(50, 1))],
-            [sg.Text("Data e hora do atendimento", size=(50, 1), font=("Helvica", 18))],
+            [sg.Text("Data e hora do atendimento", size=(50, 1), font=("Helvica", 12))],
             [
                 sg.Text("Data:", size=(7, 1)),
                 sg.InputText("", key="data", size=(20, 1), readonly=True),
@@ -229,8 +229,8 @@ class ViewAtendimentos():
             lista_atendimentos.append([sg.Radio(f"{data}", "RD1", key=data)])
 
         layout = [
-            [sg.Text("SELEÇÃO DE ATENDIMENTO", font=("Helvica", 25))],
-            [sg.Text("Selecione a data do atendimento desejado:", font=("Helvica", 37))],
+            [sg.Text("SELEÇÃO DE ATENDIMENTO", font=("Helvica", 20))],
+            [sg.Text("Selecione a data do atendimento desejado:", font=("Helvica", 15))],
             *lista_atendimentos,
             [sg.Button("Confirmar"), sg.Button("Cancelar")]
         ]
@@ -254,8 +254,8 @@ class ViewAtendimentos():
             lista_atendimentos.append([sg.Radio(f"{horario}", "RD1", key=horario)])
 
         layout = [
-            [sg.Text("SELEÇÃO DE ATENDIMENTO", font=("Helvica", 25))],
-            [sg.Text("Selecione o horário do atendimento desejado:", font=("Helvica", 37))],
+            [sg.Text("SELEÇÃO DE ATENDIMENTO", font=("Helvica", 20))],
+            [sg.Text("Selecione o horário do atendimento desejado:", font=("Helvica", 15))],
             *lista_atendimentos,
             [sg.Button("Confirmar"), sg.Button("Cancelar")]
         ]
@@ -282,8 +282,8 @@ class ViewAtendimentos():
             )
 
         layout = [
-            [sg.Text("SELEÇÃO DE PROCEDIMENTO", font=("Helvica", 25))],
-            [sg.Text("Selecione o procedimento desejado:", font=("Helvica", 37))],
+            [sg.Text("SELEÇÃO DE PROCEDIMENTO", font=("Helvica", 20))],
+            [sg.Text("Selecione o procedimento desejado:", font=("Helvica", 15))],
             *lista_procedimentos,
             [sg.Button("Confirmar"), sg.Button("Cancelar")]
         ]
@@ -303,7 +303,7 @@ class ViewAtendimentos():
     def mostrar_dados_da_consulta(self, dados: dict):
         sg.change_look_and_feel("LightGrey1")
         if len(dados["procedimentos_realizados"]) > 0:
-            lista_procedimentos = [[sg.Text("Lista de Procedimentos", font=("Helvica", 14))]]
+            lista_procedimentos = [[sg.Text("Lista de Procedimentos", font=("Helvica", 15))]]
             for procedimento in dados["procedimentos_realizados"]:
                 lista_procedimentos.append(
                     [sg.Text(
@@ -321,7 +321,7 @@ class ViewAtendimentos():
             responsavel = [sg.Text("", font=("Helvica", 12))]
 
         layout = [
-            [sg.Text("CONSULTA ATENDIMENTOS", font=("Helvica", 25))],
+            [sg.Text("CONSULTA ATENDIMENTOS", font=("Helvica", 20))],
             [sg.Text(f"Paciente: {dados['paciente']}", font=("Helvica", 12))],
             [sg.Text(f"Clínica: {dados['clinica']} - {dados['cidade']}", font=("Helvica", 12))],
             [sg.Text(f"Profissional: {dados['profissional']} - Especialidade: {dados['especialidade']}",
@@ -356,7 +356,7 @@ class ViewAtendimentos():
         listagem = "".join(lista_atendimentos)
 
         layout = [
-            [sg.Text("LISTA DE ATENDIMENTOS", font=("Helvica", 25))],
+            [sg.Text("LISTA DE ATENDIMENTOS", font=("Helvica", 20))],
             [sg.Multiline(default_text=listagem,
                           size=(70, 40),
                           disabled=True,

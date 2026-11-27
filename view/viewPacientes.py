@@ -17,7 +17,7 @@ class ViewPacientes():
     def init_opcoes(self):
         sg.change_look_and_feel("LightGrey1")
         layout = [
-            [sg.Text("MÓDULO DE GESTÃO DE PACIENTES", font=("Helvica", 25))],
+            [sg.Text("MÓDULO DE GESTÃO DE PACIENTES", font=("Helvica", 20))],
             [sg.Text("Escolha sua opção", font=("Helvica", 15))],
             [sg.Radio("Cadastrar Paciente", "RD1", key="1")],
             [sg.Radio("Buscar Paciente", "RD1", key="2")],

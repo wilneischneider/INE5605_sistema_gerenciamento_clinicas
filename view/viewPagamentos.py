@@ -18,7 +18,7 @@ class ViewPagamentos():
     def init_opcoes(self):
         sg.change_look_and_feel("LightGrey1")
         layout = [
-            [sg.Text("MÓDULO DE GESTÃO DE PAGAMENTOS", font=("Helvica", 25))],
+            [sg.Text("MÓDULO DE GESTÃO DE PAGAMENTOS", font=("Helvica", 20))],
             [sg.Text("Escolha sua opção", font=("Helvica", 15))],
             [sg.Radio("Realizar Pagamento", "RD1", key="1")],
             [sg.Radio("Consultar Pagamentos", "RD1", key="2")],
@@ -335,7 +335,7 @@ class ViewPagamentos():
     def init_opcoes_pagamento(self):
         sg.change_look_and_feel("LightGrey1")
         layout = [
-            [sg.Text("MÓDULO DE GESTÃO DE PAGAMENTOS", font=("Helvica", 25))],
+            [sg.Text("MÓDULO DE GESTÃO DE PAGAMENTOS", font=("Helvica", 20))],
             [sg.Text("Selecione a Forma de Pagamento", font=("Helvica", 15))],
             [sg.Radio("Dinheiro", "RD1", key="1")],
             [sg.Radio("PIX", "RD1", key="2")],

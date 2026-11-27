@@ -16,7 +16,7 @@ class ViewSistema():
     def init_opcoes(self):
         sg.change_look_and_feel("LightGrey1")
         layout = [
-            [sg.Text("SISTEMA DE GERENCIAMENTO DE CLÍNICAS", font=("Helvica", 25))],
+            [sg.Text("SISTEMA DE GERENCIAMENTO DE CLÍNICAS", font=("Helvica", 20))],
             [sg.Text("Escolha sua opção", font=("Helvica", 15))],
             [sg.Radio("Gerenciar Atendimentos", "RD1", key="1")],
             [sg.Radio("Gerenciar Pagamentos", "RD1", key="2")],
