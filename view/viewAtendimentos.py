@@ -46,8 +46,8 @@ class ViewAtendimentos():
         else:
             return 0
 
-    def mostrar_mensagem(self, msg):
-        sg.popup("", msg)
+    def mostrar_mensagem(self, mensagem):
+        sg.popup("", mensagem)
 
     def pegar_dados_do_responsavel(self):
         sg.change_look_and_feel("LightGrey1")
