@@ -1,6 +1,6 @@
 import FreeSimpleGUI as sg
+from datetime import datetime
 from datetime import date as Date
-from datetime import time as Time
 
 
 class ViewPagamentos():
@@ -49,13 +49,39 @@ class ViewPagamentos():
         return opcao
 
     def pegar_cpf_pagador(self):
-        cpf = input("CPF do(a) Pagador(a): ")
-        return cpf
+        sg.change_look_and_feel("LightGrey1")
+        layout = [
+            [sg.Text("Informe o CPF do Pagador", font=("Helvica", 20))],
+            [sg.Text("CPF", size=(10, 1)), sg.InputText("", key="cpf")],
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
+        self.__window = sg.Window("Módulo de Gestão de Pagamentos").layout(layout)
+
+        button, values = self.open()
+        dados = values
+        self.close()
+        if button is not None and button == "Confirmar":
+            return dados["cpf"]
+        else:
+            return None
 
     def pegar_dados_do_cartao(self):
-        numero = input("Número do Cartão de Crédito: ")
-        bandeira = input("Bandeira do Cartão: ")
-        return {"numero": numero, "bandeira": bandeira}
+        sg.change_look_and_feel("LightGrey1")
+        layout = [
+            [sg.Text("Informe os Dados do Cartão", font=("Helvica", 20))],
+            [sg.Text("Número", size=(10, 1)), sg.InputText("", key="numero")],
+            [sg.Text("Bandeira", size=(10, 1)), sg.InputText("", key="bandeira")],
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
+        self.__window = sg.Window("Módulo de Gestão de Pagamentos").layout(layout)
+
+        button, values = self.open()
+        dados = values
+        self.close()
+        if button is not None and button == "Confirmar":
+            return {"numero": dados["numero"], "bandeira": dados["bandeira"]}
+        else:
+            return None
 
     def pegar_cpf_paciente(self, pacientes: dict):
         sg.change_look_and_feel("LightGrey1")
@@ -187,76 +213,126 @@ class ViewPagamentos():
         else:
             sg.popup("Nenhum atendimento localizado!")
 
-    def pegar_data_da_consulta(self):
-        repetir = 0
-        while repetir == 0:
-            ano_consulta = input("Informe o Ano da Consulta (AAAA): ")
-            mes_consulta = input("Informe o Mês da Consulta (MM): ")
-            dia_consulta = input("Informe o Dia da Consulta (DD): ")
-            try:
-                ano = int(ano_consulta)
-                mes = int(mes_consulta)
-                dia = int(dia_consulta)
-                data_consulta = Date(ano, mes, dia)
-                repetir = 1
-            except ValueError:
-                print("Informe ano, mês e dia em numerais, nos formatos indicados. Ex.: Ano: 1990, Mês: 5, Dia: 15")
-        return data_consulta
+    def pegar_data_da_consulta(self, datas: list):
+        sg.change_look_and_feel("LightGrey1")
+        lista_datas = []
+        for data in datas:
+            lista_datas.append([sg.Radio(f"{data}", "RD1", key=data)])
 
-    def pegar_horario_da_consulta(self):
-        repetir = 0
-        while repetir == 0:
-            hora_consulta = input("Informe a Hora de Início da Consulta (HH): ")
-            minuto_consulta = input("Informe os Minutos de Início da Consulta (MM): ")
-            try:
-                hora = int(hora_consulta)
-                minuto = int(minuto_consulta)
-                horario_inicio = Time(hora, minuto)
-                repetir = 1
-            except ValueError:
-                print("Informe hora e minutos em numerais, nos formatos indicados. Ex.: Hora: 18, Minuto: 27")
-        return horario_inicio
+        layout = [
+            [sg.Text("Data da Consulta", font=("Helvica", 20))],
+            [sg.Text("Selecione a data da consulta que deseja pagar:", font=("Helvica", 12))],
+            *lista_datas,
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
+        self.__window = sg.Window("Módulo de Gestão de Pagamentos").layout(layout)
+
+        button, values = self.open()
+        dados = values
+        self.close()
+        if button is not None and button == "Confirmar":
+            for data, resposta in dados.items():
+                if resposta == True:
+                    return data
+                    break
+        else:
+            return None
+
+    def pegar_horario_da_consulta(self, horarios: list):
+        sg.change_look_and_feel("LightGrey1")
+        lista_horarios = []
+        for horario in horarios:
+            lista_horarios.append([sg.Radio(f"{horario}", "RD1", key=horario)])
+
+        layout = [
+            [sg.Text("Horário da Consulta", font=("Helvica", 20))],
+            [sg.Text("Selecione o horário da consulta que deseja pagar:", font=("Helvica", 12))],
+            *lista_horarios,
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
+        self.__window = sg.Window("Módulo de Gestão de Pagamentos").layout(layout)
+
+        button, values = self.open()
+        dados = values
+        self.close()
+        if button is not None and button == "Confirmar":
+            for horario, resposta in dados.items():
+                if resposta == True:
+                    return horario
+                    break
+        else:
+            return None
 
     def pegar_data_de_pagamento(self):
-        repetir = 0
-        while repetir == 0:
-            ano_pagamento = input("Informe o Ano do Pagamento (AAAA): ")
-            mes_pagamento = input("Informe o Mês do Pagamento (MM): ")
-            dia_pagamento = input("Informe o Dia do Pagamento (DD): ")
-            try:
-                ano = int(ano_pagamento)
-                mes = int(mes_pagamento)
-                dia = int(dia_pagamento)
-                data_pagamento = Date(ano, mes, dia)
-                repetir = 1
-            except ValueError:
-                print("Informe ano, mês e dia em numerais, nos formatos indicados. Ex.: Ano: 1990, Mês: 5, Dia: 15")
-        return data_pagamento
+        sg.change_look_and_feel("LightGrey1")
+        hoje = datetime.now()
+        hoje_formatado = hoje.strftime("%Y-%m-%d")
+        layout = [
+            [sg.Text("Informe a Data de Pagamento", font=("Helvica", 20))],
+            [
+                sg.Text("Data:", size=(7, 1)),
+                sg.InputText(hoje_formatado, key="data", size=(20, 1), readonly=True),
+                sg.CalendarButton(
+                    "Selecione a data",
+                    target="data",
+                    format="%Y-%m-%d",
+                    close_when_date_chosen=True
+                )
+            ],
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
+        self.__window = sg.Window("Módulo de Gestão de Pagamentos").layout(layout)
+
+        button, values = self.open()
+        dados_bruto = values
+        self.close()
+        if button is not None and button == "Confirmar":
+            return Date.strptime(dados_bruto['data'], "%Y-%m-%d")
+        else:
+            return None
 
     def pegar_valor_do_pagamento(self):
-        repetir = 0
-        while repetir == 0:
-            valor = input("Valor do Pagamento (em R$): ")
+        sg.change_look_and_feel("LightGrey1")
+        layout = [
+            [sg.Text("Informe o valor que deseja Pagar", font=("Helvica", 20))],
+            [sg.Text("Valor (R$):", size=(10, 1)), sg.InputText("", key="valor")],
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
+        self.__window = sg.Window("Módulo de Gestão de Pagamentos").layout(layout)
+
+        button, values = self.open()
+        dados = values
+        self.close()
+        if button is not None and button == "Confirmar":
             try:
-                valor = float(valor)
-                repetir = 1
+                valor = float(dados["valor"])
+                return valor
             except ValueError:
-                print("Informe apenas valores, utilizando ponto '.' como separador de decimal.")
-        return valor
+                sg.popup("Informe apenas números e utilize ponto '.' como separador de decimal.")
+                return None
+        else:
+            return None
 
     def pegar_numero_parcelas(self):
-        repetir = 0
-        while repetir == 0:
-            valor = input("Informe o número de parcelas: ")
-            try:
-                valor = int(valor)
-                if valor > 0:
-                    repetir = 1
-                else:
-                    print("Informe um valor inteiro maior que zero.")
-            except ValueError:
-                print("Informe um valor inteiro maior que zero.")
-        return valor
+        sg.change_look_and_feel("LightGrey1")
+        parcelas = [f"{h}" for h in range(1, 7)]
+        layout = [
+            [sg.Text("Informe o número de parcelas", font=("Helvica", 20))],
+            [
+                sg.Text("Número de parcelas:", size=(20, 1)),
+                sg.Spin(parcelas, initial_value=1, key="valor", size=(3, 1), readonly=True),
+            ],
+            [sg.Button("Confirmar"), sg.Button("Cancelar")]
+        ]
+        self.__window = sg.Window("Módulo de Gestão de Pagamentos").layout(layout)
+
+        button, values = self.open()
+        dados = values
+        self.close()
+        if button is not None and button == "Confirmar":
+            return int(dados["valor"])
+        else:
+            return None
 
     def init_opcoes_pagamento(self):
         sg.change_look_and_feel("LightGrey1")
@@ -274,16 +350,18 @@ class ViewPagamentos():
     def selecionar_forma_de_pagamento(self):
         self.init_opcoes_pagamento()
         button, values = self.open()
-        if values["1"]:
-            opcao = 1
-        if values["2"]:
-            opcao = 2
-        if values["3"]:
-            opcao = 3
-        if values["0"] or button in (None, "Cancelar"):
-            opcao = 0
+        dados = values
         self.close()
-        return opcao
+        if button is not None and button == "Confirmar":
+            if True in dados.values():
+                for opcao, resposta in dados.items():
+                    if resposta == True:
+                        return int(opcao)
+                        break
+            else:
+                return 0
+        else:
+            return 0
 
     def mostrar_mensagem(self, mensagem):
         sg.popup(mensagem)

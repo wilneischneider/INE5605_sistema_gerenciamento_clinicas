@@ -1,3 +1,5 @@
+# from model.atendimento import Atendimento
+# from model.pessoa import Pessoa
 from view.viewPagamentos import ViewPagamentos
 from model.pagamentoDinheiro import PagamentoDinheiro
 from model.pagamentoPix import PagamentoPix
@@ -20,13 +22,23 @@ class ControllerPagamento:
 
     def pagamento_dinheiro(self):
         controlador_atendimento = self.__controller_sistema.controller_atendimento
-        cpf_paciente = self.__view_pagamento.pegar_cpf_paciente()
-        data_atendimento = self.__view_pagamento.pegar_data_da_consulta()
-        horario_atendimento = self.__view_pagamento.pegar_horario_da_consulta()
+        obj_atendimentos = controlador_atendimento.extrair_atendimentos()
+        pacientes = {}
+        for objeto in obj_atendimentos:
+            pacientes.update({objeto.paciente.cpf:objeto.paciente.nome})
+        cpf_paciente = self.__view_pagamento.pegar_cpf_paciente(pacientes)
+        if cpf_paciente == None:
+            self.abrir_tela()
+        atendimentos = controlador_atendimento.atendimentos()
+        datas_atendimentos = atendimentos[cpf_paciente]
+        data_atendimento = self.__view_pagamento.pegar_data_da_consulta(list(datas_atendimentos.keys()))
+        if data_atendimento == None:
+            self.abrir_tela()
+        horarios_atendimentos = datas_atendimentos[data_atendimento]
+        horario_atendimento = self.__view_pagamento.pegar_horario_da_consulta(list(horarios_atendimentos.keys()))
+        if horario_atendimento == None:
+            self.abrir_tela()
         try:
-            atendimentos = controlador_atendimento.atendimentos()
-            datas_atendimentos = atendimentos[cpf_paciente]
-            horarios_atendimentos = datas_atendimentos[data_atendimento]
             atendimento = horarios_atendimentos[horario_atendimento]
             msg = f'Data de vencimento: {data_atendimento}'
             self.__view_pagamento.mostrar_mensagem(msg)
@@ -34,10 +46,16 @@ class ControllerPagamento:
             self.__view_pagamento.mostrar_mensagem("Não há atendimento para os dados informados!")
         else:
             data = self.__view_pagamento.pegar_data_de_pagamento()
+            if data == None:
+                self.abrir_tela()
             if data <= data_atendimento:
                 paciente = atendimento.paciente
                 valor_pago = self.__view_pagamento.pegar_valor_do_pagamento()
+                if valor_pago == None:
+                    self.abrir_tela()
                 parcelas = self.__view_pagamento.pegar_numero_parcelas()
+                if parcelas == None:
+                    self.abrir_tela()
                 pagamento = PagamentoDinheiro(paciente, atendimento, data, valor_pago, parcelas)
                 agora = datetime.now()
                 agora_formatado = agora.strftime("%Y%m%d%H%M%S")
@@ -49,13 +67,23 @@ class ControllerPagamento:
 
     def pagamento_pix(self):
         controlador_atendimento = self.__controller_sistema.controller_atendimento
-        cpf_paciente = self.__view_pagamento.pegar_cpf_paciente()
-        data_atendimento = self.__view_pagamento.pegar_data_da_consulta()
-        horario_atendimento = self.__view_pagamento.pegar_horario_da_consulta()
+        obj_atendimentos = controlador_atendimento.extrair_atendimentos()
+        pacientes = {}
+        for objeto in obj_atendimentos:
+            pacientes.update({objeto.paciente.cpf: objeto.paciente.nome})
+        cpf_paciente = self.__view_pagamento.pegar_cpf_paciente(pacientes)
+        if cpf_paciente == None:
+            self.abrir_tela()
+        atendimentos = controlador_atendimento.atendimentos()
+        datas_atendimentos = atendimentos[cpf_paciente]
+        data_atendimento = self.__view_pagamento.pegar_data_da_consulta(list(datas_atendimentos.keys()))
+        if data_atendimento == None:
+            self.abrir_tela()
+        horarios_atendimentos = datas_atendimentos[data_atendimento]
+        horario_atendimento = self.__view_pagamento.pegar_horario_da_consulta(list(horarios_atendimentos.keys()))
+        if horario_atendimento == None:
+            self.abrir_tela()
         try:
-            atendimentos = controlador_atendimento.atendimentos()
-            datas_atendimentos = atendimentos[cpf_paciente]
-            horarios_atendimentos = datas_atendimentos[data_atendimento]
             atendimento = horarios_atendimentos[horario_atendimento]
             msg = f'Data de vencimento: {data_atendimento}'
             self.__view_pagamento.mostrar_mensagem(msg)
@@ -63,11 +91,19 @@ class ControllerPagamento:
             self.__view_pagamento.mostrar_mensagem("Não há atendimento para os dados informados!")
         else:
             data = self.__view_pagamento.pegar_data_de_pagamento()
+            if data == None:
+                self.abrir_tela()
             if data <= data_atendimento:
                 paciente = atendimento.paciente
                 valor_pago = self.__view_pagamento.pegar_valor_do_pagamento()
+                if valor_pago == None:
+                    self.abrir_tela()
                 parcelas = self.__view_pagamento.pegar_numero_parcelas()
+                if parcelas == None:
+                    self.abrir_tela()
                 cpf_pagador = self.__view_pagamento.pegar_cpf_pagador()
+                if cpf_pagador == None:
+                    self.abrir_tela()
                 pagamento = PagamentoPix(paciente, atendimento, data, valor_pago, cpf_pagador, parcelas)
                 agora = datetime.now()
                 agora_formatado = agora.strftime("%Y%m%d%H%M%S")
@@ -79,13 +115,23 @@ class ControllerPagamento:
 
     def pagamento_cartao(self):
         controlador_atendimento = self.__controller_sistema.controller_atendimento
-        cpf_paciente = self.__view_pagamento.pegar_cpf_paciente()
-        data_atendimento = self.__view_pagamento.pegar_data_da_consulta()
-        horario_atendimento = self.__view_pagamento.pegar_horario_da_consulta()
+        obj_atendimentos = controlador_atendimento.extrair_atendimentos()
+        pacientes = {}
+        for objeto in obj_atendimentos:
+            pacientes.update({objeto.paciente.cpf: objeto.paciente.nome})
+        cpf_paciente = self.__view_pagamento.pegar_cpf_paciente(pacientes)
+        if cpf_paciente == None:
+            self.abrir_tela()
+        atendimentos = controlador_atendimento.atendimentos()
+        datas_atendimentos = atendimentos[cpf_paciente]
+        data_atendimento = self.__view_pagamento.pegar_data_da_consulta(list(datas_atendimentos.keys()))
+        if data_atendimento == None:
+            self.abrir_tela()
+        horarios_atendimentos = datas_atendimentos[data_atendimento]
+        horario_atendimento = self.__view_pagamento.pegar_horario_da_consulta(list(horarios_atendimentos.keys()))
+        if horario_atendimento == None:
+            self.abrir_tela()
         try:
-            atendimentos = controlador_atendimento.atendimentos()
-            datas_atendimentos = atendimentos[cpf_paciente]
-            horarios_atendimentos = datas_atendimentos[data_atendimento]
             atendimento = horarios_atendimentos[horario_atendimento]
             msg = f'Data de vencimento: {data_atendimento}'
             self.__view_pagamento.mostrar_mensagem(msg)
@@ -93,12 +139,22 @@ class ControllerPagamento:
             self.__view_pagamento.mostrar_mensagem("Não há atendimento para os dados informados!")
         else:
             data = self.__view_pagamento.pegar_data_de_pagamento()
+            if data == None:
+                self.abrir_tela()
             if data <= data_atendimento:
                 paciente = atendimento.paciente
                 valor_pago = self.__view_pagamento.pegar_valor_do_pagamento()
+                if valor_pago == None:
+                    self.abrir_tela()
                 parcelas = self.__view_pagamento.pegar_numero_parcelas()
+                if parcelas == None:
+                    self.abrir_tela()
                 cpf_pagador = self.__view_pagamento.pegar_cpf_pagador()
+                if cpf_pagador == None:
+                    self.abrir_tela()
                 cartao = self.__view_pagamento.pegar_dados_do_cartao()
+                if cartao == None:
+                    self.abrir_tela()
                 cartao_numero = cartao["numero"]
                 cartao_bandeira = cartao["bandeira"]
                 pagamento = PagamentoCartao(paciente, atendimento, data, valor_pago, cpf_pagador,
